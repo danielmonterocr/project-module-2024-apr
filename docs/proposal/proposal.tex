@@ -1,0 +1,136 @@
+\documentclass[12pt]{extarticle}
+\usepackage[utf8]{inputenc}
+\usepackage{cite}
+
+\title{Smarter Stays, Smaller Footprint: Optimizing Resource Consumption in Airbnbs}
+\author{Daniel Montero}
+\date{September 2024}
+
+\begin{document}
+
+\maketitle
+
+% \section{Summary}
+\begin{center}
+\section*{Summary}
+\end{center}
+
+The proposal aims to develop a comprehensive solution to measure and share the carbon impact of staying at an Airbnb, with the goal of promoting environmental consciousness 
+among tourists and hosts. The project will leverage data analytics to collect and analyze resource consumption metrics including energy and water, providing tourists with 
+personalized carbon footprint information for their stay.
+
+This platform will also enable hosts to monitor and optimize resource usage, offering insights into energy and water expenditure on a daily, weekly, monthly, and yearly basis. 
+By comparing carbon footprints between Airbnb and hotel stays, the project seeks to highlight the environmental benefits of sustainable accommodations.
+
+Additionally, predictive analytics will be employed to forecast resource consumption and potential revenue for future Airbnb investments, encouraging hosts to adopt eco-friendly 
+practices. The ultimate aim is to expand the network of carbon-neutral Airbnb hosts and tourists through awareness campaigns and incentive programs, fostering a culture of 
+sustainability within the hospitality industry.
+
+\section{Background Research}
+
+Tourists looking for small footprint destinations
+
+The World Economic Forum found out that 76\% want more sustainable options when traveling. This includes reusing linen and turning the AC to minimize energy consumption.
+
+Monitoring of rental homes for resources usage
+
+Smart Home Technology as we know it today started back in the 1970's with the creation of the X10 protocol. Lights and appliances were controlled over existing electrical wiring, 
+but with limited and unreliable functionality. In the next decade the technology matured but it was not until the 1990’s, with the creation of the internet that these systems 
+started to be more useful. Users were now able to interact with their homes through web interfaces or mobile apps.
+
+This also allowed monitoring the usage of energy, water and gas in real-time which attracted people with an interest in reducing their utilities bills. Turns out this interest wears 
+out after a couple of months after users stop paying attention to the reports and if they didn’t make significant changes, would end up spending the same amount of energy as before 
+getting the energy monitoring system.
+
+There are not many studies or articles on monitoring rental homes listed on Airbnb at this moment. The ones found were in fact with the purpose of figuring out if guests were less 
+energy efficient than their hosts and not with the intention of reducing the energy footprint of the Airbnb listing. This study used the monthly reports from an electricity company 
+to compare usage between guests and hosts, which was almost three times as high for guests. This coincides with the fact that overall renters are more likely to spend more energy, 
+water and gas than homeowners. No studies were found on water usage.
+
+
+Is Airbnb more ecofriendly than hotels?
+
+There is a big debate on this and it really depends on who's conducting the study and what is taken into account. Some of the studies include the type of transportation used and even 
+how the money earned from Airbnb is spent. Airbnb guests use 63 percent less energy than hotel guests. Airbnb also notes that home-share properties listed on Airbnb.com were found to 
+use 12\% less water than traditional hotel accommodations per guest night in North America and 48\% in Europe. The reason why this could be true is the fact that Airbnb has a rating 
+system that has consequences on the guests side, on the other hand hotels have no restrictions on resources use. Other studies suggest that this is actually the opposite with Airbnb 
+having larger footprints than traditional accommodation.
+
+Airbnb's environmental awareness
+Airbnb is known for having sustainable hosting plans to support Hosts with energy efficiency improvements, cutting carbon emissions and making long-term savings on their bills to help 
+with the rising cost of living. It also wants to become a net zero company by 2030.
+
+\section{Presentation of the Problem}
+
+There is no way to determine whether a person staying at an Airbnb consumes more resources than their hosts or the same guest staying at a hotel. This is because even if there are ways 
+to physically measure these values, there are no solutions to gather this data, process it, compare it with other data and share it with guests, hosts and Airbnb. Most of these systems 
+keep their data private and are not interoperable.
+
+\section{Aims and Objectives}
+
+The main aim of this project is to develop a data-driven solution that educates tourists about the carbon footprint of Airbnb stays, empowers hosts to optimize resource usage, and 
+promotes sustainable practices in the hospitality industry.
+
+\subsection{Objectives}
+
+\begin{itemize}
+    \item Create a robust system to collect and analyze data on energy, water consumption, and  room, environment temperatures, associated with Airbnb stays.
+    \item Compare the carbon footprint of Airbnb stays with equivalent hotel stays to highlight the environmental benefits of sustainable accommodations.
+    \item Develop intuitive interfaces for tourists to understand their carbon impact and for hosts to monitor and optimize resource usage.
+\end{itemize}
+
+\section{Methodology (Proposed Solution)}
+
+\begin{enumerate}
+    \item Install energy, water and temperature sensors on a real Airbnb
+    \item Gather information from the sensors and store it on a time series database (locally or on the cloud)
+    \item Process data remotely to calculate watts/hour and liters consumed during stay
+    \item Calculate difference between inside temperature, outside temperature and optimal environment temperature during stay
+    \item Compare figures from 3 with data from hotel stays
+    \item Generate a report for guest with scores and detailed results and ways to improve
+    \item Present real-time data and calculations to host with user friendly dashboard
+    \item Generate report for host with insights on spendings and tips to increase savings
+\end{enumerate}
+
+\section{Plan for Developing the Solution}
+
+\section{Proposed Solution}
+
+\subsection{Device layer}
+\subsubsection{Hardware}
+It consists of three microcontrollers, each controller a single sensor. One measures water consumption, the other energy consumption and the third one indoor and outdoor temperature. 
+These microcontrollers are connected to a WiFi access point.
+
+The idea is to capture how much of these resources (water and energy) are used by every visitor. These sensors give real time data that is used to calculate the total amount. Temperature 
+readings are used to compare the difference between the outside and inside to determine if people are trying to keep a very low temperature even if they don’t have to.
+
+\subsubsection{Software}
+Open source Zephyr Project (RTOS) runs on top of these microcontrollers to allow a secure and resource aware solution for these embedded systems. This was chosen as opposed to running
+the code on top of the chip because it is a software platform already tested by a lot of projects and that supports internet connection, sensors, over-the-air updates and an active 
+community.
+
+\subsection{Data layer}
+Two separate databases are kept, a time series database for every reading from the sensors and a non-relational database for user, house, device data and metadata. For the time series 
+database the open source ThingsBoard IoT Platform was used because it has integrated data collection, processing, visualization, and device management. The idea was to capture time 
+series data on this platform and then use its own REST API to connect to the application which in the end will run tha main program. 
+
+\subsection{Communication layer}
+It is basically a REST API that connects the Data layer with the application. It works as a way for the application to have access to user, home, device (including time series) data. 
+It complies with Open API specification for standardization. This layer allows clients (applications) to access data in a secure and standard way.
+
+\subsection{Presentation layer}
+A web application that can be accessed from personal computers, tablets and cellphones. It has two modes: host and traveler, the host mode will give access to the Airbnb host to in 
+depth real time data of every listing with historical data on resources consumption by travelers. The traveler mode has a simpler version where an interactive report of their stay 
+can be seen. This is the main program that runs the solution and how users interact with their data.
+
+
+% Write about the proposed work touching the research gap you are addressing, novelty etc. When you are using some references, make sure you list them in the reference below and cite them in this section \cite{Linhart2014} \cite{Linhart2008}.
+
+% And in the last paragraph write about the proposed deliverable aimed from this thesis  \cite{Webb2014}.
+
+% Proposed Guides: Dr./Mr./Ms Name of faculty, Professor/Associate/Assistant Professor, Department, Campus.  \nocite{Midgett2017}
+
+\bibliographystyle{plain}
+\bibliography{proposal.bib}
+
+\end{document}
