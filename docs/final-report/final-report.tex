@@ -156,7 +156,7 @@
 
 % note on names: most of the following names are made up; Silas Holman was a physics professor at MIT in the 19th century.
 
-\Author{Daniel Montero Méndez}
+\Author{Daniel Montero Méndez}{School of Computing and Mathematical Sciences}
 % \Author{Luisa Hernández}{Department of Research}[B.S. Mechanical Engineering, UCLA, 2018][M.S. Stellar Interiors, Vulcan Science Academy, 2020]
 % \Author{Thurston Howell III}{Department of Economics}[MBA, Ferengi School of Management, 2022]
 
@@ -164,10 +164,10 @@
 % For two degrees from one department, leave the department argument blank for the second degree {}.
 % \Degree{Bachelor of Science in Physics}{Department of Physics}
 % \Degree{Master of Science in Physics}{}
-\Degree{Master of Science in Computer Science}{University of London}
+\Degree{Master of Science in Computer Science}{School of Computing and Mathematical Sciences}
 
 % If there is more than one supervisor, use the \Supervisor command for each.
-\Supervisor{Dr Martyn Harris}{Programme Director, School of Computing and Mathematical Sciences}
+\Supervisor{Martyn Harris}{Programme Director}
 % \Supervisor{Secunda Castor}{Professor of Research}
 % \Supervisor{Quintus Castor}{Professor of Log Dams}
 
@@ -183,7 +183,7 @@
 \DegreeDate{September}{2024}
 
 % Date that final thesis is submitted to department
-\ThesisDate{Sep 20, 2024}
+\ThesisDate{Sep 30, 2024}
 
 %%%%%%  Choose whether to have a CREATIVE COMMONS License  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -192,6 +192,8 @@
 %
 \CClicense{CC BY-NC-ND 4.0}{https://creativecommons.org/licenses/by-nc-nd/4.0/}
 %
+
+\Institution{University of London, Birkbeck}
 
 %%%%%%%  Solutions for overflowing titlepage  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -227,7 +229,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%% Make titlepage
-\maketitle
+\SuppressAcceptorError
+\maketitle*
 
 %%%%%%%%% Contents that you need to write follows %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -258,8 +261,8 @@
 
 %% If you want to use "double spacing", you should start here...
 
- \include{chapter1}% .tex extension is presumed
-%\include{chapter2}
+\include{chapter1}% .tex extension is presumed
+\include{chapter2}
 %\include{chapter3}
 %\include{chapter4}
 
