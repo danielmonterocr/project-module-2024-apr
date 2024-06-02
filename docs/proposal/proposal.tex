@@ -3,7 +3,7 @@
 \usepackage{cite}
 
 \title{Smarter Stays, Smaller Footprint: Optimizing Resource Consumption in Airbnbs}
-\author{Daniel Montero}
+\author{Daniel Montero Méndez}
 \date{September 2024}
 
 \begin{document}
@@ -15,50 +15,76 @@
 \section*{Summary}
 \end{center}
 
-The proposal aims to develop a comprehensive solution to measure and share the carbon impact of staying at an Airbnb, with the goal of promoting environmental consciousness 
+The proposal aims to develop a comprehensive solution to reduce the carbon impact of staying at an Airbnb, with the goal of promoting environmental consciousness 
 among tourists and hosts. The project will leverage data analytics to collect and analyze resource consumption metrics including energy and water, providing tourists with 
-personalized carbon footprint information for their stay.
-
-This platform will also enable hosts to monitor and optimize resource usage, offering insights into energy and water expenditure on a daily, weekly, monthly, and yearly basis. 
-By comparing carbon footprints between Airbnb and hotel stays, the project seeks to highlight the environmental benefits of sustainable accommodations.
+personalized resource usage information of their stay. This platform will also enable hosts to monitor and optimize resource usage, offering insights into energy and water 
+expenditure on a daily, weekly, monthly, and yearly basis. 
 
 Additionally, predictive analytics will be employed to forecast resource consumption and potential revenue for future Airbnb investments, encouraging hosts to adopt eco-friendly 
-practices. The ultimate aim is to expand the network of carbon-neutral Airbnb hosts and tourists through awareness campaigns and incentive programs, fostering a culture of 
+practices. The ultimate aim is to expand the network of environmentally conscious Airbnb hosts and tourists through awareness campaigns and incentive programs, fostering a culture of 
 sustainability within the hospitality industry.
 
 \section{Background Research}
 
-Tourists looking for small footprint destinations
+\subsection{Airbed and Breakfast}
 
-The World Economic Forum found out that 76\% want more sustainable options when traveling. This includes reusing linen and turning the AC to minimize energy consumption.
+Airbed and Breakfast or Airbnb was founded in 2008 by Brian Chesky, Joe Gebbia, and Nathan Blecharczyk. The idea was to rent out an air mattress in their living room to help pay their 
+rent \cite{Satya2023}. It has since grown to be a global platform with over 4 million listings in 191 countries. The company has been valued at over 100 billion dollars and 
+revolutionized the way people travel, stay, and experience new places.
 
-Monitoring of rental homes for resources usage
+\subsection{Why Airbnb?}
 
-Smart Home Technology as we know it today started back in the 1970's with the creation of the X10 protocol. Lights and appliances were controlled over existing electrical wiring, 
-but with limited and unreliable functionality. In the next decade the technology matured but it was not until the 1990’s, with the creation of the internet that these systems 
-started to be more useful. Users were now able to interact with their homes through web interfaces or mobile apps.
+Airbnb was chosen for this project because it is a platform that has grown exponentially in Costa Rica in the last decade and has become a popular choice for travelers. An Airbnb is
+own by the creator of this project, which made it easier to test the solution in a real environment, but the idea was to create a solution that can be used by any accommodation in the 
+world.
 
-This also allowed monitoring the usage of energy, water and gas in real-time which attracted people with an interest in reducing their utilities bills. Turns out this interest wears 
-out after a couple of months after users stop paying attention to the reports and if they didn’t make significant changes, would end up spending the same amount of energy as before 
-getting the energy monitoring system.
+\subsection{Tourists looking for small footprint destinations}
 
-There are not many studies or articles on monitoring rental homes listed on Airbnb at this moment. The ones found were in fact with the purpose of figuring out if guests were less 
-energy efficient than their hosts and not with the intention of reducing the energy footprint of the Airbnb listing. This study used the monthly reports from an electricity company 
-to compare usage between guests and hosts, which was almost three times as high for guests. This coincides with the fact that overall renters are more likely to spend more energy, 
-water and gas than homeowners. No studies were found on water usage.
+The idea of offering sustainable alternatives to travelers comes from the fact that they are actually looking for these types of accommodations. In a recent study (2023) The World 
+Economic Forum found that 80\% of travelers want more sustainable options when traveling \cite{SustainableTravelReport2023}. Some other interesting facts about this study are 
+\cite{SustainableTravelReport2023}:
 
+\begin{itemize}
+    \item 49\% would like some type of discount of economic incentive for choosing a sustainable options
+    \item 42\% would be more encouraged to stay on these places if there was a reward program to excange points for discounts or some other perks
+    \item 67\% of travelers are turning they air conditioning off when they leave the room
+    \item 77\% of travelers are turning off the lights they are not using them
+\end{itemize}
 
-Is Airbnb more ecofriendly than hotels?
+\subsection{Monitoring of rental homes for resources usage}
+
+Smart home technology as we know it today started back in the 1970's with the creation of the X10 protocol\cite{Caflisch2023}. Lights and appliances were controlled over existing 
+electrical wiring, but with limited and unreliable functionality. In the next decade the technology matured but it was not until the 1990's, with the creation of the internet that 
+these systems started to be more useful. Users were now able to interact with their homes through web interfaces or mobile apps.
+
+This also allowed monitoring the usage of energy, water and gas in real-time which attracted people with an interest in reducing their utilities bills. In fact "smart home technology 
+has increasingly focused on energy efficiency and sustainability, with devices designed to optimize energy usage and reduce environmental impact" \cite{Caflisch2023}. Now people can 
+set energy goals for individual devices or your entire home, measured by day, dollars, or watts. Additionally, you can add individual sensors to large energy consumers or pool pumps 
+for more precise monitoring. For time-of-use plans, you can input your local rate zones to obtain more accurate billing information \cite{SanSone2022}. The idea behind 
+this is to enhance energy literacy and encourage behavior changes that lower electricity consumption by offering instant feedback on electricity usage \cite{Webb2014}. One home energy 
+monitor company, Sense, estimates that their average user saves about 9\% on electric bills. \cite{Walker2023}"
+
+There are not many studies or articles on monitoring rental homes listed on Airbnb at this moment. The best one found was in fact with the purpose of figuring out if guests were less 
+energy efficient than their hosts. This study used the monthly reports from an electricity company to compare usage between guests and hosts, which was almost three times as high for 
+guests \cite{Halford2023}. This coincides with the fact that overall renters are more likely to spend more energy, water and gas than homeowners \cite{Jeunesse2013}. It also states 
+that: "The gap in energy usage between owners and renters suggests that there are real opportunities for savings through some combination of added incentives for property owners to 
+make these investments in retrofits and greater incentives for tenants to conserve energy" \cite{Jeunesse2013}.
+
+\subsection{Is Airbnb more ecofriendly than hotels?}
 
 There is a big debate on this and it really depends on who's conducting the study and what is taken into account. Some of the studies include the type of transportation used and even 
-how the money earned from Airbnb is spent. Airbnb guests use 63 percent less energy than hotel guests. Airbnb also notes that home-share properties listed on Airbnb.com were found to 
-use 12\% less water than traditional hotel accommodations per guest night in North America and 48\% in Europe. The reason why this could be true is the fact that Airbnb has a rating 
-system that has consequences on the guests side, on the other hand hotels have no restrictions on resources use. Other studies suggest that this is actually the opposite with Airbnb 
-having larger footprints than traditional accommodation.
+how the money earned from Airbnb is spent \cite{Power2021}. A study by Airbnb and Cleantech Group reveals that travelers staying in Airbnb properties consume significantly less energy 
+than traditional hotel guests. In North America, Airbnb guests use 63 percent less energy and, over a single year, saved enough water to fill 270 Olympic-sized pools. Additionally, 
+nearly 83 percent of Airbnb hosts in North America own at least one energy-efficient appliance, reflecting a strong commitment to sustainable practices \cite{Simon2014}. This constrasts
+with the reality of the hotels industry, where the trend toward less and less efficient hotels is clear, with energy use per room-night doubling between the 1960s and the 2000s 
+\cite{Prairie2012}.
 
-Airbnb's environmental awareness
-Airbnb is known for having sustainable hosting plans to support Hosts with energy efficiency improvements, cutting carbon emissions and making long-term savings on their bills to help 
-with the rising cost of living. It also wants to become a net zero company by 2030.
+\subsection{Airbnb's environmental awareness}
+
+Airbnb has introduced its Sustainable Hosting Plan, which includes a £1 million fund to help Hosts improve energy efficiency, reduce carbon emissions, and save on their bills, 
+addressing the rising cost of living. Partnering with Energy Saving Trust, Airbnb will offer all Hosts a personalized home energy efficiency check and action plan, detailing steps to 
+enhance their home's efficiency. Hosts interested in making improvements will be connected to local installers and can receive grants of £1,000 or £3,000. Over a third of Hosts in 
+the UK report hosting to manage the increasing cost of living. Additionally, last year, Airbnb set a goal to become a net zero company by 2030 \cite{Airbnb2022}.
 
 \section{Presentation of the Problem}
 
@@ -97,28 +123,34 @@ promotes sustainable practices in the hospitality industry.
 \section{Proposed Solution}
 
 \subsection{Device layer}
+
 \subsubsection{Hardware}
+
 It consists of three microcontrollers, each controller a single sensor. One measures water consumption, the other energy consumption and the third one indoor and outdoor temperature. 
 These microcontrollers are connected to a WiFi access point.
 
 The idea is to capture how much of these resources (water and energy) are used by every visitor. These sensors give real time data that is used to calculate the total amount. Temperature 
-readings are used to compare the difference between the outside and inside to determine if people are trying to keep a very low temperature even if they don’t have to.
+readings are used to compare the difference between the outside and inside to determine if people are trying to keep a very low temperature even if they don't have to.
 
 \subsubsection{Software}
+
 Open source Zephyr Project (RTOS) runs on top of these microcontrollers to allow a secure and resource aware solution for these embedded systems. This was chosen as opposed to running
 the code on top of the chip because it is a software platform already tested by a lot of projects and that supports internet connection, sensors, over-the-air updates and an active 
 community.
 
 \subsection{Data layer}
+
 Two separate databases are kept, a time series database for every reading from the sensors and a non-relational database for user, house, device data and metadata. For the time series 
 database the open source ThingsBoard IoT Platform was used because it has integrated data collection, processing, visualization, and device management. The idea was to capture time 
 series data on this platform and then use its own REST API to connect to the application which in the end will run tha main program. 
 
 \subsection{Communication layer}
+
 It is basically a REST API that connects the Data layer with the application. It works as a way for the application to have access to user, home, device (including time series) data. 
 It complies with Open API specification for standardization. This layer allows clients (applications) to access data in a secure and standard way.
 
 \subsection{Presentation layer}
+
 A web application that can be accessed from personal computers, tablets and cellphones. It has two modes: host and traveler, the host mode will give access to the Airbnb host to in 
 depth real time data of every listing with historical data on resources consumption by travelers. The traveler mode has a simpler version where an interactive report of their stay 
 can be seen. This is the main program that runs the solution and how users interact with their data.
