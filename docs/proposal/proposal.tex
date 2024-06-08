@@ -24,21 +24,32 @@ Additionally, predictive analytics will be employed to forecast resource consump
 practices. The ultimate aim is to expand the network of environmentally conscious Airbnb hosts and tourists through awareness campaigns and incentive programs, fostering a culture of 
 sustainability within the hospitality industry.
 
-\section{Background Research}
 
-\subsection{Airbed and Breakfast}
+\section{Introduction}
+
+\subsection{Overview}
+
+\subsection{Problem Definition (Presentation of the Problem)}
+
+There is no way to determine whether a person staying at an Airbnb consumes more resources than their hosts or the same guest staying at a hotel. This is because even if there are ways 
+to physically measure these values, there are no solutions to gather this data, process it, compare it with other data and share it with guests, hosts and Airbnb. Most of these systems 
+keep their data private and are not interoperable.
+
+\subsection{Literary Review (Background Research)}
+
+\subsubsection{Airbed and Breakfast}
 
 Airbed and Breakfast or Airbnb was founded in 2008 by Brian Chesky, Joe Gebbia, and Nathan Blecharczyk. The idea was to rent out an air mattress in their living room to help pay their 
 rent \cite{Satya2023}. It has since grown to be a global platform with over 4 million listings in 191 countries. The company has been valued at over 100 billion dollars and 
 revolutionized the way people travel, stay, and experience new places.
 
-\subsection{Why Airbnb?}
+\subsubsection{Why Airbnb?}
 
 Airbnb was chosen for this project because it is a platform that has grown exponentially in Costa Rica in the last decade and has become a popular choice for travelers. An Airbnb is
 own by the creator of this project, which made it easier to test the solution in a real environment, but the idea was to create a solution that can be used by any accommodation in the 
 world.
 
-\subsection{Tourists looking for small footprint destinations}
+\subsubsection{Tourists looking for small footprint destinations}
 
 The idea of offering sustainable alternatives to travelers comes from the fact that they are actually looking for these types of accommodations. In a recent study (2023) The World 
 Economic Forum found that 80\% of travelers want more sustainable options when traveling \cite{SustainableTravelReport2023}. Some other interesting facts about this study are 
@@ -51,7 +62,7 @@ Economic Forum found that 80\% of travelers want more sustainable options when t
     \item 77\% of travelers are turning off the lights they are not using them
 \end{itemize}
 
-\subsection{Monitoring of rental homes for resources usage}
+\subsubsection{Monitoring of rental homes for resources usage}
 
 Smart home technology as we know it today started back in the 1970's with the creation of the X10 protocol\cite{Caflisch2023}. Lights and appliances were controlled over existing 
 electrical wiring, but with limited and unreliable functionality. In the next decade the technology matured but it was not until the 1990's, with the creation of the internet that 
@@ -70,7 +81,7 @@ guests \cite{Halford2023}. This coincides with the fact that overall renters are
 that: "The gap in energy usage between owners and renters suggests that there are real opportunities for savings through some combination of added incentives for property owners to 
 make these investments in retrofits and greater incentives for tenants to conserve energy" \cite{Jeunesse2013}.
 
-\subsection{Is Airbnb more ecofriendly than hotels?}
+\subsubsection{Is Airbnb more ecofriendly than hotels?}
 
 There is a big debate on this and it really depends on who's conducting the study and what is taken into account. Some of the studies include the type of transportation used and even 
 how the money earned from Airbnb is spent \cite{Power2021}. A study by Airbnb and Cleantech Group reveals that travelers staying in Airbnb properties consume significantly less energy 
@@ -79,25 +90,19 @@ nearly 83 percent of Airbnb hosts in North America own at least one energy-effic
 with the reality of the hotels industry, where the trend toward less and less efficient hotels is clear, with energy use per room-night doubling between the 1960s and the 2000s 
 \cite{Prairie2012}.
 
-\subsection{Airbnb's environmental awareness}
+\subsubsection{Airbnb's environmental awareness}
 
 Airbnb has introduced its Sustainable Hosting Plan, which includes a £1 million fund to help Hosts improve energy efficiency, reduce carbon emissions, and save on their bills, 
 addressing the rising cost of living. Partnering with Energy Saving Trust, Airbnb will offer all Hosts a personalized home energy efficiency check and action plan, detailing steps to 
 enhance their home's efficiency. Hosts interested in making improvements will be connected to local installers and can receive grants of £1,000 or £3,000. Over a third of Hosts in 
 the UK report hosting to manage the increasing cost of living. Additionally, last year, Airbnb set a goal to become a net zero company by 2030 \cite{Airbnb2022}.
 
-\section{Presentation of the Problem}
-
-There is no way to determine whether a person staying at an Airbnb consumes more resources than their hosts or the same guest staying at a hotel. This is because even if there are ways 
-to physically measure these values, there are no solutions to gather this data, process it, compare it with other data and share it with guests, hosts and Airbnb. Most of these systems 
-keep their data private and are not interoperable.
-
-\section{Aims and Objectives}
+\subsection{Aims and Objectives}
 
 The main aim of this project is to develop a data-driven solution that educates tourists about the carbon footprint of Airbnb stays, empowers hosts to optimize resource usage, and 
 promotes sustainable practices in the hospitality industry.
 
-\subsection{Objectives}
+\subsubsection{Objectives}
 
 \begin{itemize}
     \item Create a robust system to collect and analyze data on energy, water consumption, and  room, environment temperatures, associated with Airbnb stays.
@@ -105,7 +110,19 @@ promotes sustainable practices in the hospitality industry.
     \item Develop intuitive interfaces for tourists to understand their carbon impact and for hosts to monitor and optimize resource usage.
 \end{itemize}
 
-\section{Methodology (Proposed Solution)}
+\section{Proposed Solution (Methodology)}
+
+% 1. Description
+% 2. Reference external components that the solution will interact with
+% 3. Positives and negatives of the proposed solution
+% 4. Data models, shemas
+% 5. Business logic
+% 6. Possible errors, limitations, pseudo code and flow charts
+% 7. Presentation layer (UX, UI), mobile phone compatibility
+% 8. How will it cope with future enhancements
+% 9. Test plan and evaluation criteria, how would you design a survey to capture user feedback
+% 10. Risk assessment: use different data set, different cloud framework or reduce the set of core features
+
 
 \begin{enumerate}
     \item Install energy, water and temperature sensors on a real Airbnb
@@ -117,10 +134,6 @@ promotes sustainable practices in the hospitality industry.
     \item Present real-time data and calculations to host with user friendly dashboard
     \item Generate report for host with insights on spendings and tips to increase savings
 \end{enumerate}
-
-\section{Plan for Developing the Solution}
-
-\section{Proposed Solution}
 
 \subsection{Device layer}
 
@@ -155,6 +168,13 @@ A web application that can be accessed from personal computers, tablets and cell
 depth real time data of every listing with historical data on resources consumption by travelers. The traveler mode has a simpler version where an interactive report of their stay 
 can be seen. This is the main program that runs the solution and how users interact with their data.
 
+\section{Plan of Work (Plan for Developing the Solution)}
+
+% 1. Tasks and timelines
+% 2. Priority list
+% 3. Milestones: with metrics
+% 4. Activity network
+% 5. Gantt chart
 
 % Write about the proposed work touching the research gap you are addressing, novelty etc. When you are using some references, make sure you list them in the reference below and cite them in this section \cite{Linhart2014} \cite{Linhart2008}.
 
