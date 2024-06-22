@@ -13,8 +13,17 @@ jobs:
           working_directory: docs/proposal
           root_file: proposal.tex
 
-      - name: Upload proposal
+      - name: Compile final report
+        uses: xu-cheng/latex-action@v3
+        with:
+          working_directory: docs/final-report
+          root_file: final-report.tex
+  
+      - name: Upload docs
         uses: actions/upload-artifact@v4
         with:
-          name: PDF
-          path: docs/proposal/proposal.pdf
+          name: docs
+          path: |
+            docs/proposal/proposal.pdf
+            docs/final-report/final-report.pdf
+          overwrite: true
