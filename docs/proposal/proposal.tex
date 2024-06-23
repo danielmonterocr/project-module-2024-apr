@@ -187,7 +187,8 @@ promotes sustainable practices in the hospitality industry.
 
 \subsection{Description}
 
-
+The general system architecture of the proposed solution is shown in Figure \ref{fig:architecture-diagram}. The solution consists of four main layers: device, data, communication, and presentation.
+A detailed explanation of each layer is provided in the next section.
 
 \begin{figure}[h!]
     \centering
@@ -196,25 +197,14 @@ promotes sustainable practices in the hospitality industry.
     \label{fig:architecture-diagram}
 \end{figure}
 
-\begin{enumerate}
-    \item Install energy, water and temperature sensors on a real Airbnb
-    \item Gather information from the sensors and store it on a time series database (locally or on the cloud)
-    \item Process data remotely to calculate watts/hour and liters consumed during stay
-    \item Calculate difference between inside temperature, outside temperature and optimal environment temperature during stay
-    \item Compare figures from 3 with data from hotel stays
-    \item Generate a report for guest with scores and detailed results and ways to improve
-    \item Present real-time data and calculations to host with user friendly dashboard
-    \item Generate report for host with insights on spendings and tips to increase savings
-\end{enumerate}
-
 \subsection{Device layer}
 
 \subsubsection{Hardware}
 
-It consists of three microcontrollers, each controller a single sensor. One measures water consumption, the other energy consumption and the third one indoor and outdoor temperature. 
+It consists of three microcontrollers, each controls a sensor. One measures water consumption, the other energy usage and the third one indoor and outdoor temperatures. 
 These microcontrollers are connected to a WiFi access point.
 
-The idea is to capture how much of these resources (water and energy) are used by every visitor. These sensors give real time data that is used to calculate the total amount. Temperature 
+The idea is to capture how much of these resources (water and energy) are used by every guest. These sensors give real time data that is then used to calculate the total amount. Temperature 
 readings are used to compare the difference between the outside and inside to determine if people are trying to keep a very low temperature even if they don't have to.
 
 \subsubsection{Software}
@@ -239,6 +229,17 @@ It complies with Open API specification for standardization. This layer allows c
 A web application that can be accessed from personal computers, tablets and cellphones. It has two modes: host and traveler, the host mode will give access to the Airbnb host to in 
 depth real time data of every listing with historical data on resources consumption by travelers. The traveler mode has a simpler version where an interactive report of their stay 
 can be seen. This is the main program that runs the solution and how users interact with their data.
+
+\begin{enumerate}
+    \item Install energy, water and temperature sensors on a real Airbnb
+    \item Gather information from the sensors and store it on a time series database (locally or on the cloud)
+    \item Process data remotely to calculate watts/hour and liters consumed during stay
+    \item Calculate difference between inside temperature, outside temperature and optimal environment temperature during stay
+    \item Compare figures from 3 with data from hotel stays
+    \item Generate a report for guest with scores and detailed results and ways to improve
+    \item Present real-time data and calculations to host with user friendly dashboard
+    \item Generate report for host with insights on spendings and tips to increase savings
+\end{enumerate}
 
 \subsection{Risk Assessment}
 
