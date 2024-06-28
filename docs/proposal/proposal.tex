@@ -146,6 +146,8 @@ promotes sustainable practices in the hospitality industry.
     \item Develop an intuitive interface for hosts to monitor and optimize resource usage.
 \end{itemize}
 
+\newpage
+
 \section{Proposed Solution (Methodology)}
 
 % Current solution/design
@@ -187,13 +189,13 @@ promotes sustainable practices in the hospitality industry.
 
 \subsection{Description}
 
-The general system architecture of the proposed solution is shown in Figure \ref{fig:architecture-diagram}. The solution consists of four main layers: device, data, communication, and presentation.
-A detailed explanation of each layer is provided in the next section.
+The general system architecture of the proposed solution is shown in Figure \ref{fig:architecture-diagram}. The solution consists of four main layers: device, data, communication, 
+and presentation. A detailed explanation of each layer is provided in the next section.
 
 \begin{figure}[h!]
     \centering
     \includegraphics[width=0.5\textwidth]{architecture-diagram.png}
-    \caption{Architecture Diagram}
+    \caption{Architecture diagram}
     \label{fig:architecture-diagram}
 \end{figure}
 
@@ -201,45 +203,59 @@ A detailed explanation of each layer is provided in the next section.
 
 \subsubsection{Hardware}
 
-It consists of three microcontrollers, each controls a sensor. One measures water consumption, the other energy usage and the third one indoor and outdoor temperatures. 
-These microcontrollers are connected to a WiFi access point.
-
-The idea is to capture how much of these resources (water and energy) are used by every guest. These sensors give real time data that is then used to calculate the total amount. Temperature 
-readings are used to compare the difference between the outside and inside to determine if people are trying to keep a very low temperature even if they don't have to.
+It consists of three microcontrollers used to control the sensors. One measures water consumption, the other energy usage and the third one indoor and outdoor temperatures. 
+These microcontrollers are connected to a WiFi access point. The sensors give real time raw data that in kw, liters and degrees Celsius. Temperature 
+readings are used to compare the difference between the outside and inside of the house to determine the difference in temperatures.
 
 \subsubsection{Software}
 
-Open source Zephyr Project (RTOS) runs on top of these microcontrollers to allow a secure and resource aware solution for these embedded systems. This was chosen as opposed to running
-the code on top of the chip because it is a software platform already tested by a lot of projects and that supports internet connection, sensors, over-the-air updates and an active 
-community.
+Open source Zephyr Project (RTOS) runs on top of these microcontrollers to allow a secure and resource aware solution for these embedded systems (microcontrollers). This was chosen 
+as opposed to running the code on top of the chip because it is a software platform already tested by a lot of projects and that supports internet connection, sensors, over-the-air 
+updates and has an active community.
 
 \subsection{Data layer}
 
 Two separate databases are kept, a time series database for every reading from the sensors and a non-relational database for user, house, device data and metadata. For the time series 
-database the open source ThingsBoard IoT Platform was used because it has integrated data collection, processing, visualization, and device management. The idea was to capture time 
-series data on this platform and then use its own REST API to connect to the application which in the end will run tha main program. 
+database the open source ThingsBoard IoT Platform is used because it has integrated data collection, processing, visualization, and device management. The idea is to capture time 
+series data on this platform and then use its own REST API to connect to the application which in the end will run the main program. 
 
 \subsection{Communication layer}
 
-It is basically a REST API that connects the Data layer with the application. It works as a way for the application to have access to user, home, device (including time series) data. 
+It is basically a REST API that connects the data layer with the application. It works as a way for it to have access to user, home, device (including time series) data. 
 It complies with Open API specification for standardization. This layer allows clients (applications) to access data in a secure and standard way.
+
+\subsubsection{Interaction with Airbnb}
+
+The application connects to Airbnb's API to get data on the guests that are staying at the listing. This will allow the application to know when a guest has checked in and out.
+This will mark the start and end of the main process.
 
 \subsection{Presentation layer}
 
-A web application that can be accessed from personal computers, tablets and cellphones. It has two modes: host and traveler, the host mode will give access to the Airbnb host to in 
-depth real time data of every listing with historical data on resources consumption by travelers. The traveler mode has a simpler version where an interactive report of their stay 
-can be seen. This is the main program that runs the solution and how users interact with their data.
+A web application that can be accessed from personal computers, tablets and cellphones. It has two modes: host and guest, the host mode will give access to the Airbnb host to in 
+depth real time data of every listing with historical data on resources consumption by travelers. The guest mode has a simpler version where an interactive report of their stay 
+can be seen (guest mode won't be implemented in the first version of the application). This is the main program that runs the solution and how users interact with their data.
 
-\begin{enumerate}
-    \item Install energy, water and temperature sensors on a real Airbnb
-    \item Gather information from the sensors and store it on a time series database (locally or on the cloud)
-    \item Process data remotely to calculate watts/hour and liters consumed during stay
-    \item Calculate difference between inside temperature, outside temperature and optimal environment temperature during stay
-    \item Compare figures from 3 with data from hotel stays
-    \item Generate a report for guest with scores and detailed results and ways to improve
-    \item Present real-time data and calculations to host with user friendly dashboard
-    \item Generate report for host with insights on spendings and tips to increase savings
-\end{enumerate}
+\subsection{Data Flow}
+Figure \ref{fig:main-data-flow-diagram} shows a high-level diagram of the flow of data between the different components of the system. All the interaction between the different practices
+is done through the REST API.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.5\textwidth]{main-data-flow-diagram.png}
+    \caption{Main data flow diagram}
+    \label{fig:main-data-flow-diagram}
+\end{figure}
+
+\subsection{Test Plan and Evaluation Criteria}
+A test plan was be developed to evaluate the performance of the system. The plan includes the following steps:
+
+\begin{itemize}
+    \item Unit Testing: unit tests for the code running on the microcontrollers and the API.
+    \item Integration Testing: each layer is tested to make sure isgu working as expected.
+    \item System Testing: end-to-end testing (including interaction with host dashboard) using simulated stays.
+    \item Regression Testing: Github Actions integrated into the develpment process to make sure nothing breaks when changes are introduced.
+    \item User Testing: A small group of users will test the system and complete a survey to collect the result of their experiences.
+\end{itemize}
 
 \subsection{Risk Assessment}
 
