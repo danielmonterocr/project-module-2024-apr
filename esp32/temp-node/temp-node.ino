@@ -5,6 +5,8 @@
 #include <DallasTemperature.h>
 
 
+#define SERIAL_DEBUG_BAUD   115200
+
 #define WIFI_AP_NAME        "Nour"
 #define WIFI_PASSWORD       "tinyfootprint"
 
@@ -13,8 +15,6 @@
 
 // Data wire is plugged TO GPIO 4
 #define ONE_WIRE_BUS        4
-
-#define SERIAL_DEBUG_BAUD   115200
 
 WiFiClient espClient;
 
@@ -43,7 +43,7 @@ uint32_t interval = 60*1000;
 // Set to true if application is subscribed for the messages
 bool subscribed = false;
 
-void setup(){
+void setup() {
   // Initialize serial for debugging
   Serial.begin(SERIAL_DEBUG_BAUD);
 
@@ -64,7 +64,7 @@ void setup(){
   Serial.println(" devices.");
 
   // Loop through each device, print out address
-  for(int i=0;i<numberOfDevices; i++){
+  for(int i=0; i<numberOfDevices; i++){
     // Search the wire for address
     if(sensors.getAddress(tempDeviceAddress, i)){
       Serial.print("Found device ");
@@ -80,7 +80,7 @@ void setup(){
   }
 }
 
-void loop(){ 
+void loop() {
   static uint32_t nextTime;
 
   // Reconnect to WiFi, if needed
@@ -103,33 +103,33 @@ void loop(){
       return;
     }
   }
-
-  sensors.requestTemperatures(); // Send the command to get temperatures
-  
-  // Get temperature from first sensor
-  if(sensors.getAddress(tempDeviceAddress, 0)) {
-    // Output the device ID
-    Serial.print("Temperature for device: ");
-    Serial.println(0, DEC);
-    // Print the data
-    intTemp = sensors.getTempC(tempDeviceAddress);
-    Serial.print("Temp C: ");
-    Serial.println(intTemp);
-  }
-
-  // Get temperature from second sensor
-  if(sensors.getAddress(tempDeviceAddress, 1)) {
-    // Output the device ID
-    Serial.print("Temperature for device: ");
-    Serial.println(1, DEC);
-    // Print the data
-    extTemp = sensors.getTempC(tempDeviceAddress);
-    Serial.print("Temp C: ");
-    Serial.println(extTemp);
-  }
   
   // Check if it is a time to send temperature
   if (millis() - nextTime >= interval) {
+    sensors.requestTemperatures(); // Send the command to get temperatures
+
+    // Get temperature from first sensor
+    if(sensors.getAddress(tempDeviceAddress, 0)) {
+      // Output the device ID
+      Serial.print("Temperature for device: ");
+      Serial.println(0, DEC);
+      // Print the data
+      intTemp = sensors.getTempC(tempDeviceAddress);
+      Serial.print("Temp C: ");
+      Serial.println(intTemp);
+    }
+
+    // Get temperature from second sensor
+    if(sensors.getAddress(tempDeviceAddress, 1)) {
+      // Output the device ID
+      Serial.print("Temperature for device: ");
+      Serial.println(1, DEC);
+      // Print the data
+      extTemp = sensors.getTempC(tempDeviceAddress);
+      Serial.print("Temp C: ");
+      Serial.println(extTemp);
+    }
+
     Serial.println("Sending data...");
 
     // Uploads new telemetry to ThingsBoard using MQTT. 
@@ -145,8 +145,7 @@ void loop(){
   tb.loop();
 }
 
-void initWiFi()
-{
+void initWiFi() {
   Serial.println("Connecting to AP ...");
   // attempt to connect to WiFi network
 
