@@ -92,7 +92,7 @@ specially when is a home-sharing accommodation \cite{Webb2014} by reducing the f
 \subsubsection{Airbnb's environmental awareness}
 
 Airbnb introduced its Sustainable Hosting Plan, which includes a £1 million fund (in the United Kingdom) to help hosts improve energy efficiency, reduce carbon emissions, and save on their bills, 
-addressing the rising cost of living. Partnering with Energy Saving Trust, Airbnb will offer all Hosts a personalized home energy efficiency check and action plan, detailing steps to 
+addressing the rising cost of living. Partnering with Energy Saving Trust, Airbnb will offer all hosts a personalized home energy efficiency check and action plan, detailing steps to
 enhance their home's efficiency. Hosts interested in making improvements will be connected to local installers and can receive grants of £1,000 or £3,000. Additionally, last year, 
 Airbnb set a goal to become a net zero company by 2030 \cite{Airbnb2022}.
 
@@ -122,8 +122,8 @@ than traditional hotel guests \cite{Simon2014}. In North America, Airbnb guests 
  \cite{Simon2014}. This constrasts with the reality of the hotel industry, where the trend toward less and less efficient hotels is clear, with energy use per room-night doubling between 
  the 1960s and the 2000s \cite{Prairie2012}. 
  
- At least Airbnb has a rating system that can help reduce the spread of wasteful guests, there is little enforcement and penalizing for 
- guests with excesive use of resources in hotels \cite{Webb2014}.
+On top of that, Airbnb has a rating system that can help reduce the spread of wasteful guests, there is little enforcement and penalizing for
+guests with excesive use of resources in hotels \cite{Webb2014}.
 
 \subsubsection{Smart home technology}
 
@@ -220,8 +220,8 @@ and presentation. A detailed explanation of each layer is provided in the next s
 \subsubsection{Hardware}
 
 It consists of three microcontrollers used to control the sensors. One measures water consumption, the other energy usage and the third one indoor and outdoor temperatures. 
-These microcontrollers are connected to a WiFi access point. The sensors give real time raw data that in kw, liters and degrees Celsius. Temperature 
-readings are used to compare the difference between the outside and inside of the house to determine the difference in temperatures.
+These microcontrollers are connected to a WiFi access point. The sensors give real time raw data in kw, liters and degrees Celsius. Temperature readings are used to compare the
+difference between the outside and inside of the house.
 
 \subsubsection{Software}
 
@@ -252,7 +252,7 @@ depth real time data of every listing with historical data on resources consumpt
 can be seen (guest mode won't be implemented in the first version of the application). This is the main program that runs the solution and how users interact with their data.
 
 \subsection{Data Flow}
-Figure \ref{fig:main-data-flow-diagram} shows a high-level diagram of the flow of data between the different components of the system. All the interaction between the different practices
+Figure \ref{fig:main-data-flow-diagram} shows a high-level diagram of the flow of data between the different components of the system. All the interaction between the different layers
 is done through the REST API.
 
 \begin{figure}[h!]
@@ -275,8 +275,7 @@ A test plan was be developed to evaluate the performance of the system. The plan
 
 \subsection{Risk Assessment}
 
-The risk management plan for the project depicted in Figures \ref{fig:risk-matrix-1}-\ref{fig:risk-matrix-3} outlines the potential risks associated with various stages, including 
-Planning and Setup, Data Collection and Initial Testing, Remote Data Processing and Analysis, Report Generation and Dashboard Development, and Final Testing and Deployment. Each 
+The risk management plan for the project depicted in Figures \ref{fig:risk-matrix-1}-\ref{fig:risk-matrix-3} outlines the potential risks associated with various stages. Each 
 identified risk is evaluated based on its severity and likelihood, with corresponding risk levels assigned. For instance, during the planning and setup phase, risks such as incorrect 
 sensor specifications and unavailability of sensors in Costa Rica are mitigated by thorough research and procurement strategies. The plan emphasizes learning and preparation to 
 address knowledge gaps, such as in setting up a time series database or creating user interfaces for dashboards.
@@ -303,10 +302,9 @@ success.
 
 \subsection{Gantt Chart}
 
-The project will be developed in four main stages: Planning and Setup, Data Collection and Initial Testing, Remote Data Processing and Analysis, Report Generation and Dashboard and 
-Final Testing and Deployment. The total time of the project is 12 weeks, 10 weeks for development and testing and two weeks as a safety net in case of delays. The project is devided
-in four main phases with the purpose of having a clear path to follow and to be able to measure progress. Figure \ref{fig:gantt-chart} shows a Gantt Chart with the timeline of the 
-project.
+The total time of the project is 12 weeks, 10 weeks for development, testing and deploying, with two weeks as a safety net in case of delays. The official start date is 8 July 2024
+and the the last day 30 September 2024. The project is divided in four main phases with the purpose of having a clear path to follow and to be able to measure progress. 
+Figure \ref{fig:gantt-chart} shows a Gantt Chart with the timeline of the project.
 
 \begin{figure}[h!]
     \centering
