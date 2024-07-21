@@ -1,5 +1,24 @@
-#define LED_BUILTIN 2
-#define SENSOR  27
+#include <WiFi.h>
+#include <ThingsBoard.h>
+#include <Arduino_MQTT_Client.h>
+
+#define SERIAL_DEBUG_BAUD   115200
+
+#define WIFI_AP_NAME        "Nour"
+#define WIFI_PASSWORD       "tinyfootprint"
+
+#define TOKEN               "oi9rzh234DsN4HjaWYqB"
+#define THINGSBOARD_SERVER  "34.122.121.12"
+
+#define SENSOR              27
+
+WiFiClient espClient;
+
+// the Wifi radio's status
+int status = WL_IDLE_STATUS;
+
+Arduino_MQTT_Client mqttClient(espClient);
+ThingsBoard tb(mqttClient);
 
 long currentMillis = 0;
 long previousMillis = 0;
@@ -12,14 +31,21 @@ float flowRate;
 unsigned int flowMilliLitres;
 unsigned long totalMilliLitres;
 
+// Set to true if application is subscribed for the messages
+bool subscribed = false;
+
 void IRAM_ATTR pulseCounter()
 {
   pulseCount++;
 }
 
-void setup()
-{
-  Serial.begin(115200);
+void setup() {
+  // Initialize serial for debugging
+  Serial.begin(SERIAL_DEBUG_BAUD);
+
+  // Connect to WiFi network
+  WiFi.begin(WIFI_AP_NAME, WIFI_PASSWORD);
+  initWiFi();
 
   pinMode(LED_BUILTIN, OUTPUT);
   pinMode(SENSOR, INPUT_PULLUP);
@@ -33,8 +59,28 @@ void setup()
   attachInterrupt(digitalPinToInterrupt(SENSOR), pulseCounter, FALLING);
 }
 
-void loop()
-{
+void loop() {
+  // Reconnect to WiFi, if needed
+  if (WiFi.status() != WL_CONNECTED) {
+    reconnect();
+    return;
+  }
+
+  // Reconnect to ThingsBoard, if needed
+  if (!tb.connected()) {
+    subscribed = false;
+
+    // Connect to the ThingsBoard
+    Serial.print("Connecting to: ");
+    Serial.print(THINGSBOARD_SERVER);
+    Serial.print(" with token ");
+    Serial.println(TOKEN);
+    if (!tb.connect(THINGSBOARD_SERVER, TOKEN)) {
+      Serial.println("Failed to connect");
+      return;
+    }
+  }
+
   currentMillis = millis();
   if (currentMillis - previousMillis > interval) {
     
@@ -69,5 +115,45 @@ void loop()
     Serial.print("mL / ");
     Serial.print(totalMilliLitres / 1000);
     Serial.println("L");
+  }
+
+  if (flowRate == 0 && totalMilliLitres != 0) {
+    Serial.println("Sending data...");
+
+    // Uploads new telemetry to ThingsBoard using MQTT. 
+    // See https://thingsboard.io/docs/reference/mqtt-api/#telemetry-upload-api 
+    // for more details
+    tb.sendTelemetryData("totalMilliLitres", totalMilliLitres);
+
+    Serial.println("Reset total");
+    totalMilliLitres = 0;
+  }
+
+  // Process messages
+  tb.loop();
+}
+
+void initWiFi() {
+  Serial.println("Connecting to AP ...");
+  // attempt to connect to WiFi network
+
+  WiFi.begin(WIFI_AP_NAME, WIFI_PASSWORD);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("Connected to AP");
+}
+
+void reconnect() {
+  // Loop until we're reconnected
+  status = WiFi.status();
+  if ( status != WL_CONNECTED) {
+    WiFi.begin(WIFI_AP_NAME, WIFI_PASSWORD);
+    while (WiFi.status() != WL_CONNECTED) {
+      delay(500);
+      Serial.print(".");
+    }
+    Serial.println("Connected to AP");
   }
 }
