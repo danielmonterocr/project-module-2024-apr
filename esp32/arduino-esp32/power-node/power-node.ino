@@ -16,12 +16,12 @@
 #define CURRENT_SENSOR2 34
 
 WiFiClient espClient;
-const char *hostname = "Power monitor";
-volatile int wifi_cnt = 0;
+const char *hostname = "Power node";
+volatile int wifiCnt = 0;
 
 Arduino_MQTT_Client mqttClient(espClient);
 ThingsBoard tb(mqttClient);
-volatile int mqtt_cnt = 0;
+volatile int mqttCnt = 0;
 
 EnergyMonitor emon1;
 EnergyMonitor emon2;
@@ -32,7 +32,7 @@ uint32_t interval = 60 * 1000;
 long strt = 0L;
 TaskHandle_t xHandle = NULL;
 
-void send_power(void *pvParameters);
+void sendPower(void *pvParameters);
 
 void setup() {
   // Initialize serial for debugging
@@ -40,24 +40,36 @@ void setup() {
   delay(10);
 
   // Connect to WiFi network
-  WiFi.mode(WIFI_STA);
-  WiFi.setHostname(hostname);
+  // WiFi.mode(WIFI_STA);
+  // WiFi.setHostname(hostname);
   //WiFi.config(local_IP, gateway, subnet);
-  WiFi.begin(WIFI_AP_NAME, WIFI_PASSWORD);
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(1000);
-    wifi_cnt++;
-    Serial.println("Connecting to WiFi...");
+  int status = WL_IDLE_STATUS;
+  // attempt to connect to Wifi network:
+  WiFi.disconnect();
+  WiFi.waitForConnectResult();
+  while (status != WL_CONNECTED) {
+    Serial.print("Attempting to connect to network, SSID: ");
+    Serial.println(WIFI_AP_NAME);
+    WiFi.begin(WIFI_AP_NAME, WIFI_PASSWORD);
+    status = WiFi.waitForConnectResult();
+    Serial.print("Status: ");
+    Serial.println(status);
+    // wait 10 seconds for connection:
+    delay(10000);
+    wifiCnt += 1;
+    
+    if (wifiCnt == 5) {
+      Serial.println("Restart ESP32");
+      esp_restart();
+    }
   }
   if (WiFi.status() == WL_CONNECTED) {
     Serial.println("Connected to the WiFi network");
     Serial.print("IP address: ");
     Serial.print(WiFi.localIP());
-    Serial.printf(" after %d tries\n", wifi_cnt);
+    Serial.printf(" after %d tries\n", wifiCnt);
   } else {
     Serial.println(" Not connected to the WiFi network");
-    // Serial.println("Restart ESP32");
-    // esp_restart();
   }
 
   // Initialize current sensors
@@ -65,10 +77,10 @@ void setup() {
   emon2.current(CURRENT_SENSOR2, 111.1);  // Current: input pin, calibration
 
   // Setup thread
-  Serial.println("Create send_power thread");
+  Serial.println("Create sendPower thread");
   xTaskCreatePinnedToCore(
-    send_power,
-    "send_power",
+    sendPower,
+    "sendPower",
     2048,
     NULL,
     6,         // Priority
@@ -79,8 +91,8 @@ void setup() {
 
 void loop() {}
 
-void send_power(void *pvParameters) {
-  Serial.println("Inside send_power");
+void sendPower(void *pvParameters) {
+  Serial.println("Inside sendPower");
 
   for (;;) {
     static uint32_t nextTime;
@@ -89,14 +101,15 @@ void send_power(void *pvParameters) {
 
     // Check if it is a time to send data
     if (millis() - nextTime >= interval) {
-      Serial.println("Send power");
-      mqtt_cnt = 0;
+      Serial.println("Sense power");
+      mqttCnt = 0;
 
-      while (!tb.connected() && mqtt_cnt < 5) {
+      while (!tb.connected() && mqttCnt < 5) {
         Serial.print("Connecting to: ");
         Serial.print(THINGSBOARD_SERVER);
         Serial.print(" with token ");
         Serial.println(TOKEN);
+
         if (tb.connect(THINGSBOARD_SERVER, TOKEN)) {
           Serial.println("Read power");
 
@@ -132,9 +145,9 @@ void send_power(void *pvParameters) {
           Serial.print("Failed to connect to MQTT with WiFi state: ");
           Serial.println(WiFi.status());
           delay(1000);
-          mqtt_cnt++;
+          mqttCnt++;
         }
-        if (mqtt_cnt >= 5) {
+        if (mqttCnt >= 5) {
           Serial.println(" Not connected to MQTT server");
           Serial.println("Restart ESP32");
           esp_restart();
