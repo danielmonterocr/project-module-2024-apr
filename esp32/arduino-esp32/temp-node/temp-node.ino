@@ -17,12 +17,12 @@
 #define ONE_WIRE_BUS 4
 
 WiFiClient espClient;
-const char *hostname = "Temperature monitor";
-volatile int wifi_cnt = 0;
+const char *hostname = "Temperature node";
+volatile int wifiCnt = 0;
 
 Arduino_MQTT_Client mqttClient(espClient);
 ThingsBoard tb(mqttClient);
-volatile int mqtt_cnt = 0;
+volatile int mqttCnt = 0;
 
 // Setup a oneWire instance to communicate with any OneWire devices (not just Maxim/Dallas temperature ICs)
 OneWire oneWire(ONE_WIRE_BUS);
@@ -42,7 +42,7 @@ uint32_t interval = 60 * 1000;
 long strt = 0L;
 TaskHandle_t xHandle = NULL;
 
-void send_temp(void *pvParameters);
+void sendTemp(void *pvParameters);
 
 void setup() {
   // Initialize serial for debugging
@@ -50,24 +50,36 @@ void setup() {
   delay(10);
 
   // Connect to WiFi network
-  WiFi.mode(WIFI_STA);
-  WiFi.setHostname(hostname);
+  // WiFi.mode(WIFI_STA);
+  // WiFi.setHostname(hostname);
   //WiFi.config(local_IP, gateway, subnet);
-  WiFi.begin(WIFI_AP_NAME, WIFI_PASSWORD);
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(1000);
-    wifi_cnt++;
-    Serial.println("Connecting to WiFi...");
+  int status = WL_IDLE_STATUS;
+  // attempt to connect to Wifi network:
+  WiFi.disconnect();
+  WiFi.waitForConnectResult();
+  while (status != WL_CONNECTED) {
+    Serial.print("Attempting to connect to network, SSID: ");
+    Serial.println(WIFI_AP_NAME);
+    WiFi.begin(WIFI_AP_NAME, WIFI_PASSWORD);
+    status = WiFi.waitForConnectResult();
+    Serial.print("Status: ");
+    Serial.println(status);
+    // wait 10 seconds for connection:
+    delay(10000);
+    wifiCnt += 1;
+    
+    if (wifiCnt == 5) {
+      Serial.println("Restart ESP32");
+      esp_restart();
+    }
   }
   if (WiFi.status() == WL_CONNECTED) {
     Serial.println("Connected to the WiFi network");
     Serial.print("IP address: ");
     Serial.print(WiFi.localIP());
-    Serial.printf(" after %d tries\n", wifi_cnt);
+    Serial.printf(" after %d tries\n", wifiCnt);
   } else {
     Serial.println(" Not connected to the WiFi network");
-    // Serial.println("Restart ESP32");
-    // esp_restart();
   }
 
   // Initialize temperature sensors
@@ -99,10 +111,10 @@ void setup() {
   }
 
   // Setup thread
-  Serial.println("Create send_temp thread");
+  Serial.println("Create sendTemp thread");
   xTaskCreatePinnedToCore(
-    send_temp,
-    "send_temp",
+    sendTemp,
+    "sendTemp",
     2048,
     NULL,
     6,         // Priority
@@ -113,8 +125,8 @@ void setup() {
 
 void loop() {}
 
-void send_temp(void *pvParameters) {
-  Serial.println("Inside send_temp");
+void sendTemp(void *pvParameters) {
+  Serial.println("Inside sendTemp");
 
   for (;;) {
     static uint32_t nextTime;
@@ -123,14 +135,15 @@ void send_temp(void *pvParameters) {
 
     // Check if it is a time to send data
     if (millis() - nextTime >= interval) {
-      Serial.println("Send temperature");
-      mqtt_cnt = 0;
+      Serial.println("Sense temperature");
+      mqttCnt = 0;
 
-      while (!tb.connected() && mqtt_cnt < 5) {
+      while (!tb.connected() && mqttCnt < 5) {
         Serial.print("Connecting to: ");
         Serial.print(THINGSBOARD_SERVER);
         Serial.print(" with token ");
         Serial.println(TOKEN);
+
         if (tb.connect(THINGSBOARD_SERVER, TOKEN)) {
           Serial.println("Read temperatures");
           sensors.requestTemperatures();  // Send the command to get temperatures
@@ -175,16 +188,16 @@ void send_temp(void *pvParameters) {
           Serial.print("Failed to connect to MQTT with WiFi state: ");
           Serial.println(WiFi.status());
           delay(1000);
-          mqtt_cnt++;
+          mqttCnt++;
         }
-        if (mqtt_cnt >= 5) {
+        if (mqttCnt >= 5) {
           Serial.println(" Not connected to MQTT server");
           Serial.println("Restart ESP32");
           esp_restart();
         }
       }
 
-      Serial.println("Disconnect form MQTT server");
+      Serial.println("Disconnect from MQTT server");
       tb.disconnect();
 
       Serial.println("Increase next time by interval");
