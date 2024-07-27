@@ -49,6 +49,8 @@ void setup() {
   Serial.begin(SERIAL_DEBUG_BAUD);
   delay(10);
 
+  pinMode(LED_BUILTIN, OUTPUT);
+
   // Connect to WiFi network
   // WiFi.mode(WIFI_STA);
   // WiFi.setHostname(hostname);
@@ -136,6 +138,7 @@ void sendTemp(void *pvParameters) {
     // Check if it is a time to send data
     if (millis() - nextTime >= interval) {
       Serial.println("Sense temperature");
+      blinkSense();
       mqttCnt = 0;
 
       while (!tb.connected() && mqttCnt < 5) {
@@ -171,6 +174,7 @@ void sendTemp(void *pvParameters) {
           }
 
           Serial.println("Sending data...");
+          blinkSend();
 
           // Uploads new telemetry to ThingsBoard using MQTT.
           // See https://thingsboard.io/docs/reference/mqtt-api/#telemetry-upload-api
@@ -212,4 +216,26 @@ void printAddress(DeviceAddress deviceAddress) {
     if (deviceAddress[i] < 16) Serial.print("0");
     Serial.print(deviceAddress[i], HEX);
   }
+}
+
+void blinkSense() {
+  digitalWrite(LED_BUILTIN, HIGH);
+  delay(500);
+  digitalWrite(LED_BUILTIN, LOW);
+  delay(500);
+}
+
+void blinkSend() {
+  digitalWrite(LED_BUILTIN, HIGH);
+  delay(200);
+  digitalWrite(LED_BUILTIN, LOW);
+  delay(200);
+  digitalWrite(LED_BUILTIN, HIGH);
+  delay(200);
+  digitalWrite(LED_BUILTIN, LOW);
+  delay(200);
+  digitalWrite(LED_BUILTIN, HIGH);
+  delay(200);
+  digitalWrite(LED_BUILTIN, LOW);
+  delay(200);
 }
