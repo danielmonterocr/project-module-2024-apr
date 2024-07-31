@@ -2,36 +2,35 @@
 % Version: 1.04, 2023/10/19
 % Documentation: https://ctan.org/pkg/mitthesis
 
-\chapter{Final Results}
 
-% Introduction
-% Describe your methodology: provide details
-% Present your results
-% Discuss your findings
-% Address limitations
-% Relate back to literature review
-% Explain your experiments
-% Assessment of experiments
-% End result: software itself
-% Conclude with implications of future work
+\chapter{Test Plan and Evaluation Criteria}
+A test plan was developed to evaluate the performance of the system. The plan included the following steps:
 
+\begin{itemize}
+    \item Hardware Testing: make sure the hardware components are working properly.
+    \item Unit Testing: unit tests for the code running the API.
+    \item Integration Testing: integration tests between each system layer.
+    \item System Testing: end-to-end testing (including interaction with host dashboard) using simulated stays.
+    \item Regression Testing: Github Actions integrated into the develpment process to make sure nothing breaks when changes were introduced. This included linting the code.
+    \item User Testing: A small group of users (guests and hosts) tested the system and completed a survey to collect the result of their experiences using the application.
+\end{itemize}
 
-\begin{table}[htbp]
+\section{Test Cases}
+\subsection{Hardware Testing}
+
+\begin{table}[ht]
     \centering
-    \caption{Objectives and Evaluation Criteria}
     \begin{tabular}{|p{0.5\linewidth}|p{0.5\linewidth}|}
         \hline
-        \textbf{Objectives} & \textbf{Evaluation Criteria} \\
+        \textbf{Test Case} & \textbf{Procedure} \\
         \hline
-        Create a robust system to collect data from room and outside temperature, water consumption, and energy usage in Airbnb accommodations. & System successfully collects and stores data from various sources. \\
+        Energy sensors & Use a multimeter to compare the values coming from the current sensors \\
         \hline
-        Prepare, process and analyze the collected data in a way that can be used to calculate the total resource usage. & Data is cleaned, processed, and aggregated to calculate resource usage. \\
+        Water flow sensor & Fill up a container with water and compare the calculated volume with the real one \\
         \hline
-        Calculate an average score for resource usage per guest per stay based on average score from previous guests. & Average resource usage score is calculated and updated based on previous guest scores. \\
-        \hline
-        Generate a report for tourists with personalized resource usage information that can help them acknowledge the impact of their stay. & Personalized resource usage report is generated for tourists. \\
-        \hline
-        Develop an intuitive dashboard for hosts to monitor and optimize resource usage. & Host dashboard provides real-time monitoring and optimization features for resource usage. \\
+        Temperature sensors & Immerse sensors in boiling water and ice water and make sure the readings show 100C and 0C \\
         \hline
     \end{tabular}
+    \caption{Hardware Testing Test Cases}
+    \label{tab:hardware-testing}
 \end{table}
