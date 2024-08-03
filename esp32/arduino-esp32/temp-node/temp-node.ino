@@ -10,8 +10,8 @@
 #define WIFI_AP_NAME "Nour"
 #define WIFI_PASSWORD "tinyfootprint"
 
-#define TOKEN "s2or2c7dx7v4vb369fpl"
-#define THINGSBOARD_SERVER "34.122.121.12"
+#define TOKEN "lu4hhvnjdsjbjao9i0ha"
+#define THINGSBOARD_SERVER "34.66.170.15"
 
 // Data wire is plugged TO GPIO 4
 #define ONE_WIRE_BUS 4

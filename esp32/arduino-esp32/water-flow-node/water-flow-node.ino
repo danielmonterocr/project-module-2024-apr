@@ -7,8 +7,8 @@
 #define WIFI_AP_NAME "Nour"
 #define WIFI_PASSWORD "tinyfootprint"
 
-#define TOKEN "oi9rzh234DsN4HjaWYqB"
-#define THINGSBOARD_SERVER "34.122.121.12"
+#define TOKEN "4rgdwb23ek0xz2r6uluw"
+#define THINGSBOARD_SERVER "34.66.170.15"
 
 #define SENSOR 27
 
