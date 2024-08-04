@@ -4,6 +4,8 @@
 #include "EmonLib.h"
 
 
+#define NODE_NAME "Power node"
+
 #define SERIAL_DEBUG_BAUD 115200
 
 #define WIFI_AP_NAME "Nour"
@@ -14,9 +16,9 @@
 
 #define CURRENT_SENSOR1 33
 #define CURRENT_SENSOR2 34
+#define CURRENT_SENSOR_CAL 111.1
 
 WiFiClient espClient;
-const char *hostname = "Power node";
 volatile int wifiCnt = 0;
 
 Arduino_MQTT_Client mqttClient(espClient);
@@ -25,15 +27,17 @@ volatile int mqttCnt = 0;
 
 EnergyMonitor emon1;
 EnergyMonitor emon2;
-
 double power1, power2;
 
 uint32_t interval = 60 * 1000;
 long strt = 0L;
 TaskHandle_t xHandle = NULL;
 
-void sendPower(void *pvParameters);
+void monitorTask(void* pvParameters);
 
+/**
+ * @brief Setup function to initialize the ESP32.
+ */
 void setup() {
   // Initialize serial for debugging
   Serial.begin(SERIAL_DEBUG_BAUD);
@@ -41,60 +45,28 @@ void setup() {
 
   pinMode(LED_BUILTIN, OUTPUT);
 
-  // Connect to WiFi network
-  // WiFi.mode(WIFI_STA);
-  // WiFi.setHostname(hostname);
-  //WiFi.config(local_IP, gateway, subnet);
-  int status = WL_IDLE_STATUS;
-  // attempt to connect to Wifi network:
-  WiFi.disconnect();
-  WiFi.waitForConnectResult();
-  while (status != WL_CONNECTED) {
-    Serial.print("Attempting to connect to network, SSID: ");
-    Serial.println(WIFI_AP_NAME);
-    WiFi.begin(WIFI_AP_NAME, WIFI_PASSWORD);
-    status = WiFi.waitForConnectResult();
-    Serial.print("Status: ");
-    Serial.println(status);
-    // wait 10 seconds for connection:
-    delay(10000);
-    wifiCnt += 1;
-    
-    if (wifiCnt == 5) {
-      Serial.println("Restart ESP32");
-      esp_restart();
-    }
-  }
-  if (WiFi.status() == WL_CONNECTED) {
-    Serial.println("Connected to the WiFi network");
-    Serial.print("IP address: ");
-    Serial.print(WiFi.localIP());
-    Serial.printf(" after %d tries\n", wifiCnt);
-  } else {
-    Serial.println(" Not connected to the WiFi network");
-  }
+  connectToWiFi(WIFI_AP_NAME, WIFI_PASSWORD, NODE_NAME);
 
-  // Initialize current sensors
-  emon1.current(CURRENT_SENSOR1, 111.1);  // Current: input pin, calibration
-  emon2.current(CURRENT_SENSOR2, 111.1);  // Current: input pin, calibration
+  setupCurrentSensors();
 
   // Setup thread
-  Serial.println("Create sendPower thread");
-  xTaskCreatePinnedToCore(
-    sendPower,
-    "sendPower",
-    2048,
-    NULL,
-    6,         // Priority
-    &xHandle,  // Task Handle
-    1);        // Run on Core 1 for best sampling?
+  Serial.println("Create monitorTask thread");
+  xTaskCreatePinnedToCore(monitorTask, "monitorTask", 2048, NULL, 6, &xHandle, 1);
   configASSERT(xHandle);
 }
 
+/**
+ * @brief Main loop function. Empty as tasks are handled by FreeRTOS.
+ */
 void loop() {}
 
-void sendPower(void *pvParameters) {
-  Serial.println("Inside sendPower");
+/**
+ * @brief Task to monitor data.
+ * 
+ * @param pvParameters Parameters for the task.
+ */
+void monitorTask(void* pvParameters) {
+  Serial.println("Inside monitorTask");
 
   for (;;) {
     static uint32_t nextTime;
@@ -103,8 +75,6 @@ void sendPower(void *pvParameters) {
 
     // Check if it is a time to send data
     if (millis() - nextTime >= interval) {
-      Serial.println("Sense power");
-      blinkSense();
       mqttCnt = 0;
 
       while (!tb.connected() && mqttCnt < 5) {
@@ -114,25 +84,11 @@ void sendPower(void *pvParameters) {
         Serial.println(TOKEN);
 
         if (tb.connect(THINGSBOARD_SERVER, TOKEN)) {
-          Serial.println("Read power");
-
-          double irms1 = emon1.calcIrms(1480);  // Calculate Irms only
-          double irms2 = emon2.calcIrms(1480);  // Calculate Irms only
-
-          power1 = irms1 * 110.0;
-          Serial.print(irms1 * 110.0);  // Apparent power
-          Serial.print(" ");
-          Serial.print(irms1);  // Irms
-
-          power2 = irms2 * 110.0;
-          Serial.print(" ");
-          Serial.print(irms2 * 110.0);  // Apparent power
-          Serial.print(" ");
-          Serial.println(irms2);  // Irms
+          Serial.println("Measure power");
+          measurePower();
+          blinkLED(1, 500);  // Blink once with 500ms delay
 
           Serial.println("Sending data...");
-          blinkSend();
-
           // Uploads new telemetry to ThingsBoard using MQTT.
           // See https://thingsboard.io/docs/reference/mqtt-api/#telemetry-upload-api
           // for more details
@@ -141,6 +97,7 @@ void sendPower(void *pvParameters) {
           // Process messages
           if (tb.loop()) {
             Serial.println("Message sent successfully!");
+            blinkLED(3, 200);  // Blink three times with 200ms delay
           }
 
           Serial.print("Free heap: ");
@@ -158,7 +115,7 @@ void sendPower(void *pvParameters) {
         }
       }
 
-      Serial.println("Disconnect form MQTT server");
+      Serial.println("Disconnect from MQTT server");
       tb.disconnect();
 
       Serial.println("Increase next time by interval");
@@ -167,24 +124,89 @@ void sendPower(void *pvParameters) {
   }
 }
 
-void blinkSense() {
-  digitalWrite(LED_BUILTIN, HIGH);
-  delay(500);
-  digitalWrite(LED_BUILTIN, LOW);
-  delay(500);
+/**
+ * @brief Connect to a WiFi network.
+ * 
+ * @param ssid The SSID of the WiFi network.
+ * @param password The password of the WiFi network.
+ * @param hostname The hostname for the device.
+ */
+void connectToWiFi(const char* ssid, const char* password, const char* hostname) {
+  // Connect to WiFi network
+  // WiFi.mode(WIFI_STA);
+  WiFi.setHostname(hostname);
+  //WiFi.config(local_IP, gateway, subnet);
+  int status = WL_IDLE_STATUS;
+  // attempt to connect to Wifi network:
+  WiFi.disconnect();
+  WiFi.waitForConnectResult();
+
+  while (status != WL_CONNECTED) {
+    Serial.print("Attempting to connect to network, SSID: ");
+    Serial.println(ssid);
+    WiFi.begin(ssid, password);
+    status = WiFi.waitForConnectResult();
+    Serial.print("Status: ");
+    Serial.println(status);
+    // wait 10 seconds for connection:
+    delay(10000);
+    wifiCnt += 1;
+
+    if (wifiCnt == 5) {
+      Serial.println("Restart ESP32");
+      esp_restart();
+    }
+  }
+
+  if (WiFi.status() == WL_CONNECTED) {
+    Serial.println("Connected to the WiFi network");
+    Serial.print("IP address: ");
+    Serial.print(WiFi.localIP());
+    Serial.printf(" after %d tries\n", wifiCnt);
+  } else {
+    Serial.println(" Not connected to the WiFi network");
+  }
 }
 
-void blinkSend() {
-  digitalWrite(LED_BUILTIN, HIGH);
-  delay(200);
-  digitalWrite(LED_BUILTIN, LOW);
-  delay(200);
-  digitalWrite(LED_BUILTIN, HIGH);
-  delay(200);
-  digitalWrite(LED_BUILTIN, LOW);
-  delay(200);
-  digitalWrite(LED_BUILTIN, HIGH);
-  delay(200);
-  digitalWrite(LED_BUILTIN, LOW);
-  delay(200);
+/**
+ * @brief Setup power sensors.
+ */
+void setupCurrentSensors() {
+  // Initialize current sensors
+  emon1.current(CURRENT_SENSOR1, CURRENT_SENSOR_CAL);  // Current: input pin, calibration
+  emon2.current(CURRENT_SENSOR2, CURRENT_SENSOR_CAL);  // Current: input pin, calibration
+}
+
+/**
+ * @brief Measure power from the sensors.
+ */
+void measurePower() {
+  double irms1 = emon1.calcIrms(1480);  // Calculate Irms only
+  double irms2 = emon2.calcIrms(1480);  // Calculate Irms only
+
+  power1 = irms1 * 110.0;
+  Serial.print(irms1 * 110.0);  // Apparent power
+  Serial.print(" ");
+  Serial.print(irms1);  // Irms
+
+  power2 = irms2 * 110.0;
+  Serial.print(" ");
+  Serial.print(irms2 * 110.0);  // Apparent power
+  Serial.print(" ");
+  Serial.println(irms2);  // Irms
+}
+
+/**
+ * @brief Blink the built-in LED.
+ * 
+ * @param blinks Number of times to blink the LED.
+ * @param delayTime Delay time in milliseconds between blinks.
+ */
+void blinkLED(int blinks, int delayTime) {
+  for (int i = 0; i < blinks; i++) {
+    digitalWrite(LED_BUILTIN, HIGH);
+    delay(delayTime);
+    digitalWrite(LED_BUILTIN, LOW);
+    delay(delayTime);
+  }
 }
