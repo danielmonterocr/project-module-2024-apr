@@ -12,6 +12,7 @@
 
 #define WIFI_AP_NAME "Nour"
 #define WIFI_PASSWORD "tinyfootprint"
+#define WIFI_TIMEOUT_MS 20000
 
 #define TOKEN "lu4hhvnjdsjbjao9i0ha"
 #define THINGSBOARD_SERVER "34.66.170.15"
@@ -42,6 +43,7 @@ TaskHandle_t xHandle = NULL;
 
 void connectToWiFi(const char* ssid, const char* password, const char* hostname);
 void setupTemperatureSensors();
+void keepWifiAliveTask(void* pvParameters);
 void monitorTask(void* pvParameters);
 void printAddress(DeviceAddress deviceAddress);
 void measureTemperature();
@@ -61,16 +63,61 @@ void setup() {
 
   setupTemperatureSensors();
 
-  // Setup thread
-  Serial.println("Create monitorTask thread");
-  xTaskCreatePinnedToCore(monitorTask, "monitorTask", 2048, NULL, 6, &xHandle, 1);
-  configASSERT(xHandle);
+  // Setup tasks
+  Serial.println("Create monitorTask task");
+  xTaskCreatePinnedToCore(
+    keepWifiAliveTask,
+    "keepWifiAliveTask",
+    5000,
+    NULL,
+    1,
+    NULL,
+    0);
+  xTaskCreatePinnedToCore(
+    monitorTask,
+    "monitorTask",
+    2048,
+    NULL,
+    1,
+    NULL,
+    1);
 }
 
 /**
  * @brief Main loop function. Empty as tasks are handled by FreeRTOS.
  */
 void loop() {}
+
+/**
+ * @brief Task to monitor WiFi connection.
+ * 
+ * @param pvParameters Parameters for the task.
+ */
+void keepWifiAliveTask(void* pvParameters) {
+  for (;;) {
+    if (WiFi.status() == WL_CONNECTED) {
+      Serial.println("WiFi still connected");
+      vTaskDelay(10000 / portTICK_PERIOD_MS);
+      continue;
+    }
+
+    Serial.println("WiFi disconnected, reconnecting...");
+    WiFi.mode(WIFI_STA);
+    WiFi.begin(WIFI_AP_NAME, WIFI_PASSWORD);
+
+    unsigned long startAttemptTime = millis();
+
+    while (WiFi.status() != WL_CONNECTED && millis() - startAttemptTime < WIFI_TIMEOUT_MS);
+
+    if (WiFi.status() != WL_CONNECTED) {
+      Serial.println("WiFi failed to connect");
+      vTaskDelay(20000 / portTICK_PERIOD_MS);
+      continue;
+    }
+
+    Serial.println("WiFi reconnected: " + WiFi.localIP().toString());
+  }
+}
 
 /**
  * @brief Task to monitor data.
