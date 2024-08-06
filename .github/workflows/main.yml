@@ -33,5 +33,5 @@ jobs:
       - uses: actions/checkout@v4
       - uses: arduino/arduino-lint-action@v1 
         with:
-          path: esp32/arduino-esp32
+          path: esp32/arduino
           recursive: true
