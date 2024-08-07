@@ -1,11 +1,11 @@
-const express = require('express')
+import express from 'express';
 const router = express.Router()
 
-const User = require('../models/User')
-const { registerValidation, loginValidation } = require('../validations/validation')
+import { User } from '../models/User.js'
+import { registerValidation, loginValidation } from '../validations/validation.js'
 
-const bcryptjs = require('bcryptjs')
-const jsonwebtoken = require('jsonwebtoken')
+import bcryptjs from 'bcryptjs'
+import jsonwebtoken from 'jsonwebtoken'
 
 // POST: Create user
 router.post('/register', async (req, res) => {
@@ -62,4 +62,4 @@ router.post('/login', async (req, res) => {
     return res.header('auth-token', token).send({ 'auth-token': token })
 })
 
-module.exports = router
+export { router as auth }

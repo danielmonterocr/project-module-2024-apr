@@ -1,13 +1,14 @@
-const express = require('express')
+import express from 'express';
 const app = express()
 
-const mongoose = require('mongoose')
-const bodyParser = require('body-parser')
-require('dotenv/config')
+import mongoose from 'mongoose';
+import bodyParser from 'body-parser'
+import 'dotenv/config'
 
 app.use(bodyParser.json())
 
-const authRoute = require('./routes/auth')
+import { auth as authRoute } from './routes/auth.js'
+// const authRoute = require('./routes/auth')
 //const postsRoute = require('./routes/posts')
 //const commentsRoute = require('./routes/comments')
 //const likesRoute = require('./routes/likes')
@@ -22,3 +23,5 @@ mongoose.connect(process.env.DB_CONNECTOR)
 app.listen(3000, () => {
     console.log("Server is running")
 })
+
+export { app }
