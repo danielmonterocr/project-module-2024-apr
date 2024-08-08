@@ -1,5 +1,6 @@
 import express from 'express';
 const app = express()
+const port = 3000
 
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser'
@@ -20,8 +21,6 @@ app.use('/api/users', authRoute)
 
 mongoose.connect(process.env.DB_CONNECTOR)
 
-app.listen(3000, () => {
-    console.log("Server is running")
-})
+app.listen(port, () => console.log('App listening on port: ' + port))
 
 export { app }

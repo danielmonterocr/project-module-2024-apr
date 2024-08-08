@@ -23,7 +23,7 @@ tags:
   - name: user
     description: Operations about user
 paths:
-  /user:
+  /register:
     post:
       tags:
         - user
@@ -193,6 +193,10 @@ components:
           description: User Status
           format: int32
           examples: [1]
+      required:
+        - username
+        - email
+        - password
     ApiResponse:
       type: object
       properties:

@@ -7,36 +7,55 @@ import { registerValidation, loginValidation } from '../validations/validation.j
 import bcryptjs from 'bcryptjs'
 import jsonwebtoken from 'jsonwebtoken'
 
+import jsYaml from 'js-yaml';
+import fs from 'fs';
+import { OpenApiValidator } from 'express-openapi-validate';
+
+// Load the OpenAPI document
+const openApiDocument = jsYaml.load(fs.readFileSync('../open-api/index.yaml', "utf-8"));
+
+// Construct the validator with some basic options
+const validator = new OpenApiValidator(openApiDocument,
+    {
+        ajvOptions: {
+            allErrors: true,
+            removeAdditional: "all",
+        }
+    }
+);
+
 // POST: Create user
-router.post('/register', async (req, res) => {
-    const { error } = registerValidation(req.body)
-    if (error) {
-        return res.status(400).send({ message: error.details[0].message.replace(/"/g, '') })
-    }
+router.post('/register',
+    validator.validate('post', '/register'),
+    async (req, res) => {
+        // const { error } = registerValidation(req.body)
+        // if (error) {
+        //     return res.status(400).send({ message: error.details[0].message.replace(/"/g, '') })
+        // }
 
-    // Check if user already exists
-    const userExists = await User.findOne({ email: req.body.email })
-    if (userExists) {
-        return res.status(400).send({ message: 'User already exists' })
-    }
+        // Check if user already exists
+        const userExists = await User.findOne({ email: req.body.email })
+        if (userExists) {
+            return res.status(400).send({ message: 'User already exists' })
+        }
 
-    // Generate salt and encrypt password
-    const salt = await bcryptjs.genSalt(5)
-    const hashedPassword = await bcryptjs.hash(req.body.password, salt)
+        // Generate salt and encrypt password
+        const salt = await bcryptjs.genSalt(5)
+        const hashedPassword = await bcryptjs.hash(req.body.password, salt)
 
-    try {
-        // Save user on DB
-        const user = new User({
-            username: req.body.username,
-            email: req.body.email,
-            password: hashedPassword
-        })
-        const savedUser = await user.save()
-        return res.send(savedUser)
-    } catch (err) {
-        return res.status(400).send({ message: err })
-    }
-})
+        try {
+            // Save user on DB
+            const user = new User({
+                username: req.body.username,
+                email: req.body.email,
+                password: hashedPassword
+            })
+            const savedUser = await user.save()
+            return res.send(savedUser)
+        } catch (err) {
+            return res.status(400).send({ message: err })
+        }
+    })
 
 // POST: Create token
 router.post('/login', async (req, res) => {
@@ -61,5 +80,17 @@ router.post('/login', async (req, res) => {
     const token = jsonwebtoken.sign({ _id: user._id }, process.env.TOKEN_SECRET)
     return res.header('auth-token', token).send({ 'auth-token': token })
 })
+
+// add some error handling
+router.use((err, req, res, next) => {
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+        error: {
+            name: err.name,
+            message: err.message,
+            data: err.data,
+        },
+    });
+});
 
 export { router as auth }
