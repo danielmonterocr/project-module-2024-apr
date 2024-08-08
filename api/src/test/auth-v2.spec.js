@@ -14,7 +14,7 @@ const validator = new OpenApiValidator(openApiDocument, {});
 
 describe('POST /api/users/register', function () {
     // Create the response validator for the POST / endpoint
-    const validateResponse = validator.validateResponse('post', '/api/users/register');
+    const validateResponse = validator.validateResponse('post', '/register');
 
     it('should create new user', async function () {
         return request(app)
@@ -24,6 +24,7 @@ describe('POST /api/users/register', function () {
             .expect(200)
             .then((res) => {
                 expect(validateResponse(res)).to.be.undefined
+                expect(res.body).to.have.property('_id');
             })
             .catch((err) => expect(err).to.be.undefined);
     });
@@ -31,7 +32,7 @@ describe('POST /api/users/register', function () {
 
 describe('POST /api/users/register', function () {
     // Create the response validator for the POST / endpoint
-    const validateResponse = validator.validateResponse('post', '/api/users/register');
+    const validateResponse = validator.validateResponse('post', '/register');
 
     it('should fail as user already exists', async function () {
         return request(app)
@@ -41,6 +42,7 @@ describe('POST /api/users/register', function () {
             .expect(400)
             .then((res) => {
                 expect(validateResponse(res)).to.be.undefined
+                expect(res.body.message).to.equal('User already exists');
             })
             .catch((err) => expect(err).to.be.undefined);
     });

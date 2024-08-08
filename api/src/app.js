@@ -3,10 +3,9 @@ const app = express()
 const port = 3000
 
 import mongoose from 'mongoose';
-import bodyParser from 'body-parser'
 import 'dotenv/config'
 
-app.use(bodyParser.json())
+app.use(express.json())
 
 import { auth as authRoute } from './routes/auth.js'
 // const authRoute = require('./routes/auth')

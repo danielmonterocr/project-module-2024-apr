@@ -12,7 +12,7 @@ import fs from 'fs';
 import { OpenApiValidator } from 'express-openapi-validate';
 
 // Load the OpenAPI document
-const openApiDocument = jsYaml.load(fs.readFileSync('../open-api/index.yaml', "utf-8"));
+const openApiDocument = jsYaml.load(fs.readFileSync('../open-api/index.yaml', 'utf-8'));
 
 // Construct the validator with some basic options
 const validator = new OpenApiValidator(openApiDocument,
