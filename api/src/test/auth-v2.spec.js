@@ -1,3 +1,4 @@
+import { SWAGGER_PATH } from '../constants/config.js';
 import request from 'supertest'
 import { app } from '../app.js'
 import { expect } from 'chai';
@@ -7,7 +8,7 @@ import fs from 'fs';
 import { OpenApiValidator } from 'express-openapi-validate';
 
 // Load the OpenAPI document
-const openApiDocument = jsYaml.load(fs.readFileSync('../open-api/index.yaml', "utf-8"));
+const openApiDocument = jsYaml.load(fs.readFileSync(SWAGGER_PATH, "utf-8"));
 
 // Create the validator from the spec document
 const validator = new OpenApiValidator(openApiDocument, {});

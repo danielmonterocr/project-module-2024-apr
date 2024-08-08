@@ -1,3 +1,4 @@
+import { SWAGGER_PATH } from '../constants/config.js';
 import express from 'express';
 const router = express.Router()
 
@@ -12,7 +13,7 @@ import fs from 'fs';
 import { OpenApiValidator } from 'express-openapi-validate';
 
 // Load the OpenAPI document
-const openApiDocument = jsYaml.load(fs.readFileSync('../open-api/index.yaml', 'utf-8'));
+const openApiDocument = jsYaml.load(fs.readFileSync(SWAGGER_PATH, 'utf-8'));
 
 // Construct the validator with some basic options
 const validator = new OpenApiValidator(openApiDocument,
@@ -25,14 +26,9 @@ const validator = new OpenApiValidator(openApiDocument,
 );
 
 // POST: Create user
-router.post('/register',
-    validator.validate('post', '/register'),
+router.post('/api/users/register',
+    validator.validate('post', '/api/users/register'),
     async (req, res) => {
-        // const { error } = registerValidation(req.body)
-        // if (error) {
-        //     return res.status(400).send({ message: error.details[0].message.replace(/"/g, '') })
-        // }
-
         // Check if user already exists
         const userExists = await User.findOne({ email: req.body.email })
         if (userExists) {
@@ -58,7 +54,7 @@ router.post('/register',
     })
 
 // POST: Create token
-router.post('/login', async (req, res) => {
+router.post('/api/users/login', async (req, res) => {
     const { error } = loginValidation(req.body)
     if (error) {
         return res.status(400).send({ message: error.details[0].message.replace(/"/g, '') })
