@@ -28,7 +28,7 @@ paths:
       tags:
         - user
       summary: Create user
-      description: This can only be done by the logged in user.
+      description: Create a new user
       operationId: createUser
       requestBody:
         description: Create user object
@@ -36,6 +36,10 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/User'
+              required:
+                - username
+                - email
+                - password
       responses:
         '200':
           description: Successful operation
@@ -102,17 +106,39 @@ paths:
       responses:
         default:
           description: Successful operation
-  /user/{username}:
+  /api/users:
     get:
       tags:
         - user
-      summary: Get user by user name
-      description: ''
-      operationId: getUserByName
+      summary: List all users
+      description: This fetches all users in the database.
+      operationId: listUsers
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  anyOf:
+                    - $ref: '#/components/schemas/User'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+  /api/users/{userId}:
+    get:
+      tags:
+        - user
+      summary: Retrieve details of a specific user
+      operationId: getUserById
       parameters:
-        - name: username
+        - name: userId
           in: path
-          description: The name that needs to be fetched
+          description: The ID of the user to retrieve
           required: true
           schema:
             type: string
@@ -124,31 +150,37 @@ paths:
               schema:
                 $ref: '#/components/schemas/User'
         '400':
-          description: Invalid username supplied
+          description: Bad request
         '404':
           description: User not found
-    put:
+    patch:
       tags:
         - user
-      summary: Update user
-      description: This can only be done by the logged in user.
+      summary: Update details of a specific user
       operationId: updateUser
       parameters:
-        - name: username
+        - name: userId
           in: path
-          description: Name that need to be deleted
+          description: The ID of the user to modify
           required: true
           schema:
             type: string
       requestBody:
-        description: Update an existent user in the store
+        description: Update an existent user object
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/User'
+              anyOf:
+                - username
+                - email
       responses:
-        default:
-          description: Successful operation
+        '200':
+          description: Succesful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
     delete:
       tags:
         - user
@@ -156,15 +188,21 @@ paths:
       description: This can only be done by the logged in user.
       operationId: deleteUser
       parameters:
-        - name: username
+        - name: userId
           in: path
           description: The name that needs to be deleted
           required: true
           schema:
             type: string
       responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
         '400':
-          description: Invalid username supplied
+          description: Bad request
         '404':
           description: User not found
 components:
@@ -199,10 +237,6 @@ components:
           description: User Status
           format: int32
           examples: [1]
-      required:
-        - username
-        - email
-        - password
     ApiResponse:
       type: object
       properties:
