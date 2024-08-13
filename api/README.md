@@ -4,7 +4,6 @@
 |--------------|------------------------------------------------------------------------|-----------------------------------------------------------------------------|
 | POST         | /api/users/register                                                    | Register new user                                                           |
 | POST         | /api/users/login                                                       | Login existing user                                                         |
-| POST         | /api/users/logout                                                      | Logout logged in user                                                       |
 | GET          | /api/users/{user_id}                                                   | Retrieve details of a specific user                                         |
 | PUT          | /api/users/{user_id}                                                   | Update details of a specific user                                           |
 | DELETE       | /users/{user_id}                                                       | Delete a user                                                               |

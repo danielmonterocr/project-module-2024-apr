@@ -4,7 +4,7 @@ const router = express.Router()
 
 import { User } from '../models/User.js'
 
-import bcryptjs from 'bcryptjs'
+import { auth as verifyToken } from '../verifyToken.js'
 
 import jsYaml from 'js-yaml';
 import fs from 'fs';
@@ -25,6 +25,7 @@ const validator = new OpenApiValidator(openApiDocument,
 
 // GET: List all users
 router.get('/api/users',
+    verifyToken,
     validator.validate('get', '/api/users'),
     async (req, res) => {
         try {
@@ -38,6 +39,7 @@ router.get('/api/users',
 
 // GET: Retrieve details of a specific user
 router.get('/api/users/:userId',
+    verifyToken,
     validator.validate('get', '/api/users/{userId}'),
     async (req, res) => {
         try {
@@ -54,6 +56,7 @@ router.get('/api/users/:userId',
 
 // PUT: Update details of a specific user 
 router.patch('/api/users/:userId',
+    verifyToken,
     validator.validate('patch', '/api/users/{userId}'),
     async (req, res) => {
         var update = {};
@@ -85,6 +88,7 @@ router.patch('/api/users/:userId',
 
 // DELETE: Delete a user
 router.delete('/api/users/:userId',
+    verifyToken,
     validator.validate('delete', '/api/users/{userId}'),
     async (req, res) => {
         try {

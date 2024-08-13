@@ -14,6 +14,7 @@ const openApiDocument = jsYaml.load(fs.readFileSync(SWAGGER_PATH, "utf-8"))
 const validator = new OpenApiValidator(openApiDocument, {})
 
 var userId = '';
+var token = '';
 
 describe('POST /api/users/register', function () {
     // Validate response against the OpenAPI document (swagger.yml)
@@ -28,6 +29,7 @@ describe('POST /api/users/register', function () {
             .then((res) => {
                 expect(validateResponse(res)).to.be.undefined
                 expect(res.body).to.have.property('_id')
+                userId = res.body._id
             })
             .catch((err) => expect(err).to.be.undefined)
     });
@@ -51,6 +53,25 @@ describe('POST /api/users/register', function () {
     });
 });
 
+describe('POST /api/users/login', function () {
+    // Validate response against the OpenAPI document (swagger.yml)
+    const validateResponse = validator.validateResponse('post', '/api/users/login')
+
+    it('should return token', async function () {
+        return request(app)
+            .post('/api/users/login')
+            .set('Accept', 'application/json')
+            .send({ email: 'olga@cloud.com', password: '123456' })
+            .expect(200)
+            .then((res) => {
+                expect(validateResponse(res)).to.be.undefined
+                expect(res.headers.token).to.be.a('string')
+                token = res.headers.token
+            })
+            .catch((err) => expect(err).to.be.undefined)
+    });
+});
+
 describe('GET /api/users', function () {
     // Validate response against the OpenAPI document (swagger.yml)
     const validateResponse = validator.validateResponse('get', '/api/users')
@@ -58,11 +79,11 @@ describe('GET /api/users', function () {
     it('should list all users', async function () {
         return request(app)
             .get('/api/users')
+            .set('token', token)
             .expect(200)
             .then((res) => {
                 expect(validateResponse(res)).to.be.undefined
                 expect(res.body).to.be.an('array')
-                userId = res.body[0]._id
             })
             .catch((err) => expect(err).to.be.undefined)
     });
@@ -75,6 +96,7 @@ describe('GET /api/users/{userId}', function () {
     it('should retrieve details of a specific user', async function () {
         return request(app)
             .get('/api/users/' + userId)
+            .set('token', token)
             .expect(200)
             .then((res) => {
                 expect(validateResponse(res)).to.be.undefined
@@ -91,6 +113,7 @@ describe('PATCH /api/users/{userId}', function () {
     it('should update details of a specific user', async function () {
         return request(app)
             .patch('/api/users/' + userId)
+            .set('token', token)
             .set('Accept', 'application/json')
             .send({ email: 'aglo@cloud.com' })
             .expect(200)
@@ -109,6 +132,7 @@ describe('DELETE /api/users/{userId}', function () {
     it('should delete a user', async function () {
         return request(app)
             .delete('/api/users/' + userId)
+            .set('token', token)
             .expect(200)
             .then((res) => {
                 expect(validateResponse(res)).to.be.undefined

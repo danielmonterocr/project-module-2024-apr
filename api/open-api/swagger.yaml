@@ -53,8 +53,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
-  /user/login:
-    get:
+  /api/users/login:
+    post:
       tags:
         - user
       summary: Logs user into the system
@@ -75,37 +75,30 @@ paths:
             type: string
       responses:
         '200':
-          description: Successful operation
-          headers:
-            X-Rate-Limit:
-              description: Calls per hour allowed by the user
-              schema:
-                type: integer
-                format: int32
-            X-Expires-After:
-              description: Date in UTC when token expires
-              schema:
-                type: string
-                format: date-time
+          description: Succesful operation
           content:
             application/json:
               schema:
+                $ref: '#/components/schemas/ApiResponse'
+          headers:
+            token:
+              description: The token to be used for authentication
+              schema:
                 type: string
+          #   X-Rate-Limit:
+          #     description: Calls per hour allowed by the user
+          #     schema:
+          #       type: integer
+          #       format: int32
+          #   X-Expires-After:
+          #     description: Date in UTC when token expires
+          #     schema:
+          #       type: string
+          #       format: date-time
         '400':
           description: Invalid username/password supplied
-        '409':
-          description: User already exists
-  /user/logout:
-    get:
-      tags:
-        - user
-      summary: Logs out current logged in user session
-      description: ''
-      operationId: logoutUser
-      parameters: []
-      responses:
-        default:
-          description: Successful operation
+        '404':
+          description: User not found
   /api/users:
     get:
       tags:
@@ -196,11 +189,11 @@ paths:
             type: string
       responses:
         '200':
-          description: Successful operation
+          description: Succesful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/ApiResponse'
         '400':
           description: Bad request
         '404':

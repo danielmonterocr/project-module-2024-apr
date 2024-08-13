@@ -54,28 +54,25 @@ router.post('/api/users/register',
     })
 
 // POST: Create token
-router.post('/api/users/login', async (req, res) => {
-    const { error } = loginValidation(req.body)
-    if (error) {
-        return res.status(400).send({ message: error.details[0].message.replace(/"/g, '') })
-    }
+router.post('/api/users/login',
+    validator.validate('post', '/api/users/login'),
+    async (req, res) => {
+        // Check if user exists
+        const user = await User.findOne({ email: req.body.email })
+        if (!user) {
+            return res.status(404).send({ message: 'User not found' })
+        }
 
-    // Check if user exists
-    const user = await User.findOne({ email: req.body.email })
-    if (!user) {
-        return res.status(400).send({ message: 'User does not exists' })
-    }
+        // Validate password
+        const passwordValidation = await bcryptjs.compare(req.body.password, user.password)
+        if (!passwordValidation) {
+            return res.status(400).send({ message: 'Password is wrong' })
+        }
 
-    // Validate password
-    const passwordValidation = await bcryptjs.compare(req.body.password, user.password)
-    if (!passwordValidation) {
-        return res.status(400).send({ message: 'Password is wrong' })
-    }
-
-    // Generate token
-    const token = jsonwebtoken.sign({ _id: user._id }, process.env.TOKEN_SECRET)
-    return res.header('auth-token', token).send({ 'auth-token': token })
-})
+        // Generate token
+        const token = jsonwebtoken.sign({ _id: user._id }, process.env.TOKEN_SECRET)
+        return res.header('token', token).send({ message: 'User logged in' })
+    })
 
 // add some error handling
 router.use((err, req, res, next) => {
