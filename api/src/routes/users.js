@@ -56,7 +56,7 @@ router.get('/api/users/:userId',
 
 // PUT: Update details of a specific user 
 router.patch('/api/users/:userId',
-    verifyToken,
+    // verifyToken,
     validator.validate('patch', '/api/users/{userId}'),
     async (req, res) => {
         var update = {};

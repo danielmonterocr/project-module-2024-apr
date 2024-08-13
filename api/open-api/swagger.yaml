@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Swagger - OpenAPI 3.1
-  description: API documentation fo the final project.
+  description: API documentation for the final project.
   # termsOfService: http://swagger.io/terms/
   # contact:
   #   email: apiteam@swagger.io
@@ -58,7 +58,7 @@ paths:
       tags:
         - user
       summary: Logs user into the system
-      description: ''
+      description: Creates a new token for the user
       operationId: loginUser
       parameters:
         - name: username
@@ -104,7 +104,7 @@ paths:
       tags:
         - user
       summary: List all users
-      description: This fetches all users in the database.
+      description: This can only be done by the logged in user
       operationId: listUsers
       responses:
         '200':
@@ -127,6 +127,7 @@ paths:
       tags:
         - user
       summary: Retrieve details of a specific user
+      description: This can only be done by the logged in user
       operationId: getUserById
       parameters:
         - name: userId
@@ -150,6 +151,7 @@ paths:
       tags:
         - user
       summary: Update details of a specific user
+      description: This can only be done by the logged in user
       operationId: updateUser
       parameters:
         - name: userId
@@ -178,12 +180,12 @@ paths:
       tags:
         - user
       summary: Delete user
-      description: This can only be done by the logged in user.
+      description: This can only be done by the logged in user
       operationId: deleteUser
       parameters:
         - name: userId
           in: path
-          description: The name that needs to be deleted
+          description: The name of the user that needs to be deleted
           required: true
           schema:
             type: string
@@ -198,6 +200,132 @@ paths:
           description: Bad request
         '404':
           description: User not found
+  /api/listings:
+    post:
+      tags:
+        - listing
+      summary: Create a new listing
+      description: This can only be done by the logged in user
+      operationId: createListing
+      requestBody:
+        description: Create listing object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Listing'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Listing'
+        '400':
+          description: Listing already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+    get:
+      tags:
+        - listing
+      summary: List all listings
+      description: This can only be done by the logged in user
+      operationId: listListings
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  anyOf:
+                    - $ref: '#/components/schemas/Listing'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+  /api/listings/{listingId}:
+    get:
+      tags:
+        - listing
+      summary: Retrieve details of a specific listing
+      description: This can only be done by the logged in user
+      operationId: getListingById
+      parameters:
+        - name: listingId
+          in: path
+          description: The ID of the listing to retrieve
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Listing'
+        '400':
+          description: Bad request
+        '404':
+          description: Listing not found
+    patch:
+      tags:
+        - listing
+      summary: Update details of a specific listing
+      operationId: updateListing
+      parameters:
+        - name: listingId
+          in: path
+          description: The ID of the listing to modify
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Update an existent listing object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Listing'
+              # anyOf:
+              #   - title
+              #   - description
+              #   - location
+      responses:
+        '200':
+          description: Succesful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+    delete:
+      tags:
+        - listing
+      summary: Delete listig
+      description: This can only be done by the logged in user
+      operationId: deleteListing
+      parameters:
+        - name: listingId
+          in: path
+          description: The name of the listing that needs to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Succesful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '400':
+          description: Bad request
+        '404':
+          description: Listing not found
 components:
   schemas:
     User:
@@ -230,6 +358,21 @@ components:
           description: User Status
           format: int32
           examples: [1]
+    Listing:
+      type: object
+      properties:
+        title:
+          type: string
+          examples: [theListing]
+        description:
+          type: string
+          examples: [This is a listing]
+        location:
+          type: string
+          examples: [New York]
+        userId:
+          type: string
+          examples: [1234567890]
     ApiResponse:
       type: object
       properties:
