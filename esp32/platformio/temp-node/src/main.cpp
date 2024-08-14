@@ -64,7 +64,7 @@ void setup() {
   setupTemperatureSensors();
 
   // Setup tasks
-  Serial.println("Create monitorTask task");
+  Serial.println("Create keepWifiAliveTask task");
   xTaskCreatePinnedToCore(
     keepWifiAliveTask,
     "keepWifiAliveTask",
@@ -73,6 +73,7 @@ void setup() {
     1,
     NULL,
     0);
+  Serial.println("Create monitorTask task");
   xTaskCreatePinnedToCore(
     monitorTask,
     "monitorTask",
