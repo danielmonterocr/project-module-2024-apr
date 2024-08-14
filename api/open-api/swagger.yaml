@@ -20,13 +20,15 @@ tags:
     # externalDocs:
     #   description: Find out more about our store
     #   url: http://swagger.io
-  - name: user
-    description: Operations about user
+  - name: users
+    description: APIs related to user operations
+  - name: listings
+    description: APIs related to listing operations
 paths:
   /api/users/register:
     post:
       tags:
-        - user
+        - users
       summary: Create user
       description: Create a new user
       operationId: createUser
@@ -56,7 +58,7 @@ paths:
   /api/users/login:
     post:
       tags:
-        - user
+        - users
       summary: Logs user into the system
       description: Creates a new token for the user
       operationId: loginUser
@@ -102,7 +104,7 @@ paths:
   /api/users:
     get:
       tags:
-        - user
+        - users
       summary: List all users
       description: This can only be done by the logged in user
       operationId: listUsers
@@ -125,7 +127,7 @@ paths:
   /api/users/{userId}:
     get:
       tags:
-        - user
+        - users
       summary: Retrieve details of a specific user
       description: This can only be done by the logged in user
       operationId: getUserById
@@ -149,7 +151,7 @@ paths:
           description: User not found
     patch:
       tags:
-        - user
+        - users
       summary: Update details of a specific user
       description: This can only be done by the logged in user
       operationId: updateUser
@@ -178,7 +180,7 @@ paths:
                 $ref: '#/components/schemas/ApiResponse'
     delete:
       tags:
-        - user
+        - users
       summary: Delete user
       description: This can only be done by the logged in user
       operationId: deleteUser
@@ -203,7 +205,7 @@ paths:
   /api/listings:
     post:
       tags:
-        - listing
+        - listings
       summary: Create a new listing
       description: This can only be done by the logged in user
       operationId: createListing
@@ -228,7 +230,7 @@ paths:
                 $ref: '#/components/schemas/ApiResponse'
     get:
       tags:
-        - listing
+        - listings
       summary: List all listings
       description: This can only be done by the logged in user
       operationId: listListings
@@ -251,7 +253,7 @@ paths:
   /api/listings/{listingId}:
     get:
       tags:
-        - listing
+        - listings
       summary: Retrieve details of a specific listing
       description: This can only be done by the logged in user
       operationId: getListingById
@@ -275,7 +277,7 @@ paths:
           description: Listing not found
     patch:
       tags:
-        - listing
+        - listings
       summary: Update details of a specific listing
       operationId: updateListing
       parameters:
@@ -304,7 +306,7 @@ paths:
                 $ref: '#/components/schemas/ApiResponse'
     delete:
       tags:
-        - listing
+        - listings
       summary: Delete listig
       description: This can only be done by the logged in user
       operationId: deleteListing
