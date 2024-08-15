@@ -363,6 +363,9 @@ components:
     Listing:
       type: object
       properties:
+        provider:
+          type: string
+          examples: [Airbnb, VRBO, HomeAway]
         title:
           type: string
           examples: [theListing]
