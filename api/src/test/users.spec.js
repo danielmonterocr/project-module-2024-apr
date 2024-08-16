@@ -125,6 +125,25 @@ describe('PATCH /api/users/{userId}', function () {
     });
 });
 
+describe('POST /api/users/{userId}/sync', function () {
+    // Validate response against the OpenAPI document (swagger.yml)
+    const validateResponse = validator.validateResponse('post', '/api/users/{userId}/sync')
+
+    it('should sync listings from a provider', async function () {
+        return request(app)
+            .post('/api/users/' + userId + '/sync')
+            .query({ provider: 'airbnb' })
+            .set('token', token)
+            .set('Accept', 'application/json')
+            .expect(200)
+            .then((res) => {
+                expect(validateResponse(res)).to.be.undefined
+                expect(res.body).to.be.an('array')
+            })
+            .catch((err) => expect(err).to.be.undefined)
+    });
+});
+
 describe('DELETE /api/users/{userId}', function () {
     // Validate response against the OpenAPI document (swagger.yml)
     const validateResponse = validator.validateResponse('delete', '/api/users/{userId}')

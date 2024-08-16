@@ -1,6 +1,7 @@
 import { SWAGGER_PATH } from '../constants/config.js';
 import express from 'express';
 const router = express.Router()
+import { logger } from '../logger.js'
 
 import { Listing } from '../models/Listing.js'
 
@@ -28,13 +29,13 @@ router.post('/api/listings',
     verifyToken,
     validator.validate('post', '/api/listings'),
     async (req, res) => {
-        // Check if listing already exists
-        const listingExists = await Listing.findOne({ title: req.body.title })
-        if (listingExists) {
-            return res.status(400).send({ message: 'Listing already exists' })
-        }
-
         try {
+            // Check if listing already exists
+            const listingExists = await Listing.findOne({ title: req.body.title })
+            if (listingExists) {
+                return res.status(400).send({ message: 'Listing already exists' })
+            }
+
             // Save listing on DB
             const listing = new Listing({
                 title: req.body.title,
@@ -45,6 +46,7 @@ router.post('/api/listings',
             const savedListing = await listing.save()
             return res.send(savedListing)
         } catch (err) {
+            logger.error(err.message)
             return res.status(400).send({ message: err })
         }
     })
@@ -59,6 +61,7 @@ router.get('/api/listings',
             const listings = await Listing.find();
             res.send(listings);
         } catch (err) {
+            logger.error(err.message)
             res.status(500).send({ message: err });
         }
     })
@@ -76,6 +79,7 @@ router.get('/api/listings/:listingId',
 
             return res.send(listing);
         } catch (err) {
+            logger.error(err.message)
             res.status(400).send({ message: err })
         }
     })
@@ -111,6 +115,7 @@ router.patch('/api/listings/:listingId',
 
             res.status(200).send({ message: 'Listing updated' });
         } catch (err) {
+            logger.error(err.message)
             res.status(400).send({ message: 'err' })
         }
     })
@@ -130,6 +135,7 @@ router.delete('/api/listings/:listingId',
 
             res.status(200).send({ message: 'Listing deleted' });
         } catch (err) {
+            logger.error(err.message)
             res.status(400).send({ message: err })
         }
     })

@@ -106,31 +106,6 @@ describe('POST /api/listings', function () {
     });
 });
 
-// describe('POST /api/listings/sync', function () {
-//     // Validate response against the OpenAPI document (swagger.yml)
-//     const validateResponse = validator.validateResponse('post', '/api/listings/sync')
-
-//     it('should create new listing', async function () {
-//         return request(app)
-//             .post('/api/listings')
-//             .set('token', token)
-//             .set('Accept', 'application/json')
-//             .send({
-//                 title: 'Nour',
-//                 description: 'Tiny Footprint Getaway',
-//                 location: 'Playa Hermosa, Puntarenas',
-//                 userId: userId
-//             })
-//             .expect(200)
-//             .then((res) => {
-//                 expect(validateResponse(res)).to.be.undefined
-//                 expect(res.body).to.have.property('_id')
-//                 listingId = res.body._id
-//             })
-//             .catch((err) => expect(err).to.be.undefined)
-//     });
-// });
-
 describe('GET /api/listings', function () {
     // Validate response against the OpenAPI document (swagger.yml)
     const validateResponse = validator.validateResponse('get', '/api/listings')

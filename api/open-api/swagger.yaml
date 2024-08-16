@@ -178,6 +178,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
+        '400':
+          description: Bad request
+        '404':
+          description: User not found
     delete:
       tags:
         - users
@@ -194,6 +198,38 @@ paths:
       responses:
         '200':
           description: Succesful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '400':
+          description: Bad request
+        '404':
+          description: User not found
+  /api/users/{userId}/sync:
+    post:
+      tags:
+        - users
+      summary: Sync user listings
+      description: Sync user listings
+      operationId: syncUserListings
+      parameters:
+        - name: userId
+          in: path
+          description: The ID of the user to sync listings
+          required: true
+          schema:
+            type: string
+        - name: provider
+          in: query
+          description: The provider to sync listings from
+          required: true
+          schema:
+            type: string
+          examples: [airbnb, vrbo, homeaway]
+      responses:
+        '200':
+          description: Successful operation
           content:
             application/json:
               schema:
@@ -304,6 +340,10 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
+        '400':
+          description: Bad request
+        '404':
+          description: Listing not found
     delete:
       tags:
         - listings

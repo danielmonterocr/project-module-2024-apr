@@ -1,6 +1,7 @@
 import { SWAGGER_PATH } from '../constants/config.js';
 import express from 'express';
 const router = express.Router()
+import { logger } from '../logger.js'
 
 import { User } from '../models/User.js'
 import { registerValidation, loginValidation } from '../validations/validation.js'
@@ -49,6 +50,7 @@ router.post('/api/users/register',
             const savedUser = await user.save()
             return res.send(savedUser)
         } catch (err) {
+            logger.error(err.message)
             return res.status(400).send({ message: err })
         }
     })
