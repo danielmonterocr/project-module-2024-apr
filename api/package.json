@@ -5,8 +5,9 @@
   "main": "app.js",
   "type": "module",
   "scripts": {
-    "start": "nodemon app.js",
-    "test": "./node_modules/.bin/mocha --exit --timeout 10000"
+    "start": "nodemon src/app.js",
+    "test": "./node_modules/.bin/mocha tests/unit-tests/*.js --exit --timeout 10000",
+    "test-int": "./node_modules/.bin/mocha tests/integration-tests/*.js --exit --timeout 10000"
   },
   "author": "Daniel Montero",
   "license": "ISC",

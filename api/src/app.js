@@ -1,4 +1,4 @@
-import { PORT, SWAGGER_PATH } from './constants/config.js';
+import { PORT } from './constants/config.js';
 import express from 'express';
 const app = express();
 
@@ -10,7 +10,7 @@ app.use(express.json())
 import jsYaml from 'js-yaml';
 import fs from 'fs';
 import swaggerUi from 'swagger-ui-express';
-const openApiDocument = jsYaml.load(fs.readFileSync(SWAGGER_PATH, 'utf-8'));
+const openApiDocument = jsYaml.load(fs.readFileSync('./open-api/swagger.yaml', 'utf-8'));
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openApiDocument));
 
 import { auth as authRoute } from './routes/auth.js';

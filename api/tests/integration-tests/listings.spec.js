@@ -1,6 +1,6 @@
-import { SWAGGER_PATH } from '../constants/config.js'
+import { SWAGGER_PATH } from '../../src/constants/config.js'
 import request from 'supertest'
-import { app } from '../app.js'
+import { app } from '../../src/app.js'
 import { expect } from 'chai'
 
 import jsYaml from 'js-yaml'
