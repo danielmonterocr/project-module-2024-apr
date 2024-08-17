@@ -11,8 +11,6 @@ import jsYaml from 'js-yaml';
 import fs from 'fs';
 import { OpenApiValidator } from 'express-openapi-validate';
 
-import airbnb from 'airbnbapijs'
-
 // Load the OpenAPI document
 const openApiDocument = jsYaml.load(fs.readFileSync(SWAGGER_PATH, 'utf-8'));
 
@@ -49,7 +47,7 @@ router.post('/api/users/:userId/sync',
                 logger.info('password: ' + password)
                 var userInfo = ''
                 // userInfo = airbnb.login({ username: username, password: password })
-                userInfo = await airbnb.newAccessToken({ username: 'danielmontero.cr@gmail.com', password: '89Chimichangas?' })
+                // userInfo = await airbnb.newAccessToken({ username: 'danielmontero.cr@gmail.com', password: '89Chimichangas?' })
                 logger.info('Response: ' + userInfo)
                 console.log(userInfo)
                 res.status(200).send({ message: 'User synced' })
