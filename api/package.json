@@ -6,13 +6,12 @@
   "type": "module",
   "scripts": {
     "start": "nodemon src/app.js",
-    "test": "./node_modules/.bin/mocha tests/unit-tests/*.js --exit --timeout 10000",
-    "test-int": "./node_modules/.bin/mocha tests/integration-tests/*.js --exit --timeout 10000"
+    "test": "./node_modules/.bin/mocha tests/unit/*.js --exit --timeout 10000",
+    "test-int": "./node_modules/.bin/mocha tests/integration/*.js --exit --timeout 10000"
   },
   "author": "Daniel Montero",
   "license": "ISC",
   "dependencies": {
-    "airbnbapijs": "^0.10.5",
     "bcryptjs": "^2.4.3",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
@@ -28,6 +27,7 @@
     "express-openapi-validate": "^0.6.1",
     "js-yaml": "^4.1.0",
     "mocha": "^10.7.0",
+    "sinon": "^18.0.0",
     "supertest": "^7.0.0"
   }
 }
