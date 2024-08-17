@@ -22,13 +22,12 @@ describe('Auth Middleware', () => {
     });
 
     it('should call next if token is valid', () => {
-        const userData = { id: 1, username: 'testuser' };
-        sinon.stub(jsonwebtoken, 'verify').returns(userData);
+        sinon.stub(jsonwebtoken, 'verify').returns(true);
 
         auth(req, res, next);
 
         expect(jsonwebtoken.verify.calledOnce).to.be.true;
-        expect(req.user).to.deep.equal(userData);
+        expect(req.user).to.deep.equal(true);
         expect(next.calledOnce).to.be.true;
         expect(res.status.called).to.be.false;
     });
