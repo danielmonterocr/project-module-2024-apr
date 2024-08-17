@@ -168,9 +168,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/User'
-              anyOf:
-                - username
-                - email
       responses:
         '200':
           description: Succesful operation
@@ -226,7 +223,6 @@ paths:
           required: true
           schema:
             type: string
-          examples: [airbnb, vrbo, homeaway]
       responses:
         '200':
           description: Successful operation
