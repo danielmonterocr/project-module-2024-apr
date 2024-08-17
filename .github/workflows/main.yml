@@ -49,17 +49,28 @@ jobs:
           node-version: 22.6
           cache: 'npm'
           cache-dependency-path: api/package-lock.json
+
       - name: Generate Swagger UI
         uses: Legion2/swagger-ui-action@v1
         with:
           version: 3.1.0
           output: swagger-ui
           spec-file: api/open-api/swagger.yaml
+
       - name: Install dependencies
         working-directory: ./api 
         run: npm ci
+
       - name: Run unit tests 
         working-directory: ./api 
         run: npm test
         env:
           DB_CONNECTOR: ${{ secrets.DB_CONNECTOR }}
+          TOKEN_SECRET: ${{ secrets.TOKEN_SECRET }}
+
+      - name: Run integration tests 
+        working-directory: ./api 
+        run: npm run test-int
+        env:
+          DB_CONNECTOR: ${{ secrets.DB_CONNECTOR }}
+          TOKEN_SECRET: ${{ secrets.TOKEN_SECRET }}
