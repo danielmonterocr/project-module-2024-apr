@@ -3,26 +3,34 @@
 % Documentation: https://ctan.org/pkg/mitthesis
 
 
-\chapter{Testing, analysis and evaluation}
+\chapter{Test Plan and Evaluation Criteria}
+A test plan was developed to evaluate the performance of the system. The plan included the following steps:
 
-\lipsum[1-2] Postremo aliquos futuros suspicor, qui me ad alias litteras vocent, genus hoc scribendi, etsi sit elegans, personae tamen et dignitatis esse negent~\cite{DKE1969,ww1920,kirk2288a,churchill1948,gibbs1863}.
-
-\section{Testing}
-A description of the test plan, i.e., how the program/system was verified.
-
-Put the actual test results in an appendix if too long. This section may also include a user evaluation based on feedback where appropriate.
-
-\section{Results}
-This chapter is relevant to projects where experiments or simulations were carried out with the code written.
 \begin{itemize}
-	\item Why were certain experiments carried out but not others?
-	\item What were the important parameters in the simulation and how did they affect the results?
+    \item Hardware Testing: make sure the hardware components are working properly.
+    \item Unit Testing: unit tests for the code running the API.
+    \item Integration Testing: integration tests between each system layer.
+    \item System Testing: end-to-end testing (including interaction with host dashboard) using simulated stays.
+    \item Regression Testing: Github Actions integrated into the develpment process to make sure nothing breaks when changes were introduced. This included linting the code.
+    \item User Testing: A small group of users (guests and hosts) tested the system and completed a survey to collect the result of their experiences using the application.
 \end{itemize}
-    
-If there are many graphs and tables associated with this chapter they may be put in an appendix, but it is generally better to keep these close to the text they illustrate, as this is easier for the reader.
 
-\section{Evaluation}
-Evaluation and critical evaluation of the results including strong and weak points, lessons learnt, and design decisions.
-\begin{itemize}
-	\item Consider what you would do differently, are there ways in which the project could be improved or extended?
-\end{itemize}
+\section{Test Cases}
+\subsection{Hardware Testing}
+
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{|p{0.5\linewidth}|p{0.5\linewidth}|}
+        \hline
+        \textbf{Test Case} & \textbf{Procedure} \\
+        \hline
+        Energy sensors & Use a multimeter to compare the values coming from the current sensors \\
+        \hline
+        Water flow sensor & Fill up a container with water and compare the calculated volume with the real one \\
+        \hline
+        Temperature sensors & Immerse sensors in boiling water and ice water and make sure the readings show 100C and 0C \\
+        \hline
+    \end{tabular}
+    \caption{Hardware Testing Test Cases}
+    \label{tab:hardware-testing}
+\end{table}

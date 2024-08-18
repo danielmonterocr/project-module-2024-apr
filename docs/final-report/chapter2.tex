@@ -40,17 +40,17 @@
 
 \section{Current State and Proposed Solution}
 
-Guetting data on resources consumption in the shared housing sector it's currently done in four ways: using AMI systems, 
+Getting data on resources consumption in the shared housing sector it's currently done in four ways: using AMI systems, 
 manual readings from electric, water and gas meters, comparing utility bills, and private smart monitor devices. None of
 the studies found in the literature review mentioned the use of open smart monitoring systems, an standardised API, and 
 the benefits of cloud computing.
 
 The proposed solution generates a daily report for guests delivered via text message (AirBnB's chat). The report will 
-have information on the number of KilloWatts and liters of water used, and the average temperature of the room in the 
+have information on the number of KiloWatts and liters of water used, and the average temperature of the room in the 
 last 24 hours. It will compare this figures with the results from the day before (if available). 
 
 The system will also generate an end-of-stay report for the guest. This report will have the same information as the 
-daily report, but it will also include the total amount of KilloWatts and liters of water used during the stay. It will
+daily report, but it will also include the total amount of KiloWatts and liters of water used during the stay. It will
 highlight and improvements or deteriorations in the consumption of resources.
 
 As for the hosts, a dashboard is available on the web showing historical data in form of graphs to show electricity and
@@ -59,6 +59,20 @@ host.
 
 For external users, the API has a endpoint for downloading datasets in CSV format that can be shared with third parties
 for further analysis and research.
+
+\subsection{Requirements}
+
+\begin{itemize}
+    \item Fine-grained readings (every 2 seconds)
+    \item Stable connection to the internet through WiFi
+    \item Secure data transmission
+    \item Large amounts of data storage
+    \item Data visualization
+    \item User authentication
+    \item Reports generation
+    \item Open API standard
+    \item Scalabitlity and maintainability
+\end{itemize}
 
 \section{System Architecture}
 
@@ -75,49 +89,80 @@ monitoring system and the web application that runs on the cloud.
 
 \subsection{Device layer}
 
-\subsubsection{Hardware}
+\subsubsection{Microcontrollers}
 
-It consists of three microcontrollers used to control the sensors. One measures water consumption, the other energy usage and the third one indoor and outdoor temperatures. 
-These microcontrollers are connected to a WiFi access point. The sensors give real time raw data in kw, liters and degrees Celsius. Temperature readings are used to compare the
-difference between the outside and inside of the house.
+It consists of three Espressif ESP32-DevKitC \cite{Espressif2024} microcontrollers (pictured in 
+\ref{fig:connnectivity-diagram}) connected to the sensors. One measures water consumption, the other energy usage and 
+the third one indoor and outdoor temperatures. This development board was chosen for it's extensive documentation, 
+integrated WiFi and compatibility with the peripherals used. The idea was to have a low cost solution with fast 
+development and deployment times.
 
-\subsubsection{Software}
+FreeRTOS \cite{FreeRTOS2024} runs on top of these microcontrollers to allow a secure and resource aware solution for 
+these embedded systems (microcontrollers). This was chosen as opposed to running the code on top of the chip because it 
+allows to run multiple tasks at the same time with a predictible execution pattern, which is ideal for sensing and 
+keeping connection with the internet alive at the same time (a requirement for this project).
 
-Open source Zephyr Project (RTOS) runs on top of these microcontrollers to allow a secure and resource aware solution for these embedded systems (microcontrollers). This was chosen 
-as opposed to running the code on top of the chip because it is a software platform already tested by a lot of projects and that supports internet connection, sensors, over-the-air 
-updates and has an active community.
+The microcontrollers where programed in C++ using PlatformIO IDE (Integrated Development Environment) for embedded
+systems. This development environment was chosen because of its compatibility with the microcontrollers and the sensors 
+chosen, its focus on test-driven methodologies and collaboration principles.
+
+\subsubsection{Sensors}
+
+The interaction with the sensors was done using Arduino \cite{Arduino2024a} libraries, as these are the most common and 
+well documented. They have been tested by a lot of projects (even in commercial products) and have an active community. 
+The sensors used are the following:
+
+\begin{itemize}
+    \item Energy usage: Non-invasive AC Current Sensor SCT-013 \cite{CRCibernetica2024b} connected to 
+    the ESP32 Energy Monitor Shield \cite{CRCibernetica2024c} and controlled by EmonLib \cite{Arduino2024b} library.
+    \item Water consumption: Liquid Flow Meter - Plastic 1/2" NPS Threaded \cite{CRCibernetica2024d}.
+    \item Temperature: DS18B20 Temperature Sensor \cite{CRCibernetica2024e} controlled by DallasTemperature 
+    \cite{Arduino2024c} library.
+\end{itemize}
+
+Communication between the device layer and the data layer is done using the MQTT (Message Queuing Telemetry Transport) 
+\cite{MQTT2024} protocol. MQTT was chosen because it is lightweight, secure and uses minimal network bandwidth. It also 
+has become a standard in IoT for connecting remote devices.
 
 \subsection{Data layer}
 
-Two separate databases are kept, a time series database for every reading from the sensors and a non-relational database for user, house, device data and metadata. For the time series 
-database the open source ThingsBoard IoT Platform is used because it has integrated data collection, processing, visualization, and device management. The idea is to capture time 
-series data on this platform and then use its own REST API to connect to the application which in the end will run the main program. 
+Two separate databases are kept, a time series database for every reading from the sensors and a non-relational database 
+for user and listing data, as well as device metadata. For the time series database the open source ThingsBoard IoT 
+Platform \cite{ThingsBoard2024}was selected because it has integrated data collection and device management, which makes 
+it ideal to collect data from sensor at big scale as opposed to an in house solution. The platform also has a well 
+documented API for interaction with the devices and the data. 
 
 \subsection{Communication layer}
 
-It is basically a REST API that connects the data layer with the application. It works as a way for it to have access to user, home, device (including time series) data. 
-It complies with Open API specification for standardization. This layer allows clients (applications) to access data in a secure and standard way.
+It is a REST API that interconnects the data layer with the application layer. It works as a way to have access to user, 
+listing, and device (including time series) data. It complies with Open API \cite{OpenAPI2024} specification for 
+standardization. This layer allows clients (applications) to access information from the data layer in a secure and 
+controlled way.
 
-\subsubsection{Interaction with Airbnb}
+\subsubsection{Communication with Airbnb}
 
-The application connects to Airbnb's API to get data on the guests that are staying at the listing. This will allow the application to know when a guest has checked in and out.
-This will mark the start and end of the main process.
+Currently AirBnB does not have a public API, it provides a private API for authorized partners \cite{AirBnB2024c}. 
+Becoming a partner was not possible for this project as there is no official way to apply for this. Rather, an AirBnB
+manager contacts potential external partners. The solution was to simulate responses from the API using a web browser
+to extract the payload from network activity on an AirBnB account using the web application.
 
-\subsection{Presentation layer}
+\subsection{Presentation layer (User Interface)}
 
-A web application that can be accessed from personal computers, tablets and cellphones. It has two modes: host and guest, the host mode will give access to the Airbnb host to in 
-depth real time data of every listing with historical data on resources consumption by travelers. The guest mode has a simpler version where an interactive report of their stay 
-can be seen (guest mode won't be implemented in the first version of the application). This is the main program that runs the solution and how users interact with their data.
+A User Interface (UI) that can be used from personal computers, tablets and cellphones. It gives the host access to
+a dashboard with in-depth real-time data of every listing that shows energy and water consumption, and temperature. It 
+also provides historical data on previous stays organized by listings and guests.
 
-\subsection{Data Flow}
-Figure \ref{fig:connectivity-diagram} shows a high-level diagram of the flow of data between the different components of the system. All the interaction between the different layers
-is done through the REST API.
+\section{Data Flow}
+Figure \ref{fig:connectivity-diagram} shows a high-level diagram of the flow of data between the different components 
+of the system. The microcontrollers send data to the ThingsBoard IoT Platform through an MQTT connection, which is then
+stored in a time series database. The client application uses the API to access the data and present it to the host. 
+The API and databases are hosted on the Google Cloud for security, scalability and reliability.
 
 \begin{figure}[h!]
     \centering
     \includegraphics[width=0.5\textwidth]{connectivity-diagram.png}
     \caption{Connectivity diagram}
-    \label{fig:connnectivity-diagram}
+    \label{fig:connectivity-diagram}
 \end{figure}
 
 % 1. Design and Implement Smart Monitoring System
