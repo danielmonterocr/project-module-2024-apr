@@ -3,3 +3,181 @@
 % Documentation: https://ctan.org/pkg/mitthesis
 
 
+% Comments from Martyn
+
+% Plan for developing the solution
+
+% Good use of diagrams to explain the components of your solution.
+
+% Provide more details on the specific sensors and devices you plan to use in your solution. Including technical
+% specifications, brands, and models will add depth to your methodology section.
+
+% Consider elaborating on the data analysis techniques you intend to apply. How will you process and analyse the
+% collected data to derive meaningful insights for both hosts and guests? You also need a reference to Zephyr Project,
+% ThingsBoard.
+
+% Try not to use phrases like "It is basically", as it removes the novelty of what you are proposing. consider using the
+% term "The communication is composed of a REST API that connects the data layer..." Try to explain the layers as
+% largely composed of a client-server architecture. You can read on this subject and use the terminology to formalise
+% the architecture in a more principled way. A reference to Open API is needed here.
+
+% If you do use humans to evaluate the software as testers, make sure to include this on your ethics form if it is not
+% already mentioned and  provide a consent form detailing how they will be involved with a way for them to confirm they
+% give consent.
+
+% The risk assessment section is crucial for identifying potential challenges and mitigating strategies. Try to include
+% a more comprehensive list of risks, categorize them based on severity and likelihood, and provide detailed mitigation
+% plans for each risk identified.
+
+% It would be beneficial to outline specific benchmarks or criteria for evaluating the performance of your solution. How
+% will you measure the success of your system in terms of reducing resource consumption and promoting sustainability?
+
+% If you can not measure this objectively, then remove it. For instance, if you have guests staying, you can ask them to
+% use your prototype on a daily basis, and see if they reduce their usage  day on day, and that they report that this
+% was caused by not being aware of their usage beforehand. You could capture this in a survey.
+
+\chapter{Plan for Developing the Solution }
+
+\section{Current State and Proposed Solution}
+
+Guetting data on resources consumption in the shared housing sector it's currently done in four ways: using AMI systems, 
+manual readings from electric, water and gas meters, comparing utility bills, and private smart monitor devices. None of
+the studies found in the literature review mentioned the use of open smart monitoring systems, an standardised API, and 
+the benefits of cloud computing.
+
+The proposed solution generates a daily report for guests delivered via text message (AirBnB's chat). The report will 
+have information on the number of KilloWatts and liters of water used, and the average temperature of the room in the 
+last 24 hours. It will compare this figures with the results from the day before (if available). 
+
+The system will also generate an end-of-stay report for the guest. This report will have the same information as the 
+daily report, but it will also include the total amount of KilloWatts and liters of water used during the stay. It will
+highlight and improvements or deteriorations in the consumption of resources.
+
+As for the hosts, a dashboard is available on the web showing historical data in form of graphs to show electricity and
+water consumption, and the temperature of the room and outside. The final report from the user is also forwarded to the 
+host.
+
+For external users, the API has a endpoint for downloading datasets in CSV format that can be shared with third parties
+for further analysis and research.
+
+\section{System Architecture}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.5\textwidth]{architecture-diagram.png}
+    \caption{Architecture diagram}
+    \label{fig:architecture-diagram}
+\end{figure}
+
+The general system architecture of the proposed solution is shown in Figure \ref{fig:architecture-diagram}. The solution 
+consists of four main layers: device, data, communication, and presentation. There are two main components, the smart
+monitoring system and the web application that runs on the cloud.
+
+\subsection{Device layer}
+
+\subsubsection{Hardware}
+
+It consists of three microcontrollers used to control the sensors. One measures water consumption, the other energy usage and the third one indoor and outdoor temperatures. 
+These microcontrollers are connected to a WiFi access point. The sensors give real time raw data in kw, liters and degrees Celsius. Temperature readings are used to compare the
+difference between the outside and inside of the house.
+
+\subsubsection{Software}
+
+Open source Zephyr Project (RTOS) runs on top of these microcontrollers to allow a secure and resource aware solution for these embedded systems (microcontrollers). This was chosen 
+as opposed to running the code on top of the chip because it is a software platform already tested by a lot of projects and that supports internet connection, sensors, over-the-air 
+updates and has an active community.
+
+\subsection{Data layer}
+
+Two separate databases are kept, a time series database for every reading from the sensors and a non-relational database for user, house, device data and metadata. For the time series 
+database the open source ThingsBoard IoT Platform is used because it has integrated data collection, processing, visualization, and device management. The idea is to capture time 
+series data on this platform and then use its own REST API to connect to the application which in the end will run the main program. 
+
+\subsection{Communication layer}
+
+It is basically a REST API that connects the data layer with the application. It works as a way for it to have access to user, home, device (including time series) data. 
+It complies with Open API specification for standardization. This layer allows clients (applications) to access data in a secure and standard way.
+
+\subsubsection{Interaction with Airbnb}
+
+The application connects to Airbnb's API to get data on the guests that are staying at the listing. This will allow the application to know when a guest has checked in and out.
+This will mark the start and end of the main process.
+
+\subsection{Presentation layer}
+
+A web application that can be accessed from personal computers, tablets and cellphones. It has two modes: host and guest, the host mode will give access to the Airbnb host to in 
+depth real time data of every listing with historical data on resources consumption by travelers. The guest mode has a simpler version where an interactive report of their stay 
+can be seen (guest mode won't be implemented in the first version of the application). This is the main program that runs the solution and how users interact with their data.
+
+\subsection{Data Flow}
+Figure \ref{fig:connectivity-diagram} shows a high-level diagram of the flow of data between the different components of the system. All the interaction between the different layers
+is done through the REST API.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.5\textwidth]{connectivity-diagram.png}
+    \caption{Connectivity diagram}
+    \label{fig:connnectivity-diagram}
+\end{figure}
+
+% 1. Design and Implement Smart Monitoring System
+% Metrics:
+% Accuracy of Sensor Data: Compare sensor readings with manual measurements or benchmark values.
+% Data Transmission Reliability: Monitor the frequency and success rate of data transmission from sensors to the 
+% database.
+
+% Methods:
+% Perform calibration tests and cross-validate sensor readings with known values.
+% Track data transmission logs and error rates to ensure consistent and reliable data flow.
+
+% 2. Develop Web Application for Hosts
+% Metrics:
+% User Adoption Rate: Measure the number of hosts using the web application over time.
+% User Satisfaction: Assess user satisfaction through surveys and feedback forms.
+
+% Methods:
+% Analyze usage statistics and track user engagement within the application.
+% Conduct user surveys and gather feedback to evaluate the application’s usability and effectiveness.
+
+% 3. Create Daily and End-of-Stay Reports for Guests
+% Metrics:
+% Report Accuracy: Verify the accuracy and completeness of the data presented in reports.
+% Guest Engagement: Measure how frequently guests view their reports and any changes in behavior based on report 
+% feedback.
+
+% Methods:
+% Review reports for data consistency and correctness.
+% Implement tracking within the reporting system to monitor guest interactions with the reports and assess any 
+% subsequent changes in resource usage.
+
+% 4. Develop and Integrate API
+
+% Metrics:
+% API Usage: Track the number of API calls and the volume of data accessed by third parties.
+% API Performance: Measure response times and error rates for API requests.
+
+% Methods:
+% Monitor API logs and usage statistics to evaluate adoption and performance.
+% Conduct performance tests to ensure the API meets response time and reliability standards.
+
+% 5. Promote Sustainable Practices
+
+% Metrics:
+% Reduction in Resource Consumption: Measure changes in energy and water usage before and after implementing the system.
+% Behavioral Changes: Evaluate whether guests and hosts alter their behavior based on the feedback received.
+
+% Methods:
+% Analyze pre- and post-implementation data on resource usage to assess the impact of the system.
+% Conduct surveys or interviews with guests and hosts to understand changes in behavior and attitudes toward resource 
+% conservation.
+
+% 6. Evaluate System Effectiveness
+% Metrics:
+% Impact Assessment: Measure the overall reduction in energy and water consumption attributed to the system.
+% System Feedback: Collect and analyze feedback from users regarding the system’s effectiveness and areas for 
+% improvement.
+
+% Methods:
+% Compare resource usage data from before and after the system’s implementation to gauge effectiveness.
+% Use feedback forms, surveys, and interviews with both hosts and guests to gather insights on the system’s impact and 
+% performance.
