@@ -5,24 +5,128 @@
 
 \chapter{Testing, analysis and evaluation}
 
-\lipsum[1-2] Postremo aliquos futuros suspicor, qui me ad alias litteras vocent, genus hoc scribendi, etsi sit elegans, personae tamen et dignitatis esse negent~\cite{DKE1969,ww1920,kirk2288a,churchill1948,gibbs1863}.
+% 1. Design and Implement Smart Monitoring System
+% Metrics:
+% Accuracy of Sensor Data: Compare sensor readings with manual measurements or benchmark values.
+% Data Transmission Reliability: Monitor the frequency and success rate of data transmission from sensors to the 
+% database.
+
+% Methods:
+% Perform calibration tests and cross-validate sensor readings with known values.
+% Track data transmission logs and error rates to ensure consistent and reliable data flow.
+
+% 2. Develop Web Application for Hosts
+% Metrics:
+% User Adoption Rate: Measure the number of hosts using the web application over time.
+% User Satisfaction: Assess user satisfaction through surveys and feedback forms.
+
+% Methods:
+% Analyze usage statistics and track user engagement within the application.
+% Conduct user surveys and gather feedback to evaluate the application’s usability and effectiveness.
+
+% 3. Create Daily and End-of-Stay Reports for Guests
+% Metrics:
+% Report Accuracy: Verify the accuracy and completeness of the data presented in reports.
+% Guest Engagement: Measure how frequently guests view their reports and any changes in behavior based on report 
+% feedback.
+
+% Methods:
+% Review reports for data consistency and correctness.
+% Implement tracking within the reporting system to monitor guest interactions with the reports and assess any 
+% subsequent changes in resource usage.
+
+% 4. Develop and Integrate API
+
+% Metrics:
+% API Usage: Track the number of API calls and the volume of data accessed by third parties.
+% API Performance: Measure response times and error rates for API requests.
+
+% Methods:
+% Monitor API logs and usage statistics to evaluate adoption and performance.
+% Conduct performance tests to ensure the API meets response time and reliability standards.
+
+% 5. Promote Sustainable Practices
+
+% Metrics:
+% Reduction in Resource Consumption: Measure changes in energy and water usage before and after implementing the system.
+% Behavioral Changes: Evaluate whether guests and hosts alter their behavior based on the feedback received.
+
+% Methods:
+% Analyze pre- and post-implementation data on resource usage to assess the impact of the system.
+% Conduct surveys or interviews with guests and hosts to understand changes in behavior and attitudes toward resource 
+% conservation.
+
+% 6. Evaluate System Effectiveness
+% Metrics:
+% Impact Assessment: Measure the overall reduction in energy and water consumption attributed to the system.
+% System Feedback: Collect and analyze feedback from users regarding the system’s effectiveness and areas for 
+% improvement.
+
+% Methods:
+% Compare resource usage data from before and after the system’s implementation to gauge effectiveness.
+% Use feedback forms, surveys, and interviews with both hosts and guests to gather insights on the system’s impact and 
+% performance.
 
 \section{Testing}
-A description of the test plan, i.e., how the program/system was verified.
+* A description of the test plan, i.e., how the program/system was verified.
 
-Put the actual test results in an appendix if too long. This section may also include a user evaluation based on feedback where appropriate.
+* Put the actual test results in an appendix if too long. This section may also include a user evaluation based on 
+feedback where appropriate.
+
+A test plan was developed to evaluate the performance of the system. The plan included the following steps:
+
+\begin{itemize}
+    \item Hardware Testing: make sure the hardware components are working properly.
+    \item Unit Testing: unit tests for the code running the API.
+    \item Integration Testing: integration tests between each system layer.
+    \item System Testing: end-to-end testing (including interaction with host dashboard) using simulated stays.
+    \item Regression Testing: Github Actions integrated into the develpment process to make sure nothing breaks when changes were introduced. This included linting the code.
+    \item User Testing: A small group of users (guests and hosts) tested the system and completed a survey to collect the result of their experiences using the application.
+\end{itemize}
+
+\subsection{Hardware}
+
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{|p{0.5\linewidth}|p{0.5\linewidth}|}
+        \hline
+        \textbf{Test Case} & \textbf{Procedure} \\
+        \hline
+        Energy sensors & Use a multimeter to compare the values coming from the current sensors \\
+        \hline
+        Water flow sensor & Fill up a container with water and compare the calculated volume with the real one \\
+        \hline
+        Temperature sensors & Immerse sensors in boiling water and ice water and make sure the readings show 100C and 0C \\
+        \hline
+    \end{tabular}
+    \caption{Hardware Testing Test Cases}
+    \label{tab:hardware-testing}
+\end{table}
 
 \section{Results}
-This chapter is relevant to projects where experiments or simulations were carried out with the code written.
+
+* This chapter is relevant to projects where experiments or simulations were carried out with the code written.
 \begin{itemize}
 	\item Why were certain experiments carried out but not others?
 	\item What were the important parameters in the simulation and how did they affect the results?
 \end{itemize}
     
-If there are many graphs and tables associated with this chapter they may be put in an appendix, but it is generally better to keep these close to the text they illustrate, as this is easier for the reader.
+* If there are many graphs and tables associated with this chapter they may be put in an appendix, but it is generally better to keep these close to the text they illustrate, as this is easier for the reader.
+
+% Introduction
+% Describe your methodology: provide details
+% Present your results
+% Discuss your findings
+% Address limitations
+% Relate back to literature review
+% Explain your experiments
+% Assessment of experiments
+% End result: software itself
+% Conclude with implications of future work
 
 \section{Evaluation}
-Evaluation and critical evaluation of the results including strong and weak points, lessons learnt, and design decisions.
+
+* Evaluation and critical evaluation of the results including strong and weak points, lessons learnt, and design decisions.
 \begin{itemize}
 	\item Consider what you would do differently, are there ways in which the project could be improved or extended?
 \end{itemize}

@@ -3,34 +3,4 @@
 % Documentation: https://ctan.org/pkg/mitthesis
 
 
-\chapter{Test Plan and Evaluation Criteria}
-A test plan was developed to evaluate the performance of the system. The plan included the following steps:
-
-\begin{itemize}
-    \item Hardware Testing: make sure the hardware components are working properly.
-    \item Unit Testing: unit tests for the code running the API.
-    \item Integration Testing: integration tests between each system layer.
-    \item System Testing: end-to-end testing (including interaction with host dashboard) using simulated stays.
-    \item Regression Testing: Github Actions integrated into the develpment process to make sure nothing breaks when changes were introduced. This included linting the code.
-    \item User Testing: A small group of users (guests and hosts) tested the system and completed a survey to collect the result of their experiences using the application.
-\end{itemize}
-
-\section{Test Cases}
-\subsection{Hardware Testing}
-
-\begin{table}[ht]
-    \centering
-    \begin{tabular}{|p{0.5\linewidth}|p{0.5\linewidth}|}
-        \hline
-        \textbf{Test Case} & \textbf{Procedure} \\
-        \hline
-        Energy sensors & Use a multimeter to compare the values coming from the current sensors \\
-        \hline
-        Water flow sensor & Fill up a container with water and compare the calculated volume with the real one \\
-        \hline
-        Temperature sensors & Immerse sensors in boiling water and ice water and make sure the readings show 100C and 0C \\
-        \hline
-    \end{tabular}
-    \caption{Hardware Testing Test Cases}
-    \label{tab:hardware-testing}
-\end{table}
+\chapter{Conclusion}

@@ -87,12 +87,12 @@ The general system architecture of the proposed solution is shown in Figure \ref
 consists of four main layers: device, data, communication, and presentation. There are two main components, the smart
 monitoring system and the web application that runs on the cloud.
 
-\subsection{Device layer}
+\subsection{Device Layer}
 
 \subsubsection{Microcontrollers}
 
 It consists of three Espressif ESP32-DevKitC \cite{Espressif2024} microcontrollers (pictured in 
-\ref{fig:connnectivity-diagram}) connected to the sensors. One measures water consumption, the other energy usage and 
+\ref{fig:connectivity-diagram}) connected to the sensors. One measures water consumption, the other energy usage and 
 the third one indoor and outdoor temperatures. This development board was chosen for it's extensive documentation, 
 integrated WiFi and compatibility with the peripherals used. The idea was to have a low cost solution with fast 
 development and deployment times.
@@ -124,7 +124,7 @@ Communication between the device layer and the data layer is done using the MQTT
 \cite{MQTT2024} protocol. MQTT was chosen because it is lightweight, secure and uses minimal network bandwidth. It also 
 has become a standard in IoT for connecting remote devices.
 
-\subsection{Data layer}
+\subsection{Data Layer}
 
 Two separate databases are kept, a time series database for every reading from the sensors and a non-relational database 
 for user and listing data, as well as device metadata. For the time series database the open source ThingsBoard IoT 
@@ -132,7 +132,7 @@ Platform \cite{ThingsBoard2024}was selected because it has integrated data colle
 it ideal to collect data from sensor at big scale as opposed to an in house solution. The platform also has a well 
 documented API for interaction with the devices and the data. 
 
-\subsection{Communication layer}
+\subsection{Communication Layer}
 
 It is a REST API that interconnects the data layer with the application layer. It works as a way to have access to user, 
 listing, and device (including time series) data. It complies with Open API \cite{OpenAPI2024} specification for 
@@ -146,7 +146,7 @@ Becoming a partner was not possible for this project as there is no official way
 manager contacts potential external partners. The solution was to simulate responses from the API using a web browser
 to extract the payload from network activity on an AirBnB account using the web application.
 
-\subsection{Presentation layer (User Interface)}
+\subsection{Presentation Layer (User Interface)}
 
 A User Interface (UI) that can be used from personal computers, tablets and cellphones. It gives the host access to
 a dashboard with in-depth real-time data of every listing that shows energy and water consumption, and temperature. It 
@@ -164,67 +164,3 @@ The API and databases are hosted on the Google Cloud for security, scalability a
     \caption{Connectivity diagram}
     \label{fig:connectivity-diagram}
 \end{figure}
-
-\section{Test Plan and Evaluation Criteria}
-
-% 1. Design and Implement Smart Monitoring System
-% Metrics:
-% Accuracy of Sensor Data: Compare sensor readings with manual measurements or benchmark values.
-% Data Transmission Reliability: Monitor the frequency and success rate of data transmission from sensors to the 
-% database.
-
-% Methods:
-% Perform calibration tests and cross-validate sensor readings with known values.
-% Track data transmission logs and error rates to ensure consistent and reliable data flow.
-
-% 2. Develop Web Application for Hosts
-% Metrics:
-% User Adoption Rate: Measure the number of hosts using the web application over time.
-% User Satisfaction: Assess user satisfaction through surveys and feedback forms.
-
-% Methods:
-% Analyze usage statistics and track user engagement within the application.
-% Conduct user surveys and gather feedback to evaluate the application’s usability and effectiveness.
-
-% 3. Create Daily and End-of-Stay Reports for Guests
-% Metrics:
-% Report Accuracy: Verify the accuracy and completeness of the data presented in reports.
-% Guest Engagement: Measure how frequently guests view their reports and any changes in behavior based on report 
-% feedback.
-
-% Methods:
-% Review reports for data consistency and correctness.
-% Implement tracking within the reporting system to monitor guest interactions with the reports and assess any 
-% subsequent changes in resource usage.
-
-% 4. Develop and Integrate API
-
-% Metrics:
-% API Usage: Track the number of API calls and the volume of data accessed by third parties.
-% API Performance: Measure response times and error rates for API requests.
-
-% Methods:
-% Monitor API logs and usage statistics to evaluate adoption and performance.
-% Conduct performance tests to ensure the API meets response time and reliability standards.
-
-% 5. Promote Sustainable Practices
-
-% Metrics:
-% Reduction in Resource Consumption: Measure changes in energy and water usage before and after implementing the system.
-% Behavioral Changes: Evaluate whether guests and hosts alter their behavior based on the feedback received.
-
-% Methods:
-% Analyze pre- and post-implementation data on resource usage to assess the impact of the system.
-% Conduct surveys or interviews with guests and hosts to understand changes in behavior and attitudes toward resource 
-% conservation.
-
-% 6. Evaluate System Effectiveness
-% Metrics:
-% Impact Assessment: Measure the overall reduction in energy and water consumption attributed to the system.
-% System Feedback: Collect and analyze feedback from users regarding the system’s effectiveness and areas for 
-% improvement.
-
-% Methods:
-% Compare resource usage data from before and after the system’s implementation to gauge effectiveness.
-% Use feedback forms, surveys, and interviews with both hosts and guests to gather insights on the system’s impact and 
-% performance.
