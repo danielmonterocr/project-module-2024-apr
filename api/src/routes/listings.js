@@ -1,4 +1,3 @@
-import { SWAGGER_PATH } from '../constants/config.js';
 import express from 'express';
 const router = express.Router()
 import { logger } from '../logger.js'
@@ -6,23 +5,7 @@ import { logger } from '../logger.js'
 import { Listing } from '../models/Listing.js'
 
 import { auth as verifyToken } from '../verifyToken.js'
-
-import jsYaml from 'js-yaml';
-import fs from 'fs';
-import { OpenApiValidator } from 'express-openapi-validate';
-
-// Load the OpenAPI document
-const openApiDocument = jsYaml.load(fs.readFileSync(SWAGGER_PATH, 'utf-8'));
-
-// Construct the validator with some basic options
-const validator = new OpenApiValidator(openApiDocument,
-    {
-        ajvOptions: {
-            allErrors: true,
-            removeAdditional: "all",
-        }
-    }
-);
+import { validator } from '../validations/validator.js'
 
 // POST: Create listing
 router.post('/api/listings',

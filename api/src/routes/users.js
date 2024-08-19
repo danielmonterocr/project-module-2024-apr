@@ -1,28 +1,12 @@
-import { SWAGGER_PATH } from '../constants/config.js';
 import express from 'express';
 const router = express.Router()
 import { logger } from '../logger.js'
 
 import { User } from '../models/User.js'
+import { Listing } from '../models/Listing.js'
 
 import { auth as verifyToken } from '../verifyToken.js'
-
-import jsYaml from 'js-yaml';
-import fs from 'fs';
-import { OpenApiValidator } from 'express-openapi-validate';
-
-// Load the OpenAPI document
-const openApiDocument = jsYaml.load(fs.readFileSync(SWAGGER_PATH, 'utf-8'));
-
-// Construct the validator with some basic options
-const validator = new OpenApiValidator(openApiDocument,
-    {
-        ajvOptions: {
-            allErrors: true,
-            removeAdditional: "all",
-        }
-    }
-);
+import { validator } from '../validations/validator.js'
 
 // POST: Sync user listings
 router.post('/api/users/:userId/sync',
@@ -35,23 +19,22 @@ router.post('/api/users/:userId/sync',
                 return res.status(404).send({ message: 'User not found' });
             }
 
-            // TODO: get credentials from user info
+            // Call the function to import listings from Airbnb
+            const listings = await importListingsFromAirbnb('data/airbnb.json');
 
-            // Sync user listings
-            if (req.query.provider === 'airbnb') {
-                const username = process.env.USER
-                const password = process.env.PASSWORD
+            // Save each listing to MongoDB if it doesn't already exist
+            const savePromises = listings.map(async (listing) => {
+                const existingListing = await Listing.findOne({ userId: listing.userId, title: listing.title });
 
-                logger.info('Calling Airbnb API')
-                logger.info('username: ' + username)
-                logger.info('password: ' + password)
-                var userInfo = ''
-                // userInfo = airbnb.login({ username: username, password: password })
-                // userInfo = await airbnb.newAccessToken({ username: 'danielmontero.cr@gmail.com', password: '89Chimichangas?' })
-                logger.info('Response: ' + userInfo)
-                console.log(userInfo)
-                res.status(200).send({ message: 'User synced' })
-            }
+                if (!existingListing) {
+                    const newListing = new Listing(listing);
+                    return newListing.save();
+                }
+            });
+
+            await Promise.all(savePromises);
+
+            res.json({ listings });
         } catch (err) {
             logger.error(err.message)
             res.status(500).send({ message: err });
