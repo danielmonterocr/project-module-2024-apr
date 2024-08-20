@@ -27,14 +27,6 @@ jobs:
             docs/proposal/proposal.pdf
             docs/final-report/final-report.pdf
           overwrite: true
-  build-esp32-code:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: arduino/arduino-lint-action@v1 
-        with:
-          path: esp32/arduino
-          recursive: true
   build-api:
     runs-on: ubuntu-latest
 
