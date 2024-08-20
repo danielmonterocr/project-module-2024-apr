@@ -9,6 +9,14 @@
 
 \subsection{Energy Node}
 
+Energy consumed can be calculated by summing the power over the 60 seconds:
+
+\begin{equation}
+    \text{Energy} = \sum_{i=1}^{60} (I_i \times V_i)
+\end{equation}
+
+This gives the total energy used in that minute (in watt-seconds or joules).
+
 \begin{figure}[h!]
     \centering
     \includegraphics[width=0.5\textwidth]{energy-node-flow-chart.png}
