@@ -8,39 +8,6 @@ import { Listing } from '../models/Listing.js'
 import { auth as verifyToken } from '../verifyToken.js'
 import { validator } from '../validations/validator.js'
 
-// POST: Sync user listings
-router.post('/api/users/:userId/sync',
-    // verifyToken,
-    validator.validate('post', '/api/users/{userId}/sync'),
-    async (req, res) => {
-        try {
-            const user = await User.findById(req.params.userId);
-            if (!user) {
-                return res.status(404).send({ message: 'User not found' });
-            }
-
-            // Call the function to import listings from Airbnb
-            const listings = await importListingsFromAirbnb('data/airbnb.json');
-
-            // Save each listing to MongoDB if it doesn't already exist
-            const savePromises = listings.map(async (listing) => {
-                const existingListing = await Listing.findOne({ userId: listing.userId, title: listing.title });
-
-                if (!existingListing) {
-                    const newListing = new Listing(listing);
-                    return newListing.save();
-                }
-            });
-
-            await Promise.all(savePromises);
-
-            res.json({ listings });
-        } catch (err) {
-            logger.error(err.message)
-            res.status(500).send({ message: err });
-        }
-    })
-
 // GET: List all users
 router.get('/api/users',
     verifyToken,
@@ -124,6 +91,39 @@ router.delete('/api/users/:userId',
         } catch (err) {
             logger.error(err.message)
             res.status(400).send({ message: err })
+        }
+    })
+
+// POST: Sync user listings
+router.post('/api/users/:userId/sync',
+    // verifyToken,
+    validator.validate('post', '/api/users/{userId}/sync'),
+    async (req, res) => {
+        try {
+            const user = await User.findById(req.params.userId);
+            if (!user) {
+                return res.status(404).send({ message: 'User not found' });
+            }
+
+            // Call the function to import listings from Airbnb
+            const listings = await importListingsFromAirbnb('data/airbnb.json');
+
+            // Save each listing to MongoDB if it doesn't already exist
+            const savePromises = listings.map(async (listing) => {
+                const existingListing = await Listing.findOne({ userId: listing.userId, title: listing.title });
+
+                if (!existingListing) {
+                    const newListing = new Listing(listing);
+                    return newListing.save();
+                }
+            });
+
+            await Promise.all(savePromises);
+
+            res.json({ listings });
+        } catch (err) {
+            logger.error(err.message)
+            res.status(500).send({ message: err });
         }
     })
 

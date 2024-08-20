@@ -59,7 +59,7 @@ describe('POST /api/users/register', () => {
             .post('/api/users/register')
             .send({ username: 'testuser', email: 'test@example.com', password: '123456' })
 
-        expect(res.statusCode).to.equal(400)
+        expect(res.statusCode).to.equal(500)
         expect(res.body.message).to.deep.equal({})
         sinon.assert.calledOnce(saveStub)
     })

@@ -1,30 +1,13 @@
-import { SWAGGER_PATH } from '../constants/config.js';
 import express from 'express';
 const router = express.Router()
 import { logger } from '../logger.js'
 
 import { User } from '../models/User.js'
-import { registerValidation, loginValidation } from '../validations/validation.js'
 
 import bcryptjs from 'bcryptjs'
 import jsonwebtoken from 'jsonwebtoken'
 
-import jsYaml from 'js-yaml';
-import fs from 'fs';
-import { OpenApiValidator } from 'express-openapi-validate';
-
-// Load the OpenAPI document
-const openApiDocument = jsYaml.load(fs.readFileSync(SWAGGER_PATH, 'utf-8'));
-
-// Construct the validator with some basic options
-const validator = new OpenApiValidator(openApiDocument,
-    {
-        ajvOptions: {
-            allErrors: true,
-            removeAdditional: "all",
-        }
-    }
-);
+import { validator } from '../../src/validations/validator.js'
 
 // POST: Create user
 router.post('/api/users/register',
@@ -51,7 +34,7 @@ router.post('/api/users/register',
             return res.send(savedUser)
         } catch (err) {
             logger.error(err.message)
-            return res.status(400).send({ message: err })
+            return res.status(500).send({ message: err })
         }
     })
 
@@ -77,7 +60,7 @@ router.post('/api/users/login',
             return res.header('token', token).send({ message: 'User logged in' })
         } catch (err) {
             logger.error(err.message)
-            return res.status(400).send({ message: err })
+            return res.status(500).send({ message: err })
         }
     })
 
