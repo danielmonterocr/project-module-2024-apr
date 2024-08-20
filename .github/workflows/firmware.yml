@@ -23,9 +23,23 @@ jobs:
         python -m pip install --upgrade pip
         pip install -U platformio
 
-    - name: Build
+    - name: Build energy node
       run: |
-        cd esp32/platformio
+        cd esp32/platformio/power-node
+        platformio run
+      env:
+        CI: true
+
+    - name: Build temperature node
+      run: |
+        cd esp32/platformio/temp-node
+        platformio run
+      env:
+        CI: true
+
+    - name: Build water flow node
+      run: |
+        cd esp32/platformio/water-flow-node
         platformio run
       env:
         CI: true
