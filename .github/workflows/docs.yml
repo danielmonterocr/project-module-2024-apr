@@ -1,0 +1,35 @@
+name: docs
+
+on:
+  pull_request:
+  push:
+    paths:
+      - 'docs/**'
+jobs:
+  build-docs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up Git repository
+        uses: actions/checkout@v4
+
+      - name: Compile proposal
+        uses: xu-cheng/latex-action@v3
+        with:
+          working_directory: docs/proposal
+          root_file: proposal.tex
+
+      - name: Compile final report
+        uses: xu-cheng/latex-action@v3
+        with:
+          working_directory: docs/final-report
+          root_file: final-report.tex
+
+      - name: Upload docs
+        uses: actions/upload-artifact@v4
+        with:
+          name: docs
+          path: |
+            docs/proposal/proposal.pdf
+            docs/final-report/final-report.pdf
+          overwrite: truegg
