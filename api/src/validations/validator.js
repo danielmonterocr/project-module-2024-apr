@@ -16,4 +16,7 @@ const validator = new OpenApiValidator(openApiDocument,
     }
 );
 
-export { validator };
+// Construct the test validator with some basic options
+const testValidator = new OpenApiValidator(openApiDocument, {});
+
+export { validator, testValidator };

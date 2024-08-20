@@ -1,20 +1,12 @@
-import { SWAGGER_PATH } from '../../src/constants/config.js'
 import request from 'supertest'
 import { app } from '../../src/app.js'
 import { expect } from 'chai'
 
-import jsYaml from 'js-yaml'
-import fs from 'fs'
-import { OpenApiValidator } from 'express-openapi-validate'
-
-// Load the OpenAPI document
-const openApiDocument = jsYaml.load(fs.readFileSync(SWAGGER_PATH, "utf-8"))
-
-// Create the validator from the spec document
-const validator = new OpenApiValidator(openApiDocument, {})
+import { testValidator as validator } from '../../src/validations/validator.js'
 
 var userId = '';
 var token = '';
+var listingId = '';
 
 describe('POST /api/users/register', function () {
     // Validate response against the OpenAPI document (swagger.yml)
@@ -33,11 +25,6 @@ describe('POST /api/users/register', function () {
             })
             .catch((err) => expect(err).to.be.undefined)
     });
-});
-
-describe('POST /api/users/register', function () {
-    // Validate response against the OpenAPI document (swagger.yml)
-    const validateResponse = validator.validateResponse('post', '/api/users/register')
 
     it('should fail as user already exists', async function () {
         return request(app)
@@ -138,7 +125,42 @@ describe('POST /api/users/{userId}/sync', function () {
             .expect(200)
             .then((res) => {
                 expect(validateResponse(res)).to.be.undefined
+                expect(res.body.message).to.equal('User account synced')
+            })
+            .catch((err) => expect(err).to.be.undefined)
+    });
+});
+
+describe('GET /api/listings', function () {
+    // Validate response against the OpenAPI document (swagger.yml)
+    const validateResponse = validator.validateResponse('get', '/api/listings')
+
+    it('should list all listings', async function () {
+        return request(app)
+            .get('/api/listings')
+            .set('token', token)
+            .expect(200)
+            .then((res) => {
+                expect(validateResponse(res)).to.be.undefined
                 expect(res.body).to.be.an('array')
+                listingId = res.body[0]._id
+            })
+            .catch((err) => expect(err).to.be.undefined)
+    });
+});
+
+describe('DELETE /api/listings/{listingId}', function () {
+    // Validate response against the OpenAPI document (swagger.yml)
+    const validateResponse = validator.validateResponse('delete', '/api/listings/{listingId}')
+
+    it('should delete a listing', async function () {
+        return request(app)
+            .delete('/api/listings/' + listingId)
+            .set('token', token)
+            .expect(200)
+            .then((res) => {
+                expect(validateResponse(res)).to.be.undefined
+                expect(res.body.message).to.equal('Listing deleted')
             })
             .catch((err) => expect(err).to.be.undefined)
     });

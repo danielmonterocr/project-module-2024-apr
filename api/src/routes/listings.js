@@ -69,7 +69,7 @@ router.get('/api/listings/:listingId',
 
 // PUT: Update details of a specific listing 
 router.patch('/api/listings/:listingId',
-    // verifyToken,
+    verifyToken,
     validator.validate('patch', '/api/listings/{listingId}'),
     async (req, res) => {
         var update = {};

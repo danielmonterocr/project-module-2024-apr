@@ -8,6 +8,8 @@ import { Listing } from '../models/Listing.js'
 import { auth as verifyToken } from '../verifyToken.js'
 import { validator } from '../validations/validator.js'
 
+import { importListingsFromAirbnb } from '../utils/provider-utils.js'
+
 // GET: List all users
 router.get('/api/users',
     verifyToken,
@@ -43,7 +45,7 @@ router.get('/api/users/:userId',
 
 // PUT: Update details of a specific user 
 router.patch('/api/users/:userId',
-    // verifyToken,
+    verifyToken,
     validator.validate('patch', '/api/users/{userId}'),
     async (req, res) => {
         var update = {};
@@ -96,7 +98,7 @@ router.delete('/api/users/:userId',
 
 // POST: Sync user listings
 router.post('/api/users/:userId/sync',
-    // verifyToken,
+    verifyToken,
     validator.validate('post', '/api/users/{userId}/sync'),
     async (req, res) => {
         try {
@@ -106,7 +108,7 @@ router.post('/api/users/:userId/sync',
             }
 
             // Call the function to import listings from Airbnb
-            const listings = await importListingsFromAirbnb('data/airbnb.json');
+            const listings = await importListingsFromAirbnb('./data/payloads/airbnb-listings-example.json');
 
             // Save each listing to MongoDB if it doesn't already exist
             const savePromises = listings.map(async (listing) => {
@@ -114,13 +116,15 @@ router.post('/api/users/:userId/sync',
 
                 if (!existingListing) {
                     const newListing = new Listing(listing);
+                    newListing.userId = req.params.userId;
                     return newListing.save();
                 }
             });
 
             await Promise.all(savePromises);
 
-            res.json({ listings });
+            res.status(200).send({ message: 'User account synced' });
+
         } catch (err) {
             logger.error(err.message)
             res.status(500).send({ message: err });

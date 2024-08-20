@@ -1,17 +1,8 @@
-import { SWAGGER_PATH } from '../../src/constants/config.js'
 import request from 'supertest'
 import { app } from '../../src/app.js'
 import { expect } from 'chai'
 
-import jsYaml from 'js-yaml'
-import fs from 'fs'
-import { OpenApiValidator } from 'express-openapi-validate'
-
-// Load the OpenAPI document
-const openApiDocument = jsYaml.load(fs.readFileSync(SWAGGER_PATH, "utf-8"))
-
-// Create the validator from the spec document
-const validator = new OpenApiValidator(openApiDocument, {})
+import { testValidator as validator } from '../../src/validations/validator.js'
 
 var userId = '';
 var token = '';
@@ -171,6 +162,23 @@ describe('DELETE /api/listings/{listingId}', function () {
             .then((res) => {
                 expect(validateResponse(res)).to.be.undefined
                 expect(res.body.message).to.equal('Listing deleted')
+            })
+            .catch((err) => expect(err).to.be.undefined)
+    });
+});
+
+describe('DELETE /api/users/{userId}', function () {
+    // Validate response against the OpenAPI document (swagger.yml)
+    const validateResponse = validator.validateResponse('delete', '/api/users/{userId}')
+
+    it('should delete a user', async function () {
+        return request(app)
+            .delete('/api/users/' + userId)
+            .set('token', token)
+            .expect(200)
+            .then((res) => {
+                expect(validateResponse(res)).to.be.undefined
+                expect(res.body.message).to.equal('User deleted')
             })
             .catch((err) => expect(err).to.be.undefined)
     });
