@@ -12,7 +12,7 @@
 Energy consumed can be calculated by summing the power over the 60 seconds:
 
 \begin{equation}
-    \text{Energy} = \sum_{i=1}^{60} (I_i \times V_i)
+    \text{Energy} = \sum_{i=1}^{120} (I_i \times V_i)
 \end{equation}
 
 This gives the total energy used in that minute (in watt-seconds or joules).
@@ -25,6 +25,11 @@ This gives the total energy used in that minute (in watt-seconds or joules).
 \end{figure}
 
 \subsection{Water Flow Node}
+
+\begin{align}
+    \text{Volume} &{}= \sum_{i=1}^{120} Q_i \times \underbrace{\Delta t}_{=1\text{s}}\\
+                  &{}= \sum_{i=1}^{120} Q_i
+\end{align}
 
 \begin{figure}[h!]
     \centering
@@ -41,6 +46,10 @@ This gives the total energy used in that minute (in watt-seconds or joules).
 \end{figure}
 
 \subsection{Temperature Node}
+
+\begin{equation}
+    \text{Average Temperature} = \frac{1}{120} \sum_{i=1}^{120} T_i
+\end{equation}
 
 \begin{figure}[h!]
     \centering
