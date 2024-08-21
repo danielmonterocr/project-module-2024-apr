@@ -26,6 +26,8 @@ This gives the total energy used in that minute (in watt-seconds or joules).
 
 \subsection{Water Flow Node}
 
+Read water flow every second for 120 seconds, sum the values and upload them.
+
 \begin{align}
     \text{Volume} &{}= \sum_{i=1}^{120} Q_i \times \underbrace{\Delta t}_{=1\text{s}}\\
                   &{}= \sum_{i=1}^{120} Q_i
@@ -46,6 +48,8 @@ This gives the total energy used in that minute (in watt-seconds or joules).
 \end{figure}
 
 \subsection{Temperature Node}
+
+Calculate the average temperature over 120 seconds, then upload it.
 
 \begin{equation}
     \text{Average Temperature} = \frac{1}{120} \sum_{i=1}^{120} T_i
