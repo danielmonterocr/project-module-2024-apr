@@ -89,7 +89,7 @@ void measurePowerTask(void *pvParameters) {
 
     unsigned long end = millis();
 
-    // Delay to keep the task running every 1 second,
+    // Delay to keep the task running every 2 seconds,
     // deduct the time taken to measure power
     vTaskDelay((MQTT_PUBLISH_INTERVAL_MS - (end - start)) / portTICK_PERIOD_MS);
   }
