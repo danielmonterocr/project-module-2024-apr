@@ -26,6 +26,7 @@ jobs:
     - name: Build energy node
       run: |
         cd esp32/platformio/power-node
+        cp include/config-dist.h include/config.h
         platformio run
       env:
         CI: true
@@ -33,6 +34,7 @@ jobs:
     - name: Build temperature node
       run: |
         cd esp32/platformio/temp-node
+        cp include/config-dist.h include/config.h
         platformio run
       env:
         CI: true
@@ -40,6 +42,7 @@ jobs:
     - name: Build water flow node
       run: |
         cd esp32/platformio/water-flow-node
+        cp include/config-dist.h include/config.h
         platformio run
       env:
         CI: true
