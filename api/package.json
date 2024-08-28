@@ -14,8 +14,10 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "dotenv": "^16.4.5",
+    "dotenv-expand": "^11.0.6",
     "express": "^4.19.2",
     "joi": "^17.13.3",
+    "js-yaml": "^4.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.5.2",
     "nodemon": "^3.1.4",
@@ -25,7 +27,6 @@
   "devDependencies": {
     "chai": "^5.1.1",
     "express-openapi-validate": "^0.6.1",
-    "js-yaml": "^4.1.0",
     "mocha": "^10.7.0",
     "sinon": "^18.0.0",
     "supertest": "^7.0.0"

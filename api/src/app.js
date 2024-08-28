@@ -1,9 +1,8 @@
-import { PORT } from './constants/config.js';
+import { PORT, uri } from './constants/config.js';
 import express from 'express';
 const app = express();
 
 import mongoose from 'mongoose';
-import 'dotenv/config';
 
 app.use(express.json())
 
@@ -21,7 +20,7 @@ app.use('/', authRoute);
 app.use('/', usersRoute);
 app.use('/', listingsRoute);
 
-mongoose.connect(process.env.DB_CONNECTOR);
+mongoose.connect(uri);
 
 app.listen(PORT, () => console.log('App listening on port: ' + PORT));
 

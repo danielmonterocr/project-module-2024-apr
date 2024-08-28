@@ -10,7 +10,6 @@ describe('POST /api/users/register', () => {
     let findOneStub, saveStub, genSaltStub, hashStub
 
     beforeEach(() => {
-        process.env.DB_CONNECTOR = 'mongodb+srv'
         findOneStub = sinon.stub(User, 'findOne')
         saveStub = sinon.stub(User.prototype, 'save')
         genSaltStub = sinon.stub(bcryptjs, 'genSalt')

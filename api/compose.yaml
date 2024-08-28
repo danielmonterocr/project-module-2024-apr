@@ -17,17 +17,27 @@ services:
     image: mongo
     restart: always
     env_file: ".env"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=$DB_USER
+      - MONGO_INITDB_ROOT_PASSWORD=$DB_PASSWORD
     ports:
-      - 27017:27017
+      - $DB_PORT:$DB_PORT
 
-  server:
+  api-server:
     build:
       context: .
     depends_on:
       - mytb
       - mongo
+    env_file: .env
     environment:
       NODE_ENV: production
-    env_file: ".env"
+      PORT: $PORT
+      DB_USER: $DB_USER
+      DB_PASSWORD: $DB_PASSWORD
+      DB_PORT: $DB_PORT
+      DB_DOMAIN: $DB_DOMAIN
+      DB_NAME: $DB_NAME
+
     ports:
-      - 3000:3000
+      - $PORT:$PORT
