@@ -23,12 +23,13 @@ services:
     ports:
       - $DB_PORT:$DB_PORT
 
-  api-server:
+  server:
     build:
       context: .
     depends_on:
       - mytb
       - mongo
+    restart: always
     env_file: .env
     environment:
       NODE_ENV: production
