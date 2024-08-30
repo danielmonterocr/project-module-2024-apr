@@ -21,12 +21,6 @@ void setup()
   // Initialize built-in LED
   pinMode(LED_BUILTIN, OUTPUT);
 
-  // Initialize ADCs
-  adc1_config_channel_atten(ADC1_CHANNEL_0, ADC_ATTEN_DB_12);
-  analogReadResolution(ADC_BITS);
-  pinMode(ADC_INPUT_1, INPUT);
-  pinMode(ADC_INPUT_2, INPUT);
-
   setupCurrentSensors();
 
   /**

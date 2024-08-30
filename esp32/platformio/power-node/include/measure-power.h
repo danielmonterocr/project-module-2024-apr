@@ -17,37 +17,29 @@ extern double power2;
  * @brief Setup power sensors.
  */
 void setupCurrentSensors() {
+  // Initialize ADCs
+  adc1_config_channel_atten(ADC1_CHANNEL_0, ADC_ATTEN_DB_12);
+  analogReadResolution(ADC_BITS);
+  pinMode(ADC_INPUT_1, INPUT);
+  pinMode(ADC_INPUT_2, INPUT);
+
   // Initialize current sensors
   emon1.current(ADC_INPUT_1, CT_CALIBRATION); // Current: input pin, calibration
   emon2.current(ADC_INPUT_2, CT_CALIBRATION); // Current: input pin, calibration
 }
 
 /**
- * @brief Measure power 1.
+ * @brief Measure power.
  * 
- * @return double Power 1.
+ * @return double Power.
  */
-double measurePower1() {
-  double irms1 = emon1.calcIrms(1480); // Calculate Irms only
-  serial_print("Current 1: ");
+double measurePower(EnergyMonitor emon) {
+  double irms1 = emon.calcIrms(1480); // Calculate Irms only
+  serial_print("Current: ");
   serial_print(irms1);
   serial_println("A");
 
   return irms1 * HOME_VOLTAGE;
-}
-
-/**
- * @brief Measure power 2.
- * 
- * @return double Power 2.
- */
-double measurePower2() {
-  double irms2 = emon2.calcIrms(1480); // Calculate Irms only
-  serial_print("Current 2: ");
-  serial_print(irms2);
-  serial_println("A");
-
-  return irms2 * HOME_VOLTAGE;
 }
 
 /**
@@ -58,15 +50,14 @@ double measurePower2() {
 void measurePowerTask(void *pvParameters) {
   uint8_t i = 1;
   for(;;) {
-    serial_println("Measure power");
-    serial_print("Iteration: ");
+    // serial_println("Measure power");
+    // serial_print("Iteration: ");
     serial_println(i);
 
     unsigned long start = millis();
 
-    power1 += measurePower1();
-    power2 += measurePower2();
-    blinkLED(BUILTIN_LED, 1, 500); // Blink once with 500ms delay
+    power1 += measurePower(emon1);
+    power2 += measurePower(emon2);
 
     serial_print("Power 1: ");
     serial_println(power1);
@@ -82,9 +73,7 @@ void measurePowerTask(void *pvParameters) {
         5,
         NULL);
 
-        i = 0;
-        power1 = 0;
-        power2 = 0;
+      i = 1;
     }
 
     unsigned long end = millis();

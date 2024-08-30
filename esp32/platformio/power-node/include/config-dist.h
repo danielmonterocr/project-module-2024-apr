@@ -27,7 +27,7 @@
 #define HOME_VOLTAGE 110.0
 #define emonTxV3 1
 
-#define NUM_MEASUREMENTS 120
+#define NUM_MEASUREMENTS 60
 
 #if DEBUG == true
   #define serial_print(x)  Serial.print(x)
