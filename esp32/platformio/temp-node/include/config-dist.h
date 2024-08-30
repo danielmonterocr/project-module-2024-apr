@@ -24,7 +24,7 @@
 // Data wire is plugged TO GPIO 4
 #define ONE_WIRE_BUS 4
 
-#define NUM_MEASUREMENTS 120
+#define NUM_MEASUREMENTS 60
 
 #if DEBUG == true
   #define serial_print(x)  Serial.print(x)

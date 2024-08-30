@@ -32,53 +32,30 @@ void setupTemperatureSensors() {
 }
 
 /**
- * @brief Measure temperature 1.
+ * @brief Measure temperature.
  * 
  * @return Temperature in Celsius.
  */
-float measureTemperature1() {
+float measureTemperature(uint8_t deviceIndex) {
   sensors.requestTemperatures();  // Send the command to get temperatures
   float temp = 0;
 
   // Get temperature from first sensor
-  if (sensors.getAddress(tempDeviceAddress, 0)) {
+  if (sensors.getAddress(tempDeviceAddress, deviceIndex)) {
     // Output the device ID
     // Serial.print("Temperature for device: ");
     // Serial.println(0, DEC);
     // Print the data
     temp = sensors.getTempC(tempDeviceAddress);
-    serial_print("Temp C: ");
-    serial_println(temp);
+    // serial_print("Temp C: ");
+    // serial_println(temp);
     return temp;
   }
 
-  serial_println("Temp sensor1 not found");
+  serial_print("Temp sensor");
+  serial_print(deviceIndex);
+  serial_println(" not found");
   return temp;
-}
-
-/**
- * @brief Measure temperature 2.
- * 
- * @return Temperature in Celsius.
- */
-float measureTemperature2() {
-  sensors.requestTemperatures();  // Send the command to get temperatures
-  float temp = 0;
-
-  // Get temperature from second sensor
-  if (sensors.getAddress(tempDeviceAddress, 1)) {
-    // Output the device ID
-    // Serial.print("Temperature for device: ");
-    // Serial.println(1, DEC);
-    // Print the data
-    temp = sensors.getTempC(tempDeviceAddress);
-    serial_print("Temp C: ");
-    serial_println(temp);
-    return temp;
-  }
-
-  serial_println("Temp sensor2 not found");
-  return 0;
 }
 
 /**
@@ -89,15 +66,14 @@ float measureTemperature2() {
 void measureTemperatureTask(void *pvParameters) {
   uint8_t i = 1;
   for(;;) {
-    serial_println("Measure temperature");
-    serial_print("Iteration: ");
+    // serial_println("Measure temperature");
+    // serial_print("Iteration: ");
     serial_println(i);
 
     unsigned long start = millis();
 
-    temperature1 += measureTemperature1();
-    temperature2 += measureTemperature2();
-    blinkLED(BUILTIN_LED, 1, 500); // Blink once with 500ms delay
+    temperature1 += measureTemperature(0);
+    temperature2 += measureTemperature(1);
 
     if (i++ % NUM_MEASUREMENTS == 0) {
       /*
@@ -118,9 +94,7 @@ void measureTemperatureTask(void *pvParameters) {
         5,
         NULL);
 
-        i = 0;
-        temperature1 = 0;
-        temperature2 = 0;
+      i = 1;
     }
 
     unsigned long end = millis();

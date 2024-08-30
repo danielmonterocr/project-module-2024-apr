@@ -25,10 +25,7 @@ void keepMqttConnectionAliveTask(void* pvParameters) {
   for(;;) {
     // If connected delay and check again
     if (tb.connected()) {
-      if (tb.loop()) {
-        serial_println("Message sent successfully!");
-        blinkLED(BUILTIN_LED, 3, 200); // Blink three times with 200ms delay
-      }
+      tb.loop();
       vTaskDelay(MQTT_CHECK_INTERVAL_MS / portTICK_PERIOD_MS);
       continue;
     }
@@ -60,12 +57,20 @@ void keepMqttConnectionAliveTask(void* pvParameters) {
  * @param pvParameters Parameters for the task.
  */
 void sendDataToThingsboard(void* pvParams) {
+  if (!WiFi.isConnected() || !tb.connected()) {
+    serial_println("WiFi or MQTT not connected. Exiting sendDataToThingsboard task...");
+    vTaskDelete(NULL);
+  }
+
   serial_println("Sending data...");
   // Uploads new telemetry to ThingsBoard using MQTT.
   // See https://thingsboard.io/docs/reference/mqtt-api/#telemetry-upload-api
   // for more details
   tb.sendTelemetryData("temperature1", temperature1);
   tb.sendTelemetryData("temperature2", temperature2);
+  blinkLED(BUILTIN_LED, 3, 200); // Blink three times with 200ms delay
+
+  vTaskDelete(NULL);
 }
 
 #endif
