@@ -37,12 +37,19 @@ jobs:
         working-directory: ./api
         run: npm test
         env:
-          DB_CONNECTOR: ${{ secrets.DB_CONNECTOR }}
           TOKEN_SECRET: ${{ secrets.TOKEN_SECRET }}
+          DB_PREFIX: ${{ secrets.DB_PREFIX }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_DOMAIN: ${{ secrets.DB_DOMAIN }}
+          DB_NAME: ${{ secrets.DB_NAME }}
 
       - name: Run integration tests
         working-directory: ./api
         run: npm run test-int
         env:
-          DB_CONNECTOR: ${{ secrets.DB_CONNECTOR }}
           TOKEN_SECRET: ${{ secrets.TOKEN_SECRET }}
+          DB_PREFIX: ${{ secrets.DB_PREFIX }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_DOMAIN: ${{ secrets.DB_DOMAIN }}
