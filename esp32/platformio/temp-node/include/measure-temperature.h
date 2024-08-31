@@ -101,7 +101,7 @@ void measureTemperatureTask(void *pvParameters) {
 
     // Delay to keep the task running every 2 seconds,
     // deduct the time taken to measure power
-    vTaskDelay((MQTT_PUBLISH_INTERVAL_MS - (end - start)) / portTICK_PERIOD_MS);
+    vTaskDelay((SENSE_INTERVAL_MS - (end - start)) / portTICK_PERIOD_MS);
   }
 }
 
