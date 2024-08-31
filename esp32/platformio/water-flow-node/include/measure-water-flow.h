@@ -43,7 +43,7 @@ float measureWaterFlow() {
 
   // Divide the flow rate in litres/minute by 60 to determine how many litres have
   // passed through the sensor in this 1 second interval
-  return flowRate / 60;
+  return flowRate / 60.0;
 }
 
 /**
@@ -55,8 +55,8 @@ void measureWaterFlowTask(void *pvParameters) {
   uint8_t i = 1;
   for (;;) {
     unsigned long start = millis();
-    serial_println("Measure power");
-    serial_print("Iteration: ");
+    // serial_println("Measure power");
+    // serial_print("Iteration: ");
     serial_println(i);
 
     if (i++ % NUM_MEASUREMENTS == 0) {
@@ -68,8 +68,8 @@ void measureWaterFlowTask(void *pvParameters) {
         5,
         NULL);
 
-        i = 0;
-        totalLiters = 0;
+      i = 1;
+      totalLiters = 0;
     }
 
     unsigned long end = millis();
@@ -81,7 +81,6 @@ void measureWaterFlowTask(void *pvParameters) {
     // Right after this point 1 second have passed, calculate water flow
     flowRate = measureWaterFlow();
     totalLiters += flowRate;
-    blinkLED(BUILTIN_LED, 1, 500); // Blink once with 500ms delay
 
     serial_print("Flow rate: ");
     serial_println(flowRate);
