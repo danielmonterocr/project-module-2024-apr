@@ -4,7 +4,6 @@
 #include "mqtt-connection.h"
 
 #include <Arduino.h>
-#include <driver/adc.h>
 
 double power1 = 0;
 double power2 = 0;
