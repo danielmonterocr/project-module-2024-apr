@@ -1,4 +1,6 @@
 import fs from 'fs';
+import { Listing } from '../models/Listing.js';
+import { Reservation } from '../models/Reservation.js';
 
 /**
  * Import listings from Airbnb JSON file
@@ -73,4 +75,33 @@ const importReservationsFromAirbnb = (filePath) => {
     });
 };
 
-export { importListingsFromAirbnb, importReservationsFromAirbnb };
+const saveListingsFromAirbnbToDb = async (userId, listings) => {
+    // Save each listing to MongoDB if it doesn't already exist
+    const savePromises = listings.map(async (listing) => {
+        const existingListing = await Listing.findOne({ userId: userId, title: listing.title });
+
+        if (!existingListing) {
+            const newListing = new Listing(listing);
+            newListing.userId = userId;
+            return newListing.save();
+        }
+    });
+
+    await Promise.all(savePromises);
+}
+
+const saveReservationsFromAirbnbToDb = async (reservations) => {
+    // Save each reservation to MongoDB if it doesn't already exist
+    const savePromises = reservations.map(async (reservation) => {
+        const existingReservation = await Reservation.findOne({ listingId: reservation.listingId });
+
+        if (!existingReservation) {
+            const newReservation = new Reservation(reservation);
+            return newReservation.save();
+        }
+    });
+
+    await Promise.all(savePromises);
+}
+
+export { importListingsFromAirbnb, importReservationsFromAirbnb, saveListingsFromAirbnbToDb, saveReservationsFromAirbnbToDb };

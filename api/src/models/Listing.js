@@ -1,6 +1,12 @@
 import mongoose from 'mongoose'
 
 const listingSchema = mongoose.Schema({
+    listingId: {
+        type: String,
+        require: true,
+        min: 3,
+        max: 256
+    },
     provider: {
         type: String,
         require: true,
