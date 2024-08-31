@@ -30,7 +30,7 @@ router.post('/api/listings',
             return res.send(savedListing)
         } catch (err) {
             logger.error(err.message)
-            return res.status(400).send({ message: err })
+            return res.status(500).send({ message: err })
         }
     })
 
@@ -63,7 +63,7 @@ router.get('/api/listings/:listingId',
             return res.send(listing);
         } catch (err) {
             logger.error(err.message)
-            res.status(400).send({ message: err })
+            res.status(500).send({ message: err })
         }
     })
 
@@ -99,7 +99,7 @@ router.patch('/api/listings/:listingId',
             res.status(200).send({ message: 'Listing updated' });
         } catch (err) {
             logger.error(err.message)
-            res.status(400).send({ message: 'err' })
+            res.status(500).send({ message: 'err' })
         }
     })
 
@@ -119,7 +119,7 @@ router.delete('/api/listings/:listingId',
             res.status(200).send({ message: 'Listing deleted' });
         } catch (err) {
             logger.error(err.message)
-            res.status(400).send({ message: err })
+            res.status(500).send({ message: err })
         }
     })
 

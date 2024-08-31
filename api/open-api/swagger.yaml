@@ -364,6 +364,32 @@ paths:
           description: Bad request
         '404':
           description: Listing not found
+  /api/providers:
+    post:
+      tags:
+        - providers
+      summary: Create a new provider
+      description: This can only be done by the logged in user
+      operationId: createProvider
+      requestBody:
+        description: Create provider object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Provider'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Provider'
+        '400':
+          description: Provider already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
 components:
   schemas:
     User:
@@ -411,6 +437,15 @@ components:
         location:
           type: string
           examples: [New York]
+        userId:
+          type: string
+          examples: [1234567890]
+    Provider:
+      type: object
+      properties:
+        providerId:
+          type: string
+          examples: [1234567890]
         userId:
           type: string
           examples: [1234567890]
