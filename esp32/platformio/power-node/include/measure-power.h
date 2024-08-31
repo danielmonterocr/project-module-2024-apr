@@ -5,6 +5,7 @@
 #include "utils.h"
 #include "mqtt-connection.h"
 
+#include <driver/adc.h>
 #include <EmonLib.h>
 
 EnergyMonitor emon1;
