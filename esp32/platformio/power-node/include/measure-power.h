@@ -11,11 +11,13 @@
 EnergyMonitor emon1;
 EnergyMonitor emon2;
 
+extern SemaphoreHandle_t shared_vars_mutex;
 extern double power1;
 extern double power2;
 
 /**
  * @brief Get value from a string.
+ *        Taken from : https://arduino.stackexchange.com/questions/1013/how-do-i-split-an-incoming-string
  * 
  * @param data String to extract value from.
  * @param separator Separator character.
@@ -23,8 +25,7 @@ extern double power2;
  * 
  * @return String Extracted value.
  */
-String getValue(String data, char separator, int index)
-{
+String getValue(String data, char separator, int index) {
     int found = 0;
     int strIndex[] = { 0, -1 };
     int maxIndex = data.length() - 1;
@@ -62,18 +63,16 @@ void setupCurrentSensors() {
  * 
  * @return double Power.
  */
-double measurePower(uint8_t sensor) {
+void measurePower(double *power1, double *power2) {
   // Read the message from Arduino Leonardo
   if (Serial2.available()) {
     String receivedMessage = Serial2.readStringUntil('\n');
     Serial.print("Received message: ");
     Serial.println(receivedMessage);
 
-    String power = getValue(receivedMessage, ' ', sensor);
-    return power.toDouble();
+    *power1 = getValue(receivedMessage, ' ', 0).toDouble();
+    *power2 = getValue(receivedMessage, ' ', 1).toDouble();
   }
-
-  return 0.0;
 }
 
 /**
@@ -90,8 +89,9 @@ void measurePowerTask(void *pvParameters) {
 
     unsigned long start = millis();
 
-    power1 += measurePower(0);
-    power2 += measurePower(1);
+    xSemaphoreTake(shared_vars_mutex, portMAX_DELAY);
+    measurePower(&power1, &power2);
+    xSemaphoreGive(shared_vars_mutex);
 
     serial_print("Power 1: ");
     serial_print(power1);
@@ -110,8 +110,6 @@ void measurePowerTask(void *pvParameters) {
         NULL);
 
       i = 1;
-      power1 = 0;
-      power2 = 0;
     }
 
     unsigned long end = millis();
