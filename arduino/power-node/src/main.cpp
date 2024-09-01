@@ -43,5 +43,5 @@ void loop()
   ArduinoLeoSoftSerial.print(realPower2);
   ArduinoLeoSoftSerial.print("\n");
 
-  delay(500);
+  delay(200);
 }
