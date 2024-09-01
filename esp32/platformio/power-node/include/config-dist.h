@@ -23,8 +23,8 @@
 
 #define ADC_INPUT_1 33
 #define ADC_INPUT_2 34
-#define CT_CALIBRATION 111.1
-#define HOME_VOLTAGE 110.0
+#define CT_CALIBRATION 20.0
+#define HOME_VOLTAGE 118.0
 #define emonTxV3 1
 
 #define NUM_MEASUREMENTS 60

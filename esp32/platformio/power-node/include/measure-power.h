@@ -15,18 +15,46 @@ extern double power1;
 extern double power2;
 
 /**
+ * @brief Get value from a string.
+ * 
+ * @param data String to extract value from.
+ * @param separator Separator character.
+ * @param index Index of the value to extract.
+ * 
+ * @return String Extracted value.
+ */
+String getValue(String data, char separator, int index)
+{
+    int found = 0;
+    int strIndex[] = { 0, -1 };
+    int maxIndex = data.length() - 1;
+
+    for (int i = 0; i <= maxIndex && found <= index; i++) {
+        if (data.charAt(i) == separator || i == maxIndex) {
+            found++;
+            strIndex[0] = strIndex[1] + 1;
+            strIndex[1] = (i == maxIndex) ? i+1 : i;
+        }
+    }
+    return found > index ? data.substring(strIndex[0], strIndex[1]) : "";
+}
+
+/**
  * @brief Setup power sensors.
  */
 void setupCurrentSensors() {
   // Initialize ADCs
-  adc1_config_channel_atten(ADC1_CHANNEL_0, ADC_ATTEN_DB_12);
-  analogReadResolution(ADC_BITS);
-  pinMode(ADC_INPUT_1, INPUT);
-  pinMode(ADC_INPUT_2, INPUT);
+  // adc1_config_channel_atten(ADC1_CHANNEL_5, ADC_ATTEN_DB_12);
+  // adc1_config_channel_atten(ADC1_CHANNEL_6, ADC_ATTEN_DB_12);
+  // analogReadResolution(ADC_BITS);
+  // pinMode(ADC_INPUT_1, INPUT);
+  // pinMode(ADC_INPUT_2, INPUT);
 
   // Initialize current sensors
-  emon1.current(ADC_INPUT_1, CT_CALIBRATION); // Current: input pin, calibration
-  emon2.current(ADC_INPUT_2, CT_CALIBRATION); // Current: input pin, calibration
+  // emon1.current(ADC_INPUT_1, CT_CALIBRATION); // Current: input pin, calibration
+  // emon2.current(ADC_INPUT_2, CT_CALIBRATION); // Current: input pin, calibration
+
+  Serial2.begin(9600, SERIAL_8N1, 16, 17);
 }
 
 /**
@@ -34,13 +62,18 @@ void setupCurrentSensors() {
  * 
  * @return double Power.
  */
-double measurePower(EnergyMonitor emon) {
-  double irms1 = emon.calcIrms(1480); // Calculate Irms only
-  serial_print("Current: ");
-  serial_print(irms1);
-  serial_println("A");
+double measurePower(uint8_t sensor) {
+  // Read the message from Arduino Leonardo
+  if (Serial2.available()) {
+    String receivedMessage = Serial2.readStringUntil('\n');
+    Serial.print("Received message: ");
+    Serial.println(receivedMessage);
 
-  return irms1 * HOME_VOLTAGE;
+    String power = getValue(receivedMessage, ' ', sensor);
+    return power.toDouble();
+  }
+
+  return 0.0;
 }
 
 /**
@@ -57,13 +90,15 @@ void measurePowerTask(void *pvParameters) {
 
     unsigned long start = millis();
 
-    power1 += measurePower(emon1);
-    power2 += measurePower(emon2);
+    power1 += measurePower(0);
+    power2 += measurePower(1);
 
     serial_print("Power 1: ");
-    serial_println(power1);
+    serial_print(power1);
+    serial_println("W");
     serial_print("Power 2: ");
-    serial_println(power2);
+    serial_print(power2);
+    serial_println("W");
 
     if (i++ % NUM_MEASUREMENTS == 0) {
       xTaskCreate(
@@ -75,6 +110,8 @@ void measurePowerTask(void *pvParameters) {
         NULL);
 
       i = 1;
+      power1 = 0;
+      power2 = 0;
     }
 
     unsigned long end = millis();
