@@ -23,10 +23,17 @@ jobs:
         python -m pip install --upgrade pip
         pip install -U platformio
 
-    - name: Build energy node
+    - name: Build energy node (ESP32)
       run: |
         cd esp32/platformio/power-node
         cp include/config-dist.h include/config.h
+        platformio run
+      env:
+        CI: true
+
+    - name: Build energy node (Arduino)
+      run: |
+        cd arduino/power-node
         platformio run
       env:
         CI: true
@@ -46,3 +53,4 @@ jobs:
         platformio run
       env:
         CI: true
+
