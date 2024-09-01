@@ -70,8 +70,10 @@ void measurePower(double *power1, double *power2) {
     Serial.print("Received message: ");
     Serial.println(receivedMessage);
 
+    xSemaphoreTake(shared_vars_mutex, portMAX_DELAY);
     *power1 = getValue(receivedMessage, ' ', 0).toDouble();
     *power2 = getValue(receivedMessage, ' ', 1).toDouble();
+    xSemaphoreGive(shared_vars_mutex);
   }
 }
 
@@ -89,9 +91,7 @@ void measurePowerTask(void *pvParameters) {
 
     unsigned long start = millis();
 
-    xSemaphoreTake(shared_vars_mutex, portMAX_DELAY);
     measurePower(&power1, &power2);
-    xSemaphoreGive(shared_vars_mutex);
 
     serial_print("Power 1: ");
     serial_print(power1);
