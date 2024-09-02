@@ -14,6 +14,8 @@ EnergyMonitor emon2;
 extern SemaphoreHandle_t shared_vars_mutex;
 extern double power1;
 extern double power2;
+extern double totalPower1;
+extern double totalPower2;
 
 /**
  * @brief Get value from a string.
@@ -64,16 +66,22 @@ void setupCurrentSensors() {
  * @return double Power.
  */
 void measurePower(double *power1, double *power2) {
+  uint8_t i = 0;
+
   // Read the message from Arduino Leonardo
-  if (Serial2.available()) {
+  Serial2.flush();
+  while(!Serial2.available() && i++ < 5);
+
+  if (Serial2.available() == 0) {
+    serial_println("No message received from Arduino Leonardo");
+    return;
+  } else {
     String receivedMessage = Serial2.readStringUntil('\n');
     Serial.print("Received message: ");
     Serial.println(receivedMessage);
 
-    xSemaphoreTake(shared_vars_mutex, portMAX_DELAY);
     *power1 = getValue(receivedMessage, ' ', 0).toDouble();
     *power2 = getValue(receivedMessage, ' ', 1).toDouble();
-    xSemaphoreGive(shared_vars_mutex);
   }
 }
 
@@ -100,7 +108,19 @@ void measurePowerTask(void *pvParameters) {
     serial_print(power2);
     serial_println("W");
 
+    xSemaphoreTake(shared_vars_mutex, portMAX_DELAY);
+    totalPower1 += power1;
+    totalPower2 += power2;
+    xSemaphoreGive(shared_vars_mutex);
+
     if (i++ % NUM_MEASUREMENTS == 0) {
+      serial_print("Total power 1: ");
+      serial_print(totalPower1);
+      serial_println("W");
+      serial_print("Total power 2: ");
+      serial_print(totalPower2);
+      serial_println("W");
+
       xTaskCreate(
         sendDataToThingsboard,
         "sendDataToThingsboard",

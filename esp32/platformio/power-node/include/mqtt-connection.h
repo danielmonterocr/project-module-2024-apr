@@ -14,8 +14,8 @@ Arduino_MQTT_Client mqttClient(espClient);
 ThingsBoard tb(mqttClient);
 
 extern SemaphoreHandle_t shared_vars_mutex;
-extern double power1;
-extern double power2;
+extern double totalPower1;
+extern double totalPower2;
 
 /**
  * @brief Task to keep MQTT connection alive.
@@ -67,13 +67,13 @@ void sendDataToThingsboard(void* pvParams) {
   // Uploads new telemetry to ThingsBoard using MQTT.
   // See https://thingsboard.io/docs/reference/mqtt-api/#telemetry-upload-api
   // for more details
-  tb.sendTelemetryData("power1", power1);
-  tb.sendTelemetryData("power2", power2);
+  tb.sendTelemetryData("power1", totalPower1 / NUM_MEASUREMENTS);
+  tb.sendTelemetryData("power2", totalPower2 / NUM_MEASUREMENTS);
   blinkLED(BUILTIN_LED, 3, 200); // Blink three times with 200ms delay
 
   xSemaphoreTake(shared_vars_mutex, portMAX_DELAY);
-  power1 = 0;
-  power2 = 0;
+  totalPower1 = 0;
+  totalPower2 = 0;
   xSemaphoreGive(shared_vars_mutex);
 
   vTaskDelete(NULL);
