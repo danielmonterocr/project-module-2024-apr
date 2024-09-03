@@ -8,6 +8,7 @@
 #include <Arduino.h>
 
 volatile byte pulseCount;
+float tempTotalLiters;
 extern float flowRate;
 extern float totalLiters;
 
@@ -60,6 +61,12 @@ void measureWaterFlowTask(void *pvParameters) {
     serial_println(i);
 
     if (i++ % NUM_MEASUREMENTS == 0) {
+      totalLiters = tempTotalLiters;
+      serial_print("Total liters: ");
+      serial_println(totalLiters);
+
+      tempTotalLiters = 0;
+
       xTaskCreate(
         sendDataToThingsboard,
         "sendDataToThingsboard",
@@ -69,7 +76,6 @@ void measureWaterFlowTask(void *pvParameters) {
         NULL);
 
       i = 1;
-      totalLiters = 0;
     }
 
     unsigned long end = millis();
@@ -80,12 +86,12 @@ void measureWaterFlowTask(void *pvParameters) {
 
     // Right after this point 1 second have passed, calculate water flow
     flowRate = measureWaterFlow();
-    totalLiters += flowRate;
+    tempTotalLiters += flowRate;
 
     serial_print("Flow rate: ");
     serial_println(flowRate);
     serial_print("Total liters: ");
-    serial_println(totalLiters);
+    serial_println(tempTotalLiters);
   }
 }
 

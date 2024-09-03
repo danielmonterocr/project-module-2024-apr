@@ -24,7 +24,7 @@
 #define CALIBRATION_FACTOR 7.11
 #define SENSE_INTERVAL_MS 1000
 
-#define NUM_MEASUREMENTS 120
+#define NUM_MEASUREMENTS 60
 
 #if DEBUG == true
   #define serial_print(x)  Serial.print(x)
