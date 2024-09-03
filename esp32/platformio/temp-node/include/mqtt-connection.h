@@ -15,6 +15,8 @@ ThingsBoard tb(mqttClient);
 
 extern double temperature1;
 extern double temperature2;
+extern double totalTemperature1;
+extern double totalTemperature2;
 
 /**
  * @brief Task to keep MQTT connection alive.
@@ -66,8 +68,8 @@ void sendDataToThingsboard(void* pvParams) {
   // Uploads new telemetry to ThingsBoard using MQTT.
   // See https://thingsboard.io/docs/reference/mqtt-api/#telemetry-upload-api
   // for more details
-  tb.sendTelemetryData("temperature1", temperature1);
-  tb.sendTelemetryData("temperature2", temperature2);
+  tb.sendTelemetryData("temperature1", totalTemperature1 / NUM_MEASUREMENTS);
+  tb.sendTelemetryData("temperature2", totalTemperature2 / NUM_MEASUREMENTS);
   blinkLED(BUILTIN_LED, 3, 200); // Blink three times with 200ms delay
 
   vTaskDelete(NULL);

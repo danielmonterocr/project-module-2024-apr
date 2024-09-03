@@ -12,8 +12,12 @@ OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature sensors(&oneWire);
 DeviceAddress tempDeviceAddress;
 
+double tempTemperature1;
+double tempTemperature2;
 extern double temperature1;
 extern double temperature2;
+extern double totalTemperature1;
+extern double totalTemperature2;
 
 /**
  * @brief Setup temperature sensors.
@@ -22,6 +26,7 @@ void setupTemperatureSensors() {
   int numberOfDevices;
   // Initialize temperature sensors
   sensors.begin();
+  sensors.setResolution(TEMPERATURE_PRECISION);
   // Grab a count of devices on the wire
   numberOfDevices = sensors.getDeviceCount();
   // Locate devices on the bus
@@ -37,24 +42,13 @@ void setupTemperatureSensors() {
  * @return Temperature in Celsius.
  */
 float measureTemperature(uint8_t deviceIndex) {
-  sensors.requestTemperatures();  // Send the command to get temperatures
   float temp = 0;
+  sensors.requestTemperatures();
+  while (!sensors.isConversionComplete());
 
   // Get temperature from first sensor
-  if (sensors.getAddress(tempDeviceAddress, deviceIndex)) {
-    // Output the device ID
-    // Serial.print("Temperature for device: ");
-    // Serial.println(0, DEC);
-    // Print the data
-    temp = sensors.getTempC(tempDeviceAddress);
-    // serial_print("Temp C: ");
-    // serial_println(temp);
-    return temp;
-  }
+  temp = sensors.getTempCByIndex(deviceIndex);
 
-  serial_print("Temp sensor");
-  serial_print(deviceIndex);
-  serial_println(" not found");
   return temp;
 }
 
@@ -72,19 +66,31 @@ void measureTemperatureTask(void *pvParameters) {
 
     unsigned long start = millis();
 
-    temperature1 += measureTemperature(0);
-    temperature2 += measureTemperature(1);
+    tempTemperature1 = measureTemperature(0);
+    tempTemperature2 = measureTemperature(1);
+
+    serial_print("Temp 1: ");
+    serial_print(tempTemperature1);
+    serial_println("C");
+    serial_print("Temp 2: ");
+    serial_print(tempTemperature2);
+    serial_println("C");
+
+    temperature1 += tempTemperature1;
+    temperature2 += tempTemperature2;
 
     if (i++ % NUM_MEASUREMENTS == 0) {
-      /*
-       * Calculate average temperature for time elapsed
-       */
-      temperature1 /= NUM_MEASUREMENTS;
-      temperature2 /= NUM_MEASUREMENTS;
-      serial_print("Average temp1: ");
-      serial_println(temperature1);
-      serial_print("Average temp2: ");
-      serial_println(temperature2);
+      totalTemperature1 = temperature1;
+      totalTemperature2 = temperature2;
+      serial_print("Avg temp1: ");
+      serial_print(totalTemperature1 / NUM_MEASUREMENTS);
+      serial_println("C");
+      serial_print("Avg temp2: ");
+      serial_print(totalTemperature2 / NUM_MEASUREMENTS);
+      serial_println("C");
+
+      temperature1 = 0;
+      temperature2 = 0;
 
       xTaskCreate(
         sendDataToThingsboard,

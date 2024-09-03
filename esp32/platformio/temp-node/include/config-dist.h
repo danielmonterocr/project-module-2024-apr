@@ -22,9 +22,10 @@
 
 // Data wire is plugged TO GPIO 4
 #define ONE_WIRE_BUS 4
-#define SENSE_INTERVAL_MS 1000
+#define TEMPERATURE_PRECISION 12
+#define SENSE_INTERVAL_MS 2000
 
-#define NUM_MEASUREMENTS 60
+#define NUM_MEASUREMENTS 30
 
 #if DEBUG == true
   #define serial_print(x)  Serial.print(x)

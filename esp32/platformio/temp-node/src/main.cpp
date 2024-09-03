@@ -7,6 +7,8 @@
 
 double temperature1;
 double temperature2;
+double totalTemperature1;
+double totalTemperature2;
 
 /**
  * @brief Setup function to initialize the ESP32.
