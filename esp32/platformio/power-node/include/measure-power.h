@@ -11,6 +11,8 @@
 EnergyMonitor emon1;
 EnergyMonitor emon2;
 
+double tmpPower1 = 0;
+double tmpPower2 = 0;
 extern double power1;
 extern double power2;
 extern double totalPower1;
@@ -98,28 +100,38 @@ void measurePowerTask(void *pvParameters) {
 
     unsigned long start = millis();
 
-    measurePower(&power1, &power2);
+    measurePower(&tmpPower1, &tmpPower2);
 
     serial_print("Power 1: ");
-    serial_print(power1);
+    serial_print(tmpPower1);
     serial_println("W");
     serial_print("Power 2: ");
+    serial_print(tmpPower2);
+    serial_println("W");
+
+    power1 += tmpPower1;
+    power2 += tmpPower2;
+
+    serial_print("Total power 1: ");
+    serial_print(power1);
+    serial_println("W");
+    serial_print("Total power 2: ");
     serial_print(power2);
     serial_println("W");
 
-    totalPower1 += power1;
-    totalPower2 += power2;
-
     if (i++ % NUM_MEASUREMENTS == 0) {
+      totalPower1 = power1;
+      totalPower2 = power2;
       serial_print("Avg power1: ");
       serial_print(totalPower1 / NUM_MEASUREMENTS);
+
       serial_println("W");
       serial_print("Avg power2: ");
       serial_print(totalPower2 / NUM_MEASUREMENTS);
       serial_println("W");
 
-      totalPower1 = 0;
-      totalPower2 = 0;
+      power1 = 0;
+      power2 = 0;
 
       xTaskCreate(
         sendDataToThingsboard,
