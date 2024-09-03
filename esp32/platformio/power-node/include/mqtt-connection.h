@@ -13,7 +13,6 @@ WiFiClient espClient;
 Arduino_MQTT_Client mqttClient(espClient);
 ThingsBoard tb(mqttClient);
 
-extern SemaphoreHandle_t shared_vars_mutex;
 extern double totalPower1;
 extern double totalPower2;
 
@@ -70,11 +69,6 @@ void sendDataToThingsboard(void* pvParams) {
   tb.sendTelemetryData("power1", totalPower1 / NUM_MEASUREMENTS);
   tb.sendTelemetryData("power2", totalPower2 / NUM_MEASUREMENTS);
   blinkLED(BUILTIN_LED, 3, 200); // Blink three times with 200ms delay
-
-  xSemaphoreTake(shared_vars_mutex, portMAX_DELAY);
-  totalPower1 = 0;
-  totalPower2 = 0;
-  xSemaphoreGive(shared_vars_mutex);
 
   vTaskDelete(NULL);
 }

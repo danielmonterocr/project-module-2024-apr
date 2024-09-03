@@ -5,7 +5,6 @@
 
 #include <Arduino.h>
 
-SemaphoreHandle_t shared_vars_mutex = xSemaphoreCreateMutex();
 double power1 = 0;
 double power2 = 0;
 double totalPower1 = 0;

@@ -11,7 +11,6 @@
 EnergyMonitor emon1;
 EnergyMonitor emon2;
 
-extern SemaphoreHandle_t shared_vars_mutex;
 extern double power1;
 extern double power2;
 extern double totalPower1;
@@ -108,18 +107,19 @@ void measurePowerTask(void *pvParameters) {
     serial_print(power2);
     serial_println("W");
 
-    xSemaphoreTake(shared_vars_mutex, portMAX_DELAY);
     totalPower1 += power1;
     totalPower2 += power2;
-    xSemaphoreGive(shared_vars_mutex);
 
     if (i++ % NUM_MEASUREMENTS == 0) {
-      serial_print("Total power 1: ");
-      serial_print(totalPower1);
+      serial_print("Avg power1: ");
+      serial_print(totalPower1 / NUM_MEASUREMENTS);
       serial_println("W");
-      serial_print("Total power 2: ");
-      serial_print(totalPower2);
+      serial_print("Avg power2: ");
+      serial_print(totalPower2 / NUM_MEASUREMENTS);
       serial_println("W");
+
+      totalPower1 = 0;
+      totalPower2 = 0;
 
       xTaskCreate(
         sendDataToThingsboard,
