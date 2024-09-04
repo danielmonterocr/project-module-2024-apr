@@ -11,7 +11,7 @@
 
 \subsubsection{Calibration}
 
-\begin{table}[ht]
+\begin{table}[h]
     \centering
     \begin{tabular}{|c|c|c|c|}
         \hline
@@ -38,13 +38,93 @@
         10 & 12.42 & 12.14 & 12.5 \\
         \hline
     \end{tabular}
-    \caption{Current Sensor Readings}
-    \label{tab:current-sensor-readings}
+    \caption{Current sensors readings}
+    \label{tab:current-sensors-readings}
 \end{table}
 
-\subsection{Water Flow Sensor}
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{kettle-and-ac.png}
+    \caption{Change in current reading by using on appliances: kettle (left) and air conditioner (right).}
+    \label{fig:using-kettle-and-ac}
+\end{figure}
+
 \subsection{Temperature Sensors}
-\section{Unit Testing}
+
+\subsubsection{Calibration}
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|c|c|c|c|}
+        \hline
+        \textbf{Time} & \textbf{Temp. Sensor 1 (C)} & \textbf{Temp. Sensor 2 (C)} & \textbf{Thermometer (C)} \\
+        \hline
+        6am & 26 & 24 & 26 \\
+        \hline
+        7am & 27 & 25 & 27 \\
+        \hline
+        8am & 28 & 26 & 28 \\
+        \hline
+        9am & 29 & 27 & 29 \\
+        \hline
+        10am & 30 & 28 & 30 \\
+        \hline
+        11am & 31 & 29 & 31 \\
+        \hline
+        12pm & 32 & 30 & 32 \\
+        \hline
+        1pm & 33 & 31 & 33 \\
+        \hline
+        2pm & 33 & 31 & 33 \\
+        \hline
+        3pm & 32 & 30 & 32 \\
+        \hline
+        4pm & 31 & 29 & 31 \\
+        \hline
+        5pm & 30 & 28 & 30 \\
+        \hline
+        6pm & 29 & 27 & 29 \\
+        \hline
+    \end{tabular}
+    \caption{Temperature sensors readings}
+    \label{tab:temperature-sensors-readings}
+\end{table}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{temp-sensor-response.png}
+    \caption{Temperature sensor response to changes}
+    \label{fig:temp-sensor-response}
+\end{figure}
+
+\subsection{Water Flow Sensor}
+
+\subsubsection{Calibration}
+
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{|c|c|c|}
+        \hline
+        \textbf{Flow speed} & \textbf{Volume (L)} & \textbf{Volume from Water Flow Sensor (L)} \\
+        \hline
+        Slow & 1 & 0.70 \\
+        \hline
+        Medium & 1 & 0.78 \\
+        \hline
+        Fast & 1 & 0.92 \\
+        \hline
+    \end{tabular}
+    \caption{Water sensor readings}
+    \label{tab:water-sensor-readings}
+\end{table}
+
+% \begin{figure}[ht]
+%     \centering
+%     \includegraphics[width=0.8\textwidth]{water-flow-sensor.png}
+%     \caption{Water flow sensor setup}
+%     \label{fig:water-flow-sensor}
+% \end{figure}
+
 \section{Integration Testing}
 \section{System Testing}
 \section{Regression Testing}
