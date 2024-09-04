@@ -1,14 +1,14 @@
 import express from 'express';
 const router = express.Router()
-import { logger } from '../logger.js'
+import mongoose from 'mongoose';
+import { logger } from '../logger.js';
 
-import { User } from '../models/User.js'
-import { Listing } from '../models/Listing.js'
+import { User } from '../models/User.js';
+import { Provider } from '../models/Provider.js';
 
-import { auth as verifyToken } from '../verifyToken.js'
-import { validator } from '../validations/validator.js'
-
-import { importListingsFromAirbnb } from '../utils/provider-utils.js'
+import { auth as verifyToken } from '../verifyToken.js';
+import { validator } from '../validations/validator.js';
+import { agenda } from '../jobs/agenda.js';
 
 // GET: List all users
 router.get('/api/users',
@@ -107,21 +107,14 @@ router.post('/api/users/:userId/sync',
                 return res.status(404).send({ message: 'User not found' });
             }
 
-            // Call the function to import listings from Airbnb
-            const listings = await importListingsFromAirbnb('./data/payloads/airbnb-listings-example.json');
+            const providers = await Provider.find({ userId: req.params.userId });
+            const providersList = providers.map(provider => provider.providerId);
+            logger.info('Providers:', providersList);
 
-            // Save each listing to MongoDB if it doesn't already exist
-            const savePromises = listings.map(async (listing) => {
-                const existingListing = await Listing.findOne({ userId: listing.userId, title: listing.title });
-
-                if (!existingListing) {
-                    const newListing = new Listing(listing);
-                    newListing.userId = req.params.userId;
-                    return newListing.save();
-                }
-            });
-
-            await Promise.all(savePromises);
+            if (providersList.includes('airbnb')) {
+                // Create a new job to sync listings from Airbnb
+                await agenda.now("sync-provider", { userId: req.params.userId, provider: 'airbnb' });
+            }
 
             res.status(200).send({ message: 'User account synced' });
 

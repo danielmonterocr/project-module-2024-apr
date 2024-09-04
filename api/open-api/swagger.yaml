@@ -390,6 +390,29 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
+    delete:
+      tags:
+        - providers
+      summary: Delete provider
+      description: This can only be done by the logged in user
+      operationId: deleteProvider
+      requestBody:
+        description: Delete provider object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Provider'
+      responses:
+        '200':
+          description: Succesful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '400':
+          description: Bad request
+        '404':
+          description: Provider not found
 components:
   schemas:
     User:

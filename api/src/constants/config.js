@@ -6,7 +6,7 @@ dotenvExpand.expand(dotenv.config());
 export const SWAGGER_PATH = './open-api/swagger.yaml';
 export const PORT = process.env.PORT || 3000;
 
-const {
+export const {
     DB_PREFIX,
     DB_USER,
     DB_PASSWORD,

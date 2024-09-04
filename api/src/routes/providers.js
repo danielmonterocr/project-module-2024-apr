@@ -7,7 +7,7 @@ import { Provider } from '../models/Provider.js'
 import { auth as verifyToken } from '../verifyToken.js'
 import { validator } from '../validations/validator.js'
 
-// POST: Create listing
+// POST: Create provider
 router.post('/api/providers',
     verifyToken,
     validator.validate('post', '/api/providers'),
@@ -18,14 +18,32 @@ router.post('/api/providers',
             if (providerExists) {
                 return res.status(400).send({ message: 'Provider already exists' })
             }
-            console.log('providerExists');
-            // Save listing on DB
+            // Save provider on DB
             const provider = new Provider({
                 providerId: req.body.providerId,
                 userId: req.body.userId
             })
             const savedProvider = await provider.save()
             return res.send(savedProvider)
+        } catch (err) {
+            logger.error(err.message)
+            return res.status(500).send({ message: err })
+        }
+    })
+
+// DELETE: Delete provider
+router.delete('/api/providers',
+    verifyToken,
+    validator.validate('delete', '/api/providers'),
+    async (req, res) => {
+        try {
+            const deleteById = await Provider.deleteOne(
+                { providerId: req.body.providerId, userId: req.body.userId }
+            )
+            if (deleteById.deletedCount != 1) {
+                return res.status(400).send({ message: 'Failed to delete provider' })
+            }
+            return res.send({ message: 'Provider deleted' })
         } catch (err) {
             logger.error(err.message)
             return res.status(500).send({ message: err })
