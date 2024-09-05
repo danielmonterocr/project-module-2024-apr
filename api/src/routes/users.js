@@ -1,6 +1,5 @@
 import express from 'express';
 const router = express.Router()
-import mongoose from 'mongoose';
 import { logger } from '../logger.js';
 
 import { User } from '../models/User.js';
@@ -109,7 +108,6 @@ router.post('/api/users/:userId/sync',
 
             const providers = await Provider.find({ userId: req.params.userId });
             const providersList = providers.map(provider => provider.providerId);
-            logger.info('Providers:', providersList);
 
             if (providersList.includes('airbnb')) {
                 // Create a new job to sync listings from Airbnb

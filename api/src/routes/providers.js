@@ -6,6 +6,7 @@ import { Provider } from '../models/Provider.js'
 
 import { auth as verifyToken } from '../verifyToken.js'
 import { validator } from '../validations/validator.js'
+import { agenda } from '../jobs/agenda.js';
 
 // POST: Create provider
 router.post('/api/providers',
@@ -43,6 +44,21 @@ router.delete('/api/providers',
             if (deleteById.deletedCount != 1) {
                 return res.status(400).send({ message: 'Failed to delete provider' })
             }
+
+            // Delete sync schedules linked to user and provider
+            const query = { 
+                name: 'sync-provider',
+                'data.userId': req.body.userId,
+                'data.provider': req.body.providerId
+            }
+            agenda.cancel(query, (err, numRemoved) => {
+                if (err) {
+                    logger.error(err);
+                } else {
+                    logger.info(`removed ${numRemoved} jobs`);
+                }
+            });
+
             return res.send({ message: 'Provider deleted' })
         } catch (err) {
             logger.error(err.message)
