@@ -19,12 +19,6 @@ const listingSchema = mongoose.Schema({
         min: 3,
         max: 256
     },
-    description: {
-        type: String,
-        require: true,
-        min: 6,
-        max: 256
-    },
     location: {
         type: String,
         require: true,

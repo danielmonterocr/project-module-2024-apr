@@ -3,6 +3,7 @@ import { app } from '../../src/app.js'
 import { expect } from 'chai'
 
 import { testValidator as validator } from '../../src/validations/validator.js'
+import { syncAirbnb } from '../../src/utils/provider-utils.js'
 
 var userId = '';
 var token = '';
@@ -149,6 +150,51 @@ describe('POST /api/users/{userId}/sync', function () {
             .catch((err) => expect(err).to.be.undefined)
     });
 });
+
+describe('importListingsFromAirbnb', function () {
+    it('should import listings and reservations from Airbnb JSON files', async function () {
+        return syncAirbnb(userId)
+            .then((ret) => {
+                expect(ret).to.be.true
+            })
+            .catch((err) => expect(err).to.be.undefined)
+    });
+});
+
+describe('GET /api/listings', function () {
+    // Validate response against the OpenAPI document (swagger.yml)
+    const validateResponse = validator.validateResponse('get', '/api/listings')
+
+    it('should list all listings', async function () {
+        return request(app)
+            .get('/api/listings')
+            .set('token', token)
+            .expect(200)
+            .then((res) => {
+                expect(validateResponse(res)).to.be.undefined
+                expect(res.body).to.be.an('array')
+                listingId = res.body[0]._id
+            })
+            .catch((err) => expect(err).to.be.undefined)
+    });
+});
+
+// describe('DELETE /api/listings/{listingId}', function () {
+//     // Validate response against the OpenAPI document (swagger.yml)
+//     const validateResponse = validator.validateResponse('delete', '/api/listings/{listingId}')
+
+//     it('should delete a listing', async function () {
+//         return request(app)
+//             .delete('/api/listings/' + listingId)
+//             .set('token', token)
+//             .expect(200)
+//             .then((res) => {
+//                 expect(validateResponse(res)).to.be.undefined
+//                 expect(res.body.message).to.equal('Listing deleted')
+//             })
+//             .catch((err) => expect(err).to.be.undefined)
+//     });
+// });
 
 describe('DELETE /api/providers/', function () {
     // Validate response against the OpenAPI document (swagger.yml)

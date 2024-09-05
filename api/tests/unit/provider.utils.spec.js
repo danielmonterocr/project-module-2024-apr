@@ -21,7 +21,6 @@ describe('Provider Utils', () => {
         expect(listings).to.have.length(1);
         expect(listings[0]).to.have.property('provider', 'airbnb');
         expect(listings[0]).to.have.property('title', 'NourTinyFootprint Getaway');
-        expect(listings[0]).to.have.property('description');
         expect(listings[0]).to.have.property('location', 'Playa Hermosa, Puntarenas Province');
         expect(listings[0]).to.have.property('listingId', '1065162203416824771');
     });
@@ -43,8 +42,8 @@ describe('Provider Utils', () => {
 
         const userId = 'test-user-id';
         const listings = [
-            { provider: 'airbnb', listingId: '1', title: 'Listing 1', description: 'Description 1', location: 'Location 1' },
-            { provider: 'airbnb', listingId: '2', title: 'Listing 2', description: 'Description 2', location: 'Location 2' }
+            { provider: 'airbnb', listingId: '1', title: 'Listing 1', location: 'Location 1' },
+            { provider: 'airbnb', listingId: '2', title: 'Listing 2', location: 'Location 2' }
         ];
 
         findOneStub.returns(null); // Simulate no existing listing found
@@ -62,8 +61,8 @@ describe('Provider Utils', () => {
 
         const userId = 'test-user-id';
         const listings = [
-            { provider: 'airbnb', listingId: '1', title: 'Listing 1', description: 'Description 1', location: 'Location 1' },
-            { provider: 'airbnb', listingId: '2', title: 'Listing 2', description: 'Description 2', location: 'Location 2' }
+            { provider: 'airbnb', listingId: '1', title: 'Listing 1', location: 'Location 1' },
+            { provider: 'airbnb', listingId: '2', title: 'Listing 2', location: 'Location 2' }
         ];
 
         findOneStub.returns({ listingId: '1' }); // Simulate existing listing found
