@@ -234,6 +234,55 @@ paths:
           description: Bad request
         '404':
           description: User not found
+  /api/providers:
+    post:
+      tags:
+        - providers
+      summary: Create a new provider
+      description: This can only be done by the logged in user
+      operationId: createProvider
+      requestBody:
+        description: Create provider object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Provider'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Provider'
+        '400':
+          description: Provider already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+    delete:
+      tags:
+        - providers
+      summary: Delete provider
+      description: This can only be done by the logged in user
+      operationId: deleteProvider
+      requestBody:
+        description: Delete provider object
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Provider'
+      responses:
+        '200':
+          description: Succesful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '400':
+          description: Bad request
+        '404':
+          description: Provider not found
   /api/listings:
     post:
       tags:
@@ -364,44 +413,97 @@ paths:
           description: Bad request
         '404':
           description: Listing not found
-  /api/providers:
+  /api/devices:
     post:
       tags:
-        - providers
-      summary: Create a new provider
+        - devices
+      summary: Create a new device
       description: This can only be done by the logged in user
-      operationId: createProvider
+      operationId: createDevice
       requestBody:
-        description: Create provider object
+        description: Create device object
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Provider'
+              $ref: '#/components/schemas/Device'
       responses:
         '200':
           description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Provider'
+                $ref: '#/components/schemas/Device'
         '400':
-          description: Provider already exists
+          description: Device already exists
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
-    delete:
+    get:
       tags:
-        - providers
-      summary: Delete provider
+        - devices
+      summary: List all devices
       description: This can only be done by the logged in user
-      operationId: deleteProvider
+      operationId: listDevices
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  anyOf:
+                    - $ref: '#/components/schemas/Device'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+  /api/devices/{deviceId}:
+    get:
+      tags:
+        - devices
+      summary: Retrieve details of a specific device
+      description: This can only be done by the logged in user
+      operationId: getDeviceById
+      parameters:
+        - name: deviceId
+          in: path
+          description: The ID of the device to retrieve
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
+        '400':
+          description: Bad request
+        '404':
+          description: Device not found
+    patch:
+      tags:
+        - devices
+      summary: Update details of a specific device
+      operationId: updateDevice
+      parameters:
+        - name: deviceId
+          in: path
+          description: The ID of the device to modify
+          required: true
+          schema:
+            type: string
       requestBody:
-        description: Delete provider object
+        description: Update an existent device object
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Provider'
+              $ref: '#/components/schemas/Device'
       responses:
         '200':
           description: Succesful operation
@@ -412,7 +514,31 @@ paths:
         '400':
           description: Bad request
         '404':
-          description: Provider not found
+          description: Device not found
+    delete:
+      tags:
+        - devices
+      summary: Delete device
+      description: This can only be done by the logged in user
+      operationId: deleteDevice
+      parameters:
+        - name: deviceId
+          in: path
+          description: The name of the device that needs to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Succesful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '400':
+          description: Bad request
+        '404':
+          description: Device not found
 components:
   schemas:
     User:
@@ -445,6 +571,15 @@ components:
           description: User Status
           format: int32
           examples: [1]
+    Provider:
+      type: object
+      properties:
+        providerId:
+          type: string
+          examples: [1234567890]
+        userId:
+          type: string
+          examples: [1234567890]
     Listing:
       type: object
       properties:
@@ -463,13 +598,19 @@ components:
         userId:
           type: string
           examples: [1234567890]
-    Provider:
+    Device:
       type: object
       properties:
-        providerId:
+        deviceId:
           type: string
           examples: [1234567890]
-        userId:
+        deviceType:
+          type: string
+          examples: [Phone, Tablet, Laptop]
+        deviceToken:
+          type: string
+          examples: [1234567890]
+        listingId:
           type: string
           examples: [1234567890]
     ApiResponse:
