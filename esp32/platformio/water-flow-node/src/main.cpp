@@ -4,7 +4,10 @@
 #include "mqtt-connection.h"
 
 #include <Arduino.h>
+#include <esp_task_wdt.h>
 
+xTaskHandle measureWaterFlowTaskHandle = NULL;
+xTaskHandle sendDataToThingsboardHandle = NULL;
 float flowRate;
 float totalLiters;
 
@@ -20,6 +23,8 @@ void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
 
   setupWaterFlowSensors();
+
+  esp_task_wdt_init(WDT_TIMEOUT, true);
 
     /**
    * Creates a new task and assigns it to a specific core.
@@ -60,7 +65,8 @@ void setup() {
       5000,
       NULL,
       4,
-      NULL);
+      &measureWaterFlowTaskHandle);
+  esp_task_wdt_add(measureWaterFlowTaskHandle);
 }
 
 /**

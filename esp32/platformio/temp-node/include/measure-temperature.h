@@ -5,8 +5,11 @@
 #include "utils.h"
 #include "mqtt-connection.h"
 
+#include <esp_task_wdt.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
+
+extern xTaskHandle sendDataToThingsboardHandle;
 
 OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature sensors(&oneWire);
@@ -60,6 +63,9 @@ float measureTemperature(uint8_t deviceIndex) {
 void measureTemperatureTask(void *pvParameters) {
   uint8_t i = 1;
   for(;;) {
+    int ret = esp_task_wdt_reset();
+    if (ret == 0) serial_println("WDT reset ok");
+
     // serial_println("Measure temperature");
     // serial_print("Iteration: ");
     serial_println(i);
@@ -98,7 +104,8 @@ void measureTemperatureTask(void *pvParameters) {
         10000,
         NULL,
         5,
-        NULL);
+        &sendDataToThingsboardHandle);
+      esp_task_wdt_add(sendDataToThingsboardHandle);
 
       i = 1;
     }

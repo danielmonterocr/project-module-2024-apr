@@ -4,7 +4,10 @@
 #include "mqtt-connection.h"
 
 #include <Arduino.h>
+#include <esp_task_wdt.h>
 
+xTaskHandle measurePowerTaskHandle = NULL;
+xTaskHandle sendDataToThingsboardHandle = NULL;
 double power1 = 0;
 double power2 = 0;
 double totalPower1 = 0;
@@ -23,6 +26,8 @@ void setup()
   pinMode(LED_BUILTIN, OUTPUT);
 
   setupCurrentSensors();
+
+  esp_task_wdt_init(WDT_TIMEOUT, true);
 
   /**
    * Creates a new task and assigns it to a specific core.
@@ -63,7 +68,8 @@ void setup()
       5000,
       NULL,
       4,
-      NULL);
+      &measurePowerTaskHandle);
+  esp_task_wdt_add(measurePowerTaskHandle);
 }
 
 /**

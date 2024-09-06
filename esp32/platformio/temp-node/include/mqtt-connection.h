@@ -4,6 +4,7 @@
 #include "config.h"
 #include "utils.h"
 
+#include <esp_task_wdt.h>
 #include <WiFi.h>
 #include "Update.h"
 #include <ThingsBoard.h>
@@ -59,6 +60,9 @@ void keepMqttConnectionAliveTask(void* pvParameters) {
  * @param pvParameters Parameters for the task.
  */
 void sendDataToThingsboard(void* pvParams) {
+  int ret = esp_task_wdt_reset();
+  if (ret == 0) serial_println("WDT reset ok");
+
   if (!WiFi.isConnected() || !tb.connected()) {
     serial_println("WiFi or MQTT not connected. Exiting sendDataToThingsboard task...");
     vTaskDelete(NULL);

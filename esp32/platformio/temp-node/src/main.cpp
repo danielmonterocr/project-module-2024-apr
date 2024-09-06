@@ -4,7 +4,10 @@
 #include "mqtt-connection.h"
 
 #include <Arduino.h>
+#include <esp_task_wdt.h>
 
+xTaskHandle measureTemperatureTaskHandle = NULL;
+xTaskHandle sendDataToThingsboardHandle = NULL;
 double temperature1;
 double temperature2;
 double totalTemperature1;
@@ -22,6 +25,8 @@ void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
 
   setupTemperatureSensors();
+
+  esp_task_wdt_init(WDT_TIMEOUT, true);
 
   /**
    * Creates a new task and assigns it to a specific core.
@@ -62,7 +67,8 @@ void setup() {
       5000,
       NULL,
       4,
-      NULL);
+      &measureTemperatureTaskHandle);
+  esp_task_wdt_add(measureTemperatureTaskHandle);
 }
 
 /**

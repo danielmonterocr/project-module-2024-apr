@@ -6,6 +6,9 @@
 #include "mqtt-connection.h"
 
 #include <Arduino.h>
+#include <esp_task_wdt.h>
+
+extern xTaskHandle sendDataToThingsboardHandle;
 
 volatile byte pulseCount;
 float tempTotalLiters;
@@ -55,12 +58,18 @@ float measureWaterFlow() {
 void measureWaterFlowTask(void *pvParameters) {
   uint8_t i = 1;
   for (;;) {
+    int ret = esp_task_wdt_reset();
+    if (ret == 0) serial_println("WDT reset ok");
+
     unsigned long start = millis();
     // serial_println("Measure power");
     // serial_print("Iteration: ");
     serial_println(i);
 
     if (i++ % NUM_MEASUREMENTS == 0) {
+      int ret = esp_task_wdt_reset();
+      if (ret == 0) serial_println("WDT reset ok");
+
       totalLiters = tempTotalLiters;
       serial_print("Total liters: ");
       serial_println(totalLiters);
@@ -73,7 +82,8 @@ void measureWaterFlowTask(void *pvParameters) {
         10000,
         NULL,
         5,
-        NULL);
+        &sendDataToThingsboardHandle);
+      esp_task_wdt_add(sendDataToThingsboardHandle);
 
       i = 1;
     }

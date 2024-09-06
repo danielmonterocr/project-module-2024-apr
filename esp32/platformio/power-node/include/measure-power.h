@@ -5,8 +5,11 @@
 #include "utils.h"
 #include "mqtt-connection.h"
 
+#include <esp_task_wdt.h>
 #include <driver/adc.h>
 #include <EmonLib.h>
+
+extern xTaskHandle sendDataToThingsboardHandle;
 
 EnergyMonitor emon1;
 EnergyMonitor emon2;
@@ -94,6 +97,9 @@ void measurePower(double *power1, double *power2) {
 void measurePowerTask(void *pvParameters) {
   uint8_t i = 1;
   for(;;) {
+    int ret = esp_task_wdt_reset();
+    if (ret == 0) serial_println("WDT reset ok");
+
     // serial_println("Measure power");
     // serial_print("Iteration: ");
     serial_println(i);
@@ -139,7 +145,8 @@ void measurePowerTask(void *pvParameters) {
         10000,
         NULL,
         5,
-        NULL);
+        &sendDataToThingsboardHandle);
+      esp_task_wdt_add(sendDataToThingsboardHandle);
 
       i = 1;
     }
