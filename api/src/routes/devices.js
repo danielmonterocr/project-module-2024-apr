@@ -1,6 +1,7 @@
 import express from 'express';
 const router = express.Router()
 import { logger } from '../logger.js'
+import { THINGSBOARD_URL, PROVISION_DEVICE_KEY, PROVISION_DEVICE_SECRET } from '../constants/config.js'
 
 import { Device } from '../models/Device.js'
 
@@ -18,13 +19,36 @@ router.post('/api/devices',
             if (deviceExists) {
                 return res.status(400).send({ message: 'Device already exists' })
             }
-            // Save device on DB
-            const device = new Device({
-                deviceId: req.body.deviceId,
-                userId: req.body.userId
-            })
-            const savedDevice = await device.save()
-            return res.send(savedDevice)
+
+            // Create device in ThingsBoard
+            const payload = {
+                "deviceName": req.body.deviceName,
+                "provisionDeviceKey": PROVISION_DEVICE_KEY,
+                "provisionDeviceSecret": PROVISION_DEVICE_SECRET
+            }
+
+            logger.info("Calling ThingsBoard API with payload: " + JSON.stringify(payload));
+            const response = await fetch(THINGSBOARD_URL + '/api/v1/provision', {
+                method: 'post',
+                body: JSON.stringify(payload),
+            });
+
+            const data = await response.json();
+            logger.info("Response from ThingsBoard API: " + JSON.stringify(data));
+
+            if (response.status === 200) {
+                // Save device on DB
+                const device = new Device({
+                    deviceName: req.body.deviceName,
+                    deviceType: req.body.deviceType,
+                    deviceToken: data.credentialsValue,
+                    listingId: req.body.listingId
+                })
+                const savedDevice = await device.save()
+                return res.send(savedDevice)
+            }
+
+            return res.status(500).send({ message: 'Error creating device' })
         } catch (err) {
             logger.error(err.message)
             return res.status(500).send({ message: err })

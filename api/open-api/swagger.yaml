@@ -22,8 +22,12 @@ tags:
     #   url: http://swagger.io
   - name: users
     description: APIs related to user operations
+  - name: providers
+    description: APIs related to provider operations
   - name: listings
     description: APIs related to listing operations
+  - name: devices
+    description: APIs related to device operations
 paths:
   /api/users/register:
     post:

@@ -7,7 +7,7 @@ import { devices as router } from '../../src/routes/devices.js';
 import jsonwebtoken from 'jsonwebtoken'
 
 describe('POST /api/devices', function () {
-    let app, verifyStub, findOneStub, saveStub;
+    let app, verifyStub, findOneStub, saveStub, fetchStub;
 
     beforeEach(function () {
         app = express();
@@ -16,6 +16,7 @@ describe('POST /api/devices', function () {
         verifyStub = sinon.stub(jsonwebtoken, 'verify');
         findOneStub = sinon.stub(Device, 'findOne')
         saveStub = sinon.stub(Device.prototype, 'save')
+        fetchStub = sinon.stub(global, 'fetch');
     });
 
     afterEach(function () {
@@ -26,7 +27,8 @@ describe('POST /api/devices', function () {
         const device = { deviceId: 'Device 1', userId: 'User 1' };
         verifyStub.returns(true);
         findOneStub.returns(null);
-        saveStub.resolves(device)
+        saveStub.resolves(device);
+        fetchStub.resolves({ status: 200, json: () => ({ credentialsValue: 'CREDS_VALUE' }) });
 
         const res = (await request(app).post('/api/devices').send(device).set({ token: '1234567890' }));
 
@@ -44,6 +46,7 @@ describe('POST /api/devices', function () {
 
         expect(res.statusCode).to.equal(400);
         expect(res.body.message).to.equal('Device already exists');
+        sinon.assert.notCalled(fetchStub);
         sinon.assert.notCalled(saveStub);
     });
 
@@ -52,6 +55,7 @@ describe('POST /api/devices', function () {
         verifyStub.returns(true);
         findOneStub.returns(null);
         saveStub.throws(new Error('DB Error'));
+        fetchStub.resolves({ status: 200, json: () => ({ credentialsValue: 'CREDS_VALUE' }) });
 
         const res = (await request(app).post('/api/devices').send(device).set({ token: '1234567890' }));
 
