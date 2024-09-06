@@ -131,20 +131,35 @@ describe('GET /api/listings/{listingId}', function () {
     });
 });
 
-describe('PATCH /api/listings/{listingId}', function () {
+describe('POST /api/listings/{listingId}/enable', function () {
     // Validate response against the OpenAPI document (swagger.yml)
-    const validateResponse = validator.validateResponse('patch', '/api/listings/{listingId}')
+    const validateResponse = validator.validateResponse('post', '/api/listings/{listingId}/enable')
 
-    it('should update details of a specific listing', async function () {
+    it('should enable a listing', async function () {
         return request(app)
-            .patch('/api/listings/' + listingId)
+            .post('/api/listings/' + listingId + '/enable')
             .set('token', token)
-            .set('Accept', 'application/json')
-            .send({ title: 'Ruon' })
             .expect(200)
             .then((res) => {
                 expect(validateResponse(res)).to.be.undefined
-                expect(res.body.message).to.equal('Listing updated')
+                expect(res.body.message).to.equal('Listing enabled')
+            })
+            .catch((err) => expect(err).to.be.undefined)
+    });
+});
+
+describe('POST /api/listings/{listingId}/disable', function () {
+    // Validate response against the OpenAPI document (swagger.yml)
+    const validateResponse = validator.validateResponse('post', '/api/listings/{listingId}/disable')
+
+    it('should disable a listing', async function () {
+        return request(app)
+            .post('/api/listings/' + listingId + '/disable')
+            .set('token', token)
+            .expect(200)
+            .then((res) => {
+                expect(validateResponse(res)).to.be.undefined
+                expect(res.body.message).to.equal('Listing disabled')
             })
             .catch((err) => expect(err).to.be.undefined)
     });

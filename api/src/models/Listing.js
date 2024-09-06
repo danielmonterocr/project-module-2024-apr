@@ -30,6 +30,10 @@ const listingSchema = mongoose.Schema({
         require: true,
         min: 3,
         max: 256
+    },
+    enabled: {
+        type: Boolean,
+        default: false
     }
 })
 

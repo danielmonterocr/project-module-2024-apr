@@ -360,39 +360,6 @@ paths:
           description: Bad request
         '404':
           description: Listing not found
-    patch:
-      tags:
-        - listings
-      summary: Update details of a specific listing
-      operationId: updateListing
-      parameters:
-        - name: listingId
-          in: path
-          description: The ID of the listing to modify
-          required: true
-          schema:
-            type: string
-      requestBody:
-        description: Update an existent listing object
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Listing'
-              # anyOf:
-              #   - title
-              #   - description
-              #   - location
-      responses:
-        '200':
-          description: Succesful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-        '400':
-          description: Bad request
-        '404':
-          description: Listing not found
     delete:
       tags:
         - listings
@@ -417,6 +384,68 @@ paths:
           description: Bad request
         '404':
           description: Listing not found
+  /api/listings/{listingId}/enable:
+    post:
+      tags:
+        - listings
+      summary: Enable listing
+      description: This can only be done by the logged in user
+      operationId: enableListing
+      parameters:
+        - name: listingId
+          in: path
+          description: The ID of the listing to enable
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '400':
+          description: Bad request
+        '404':
+          description: Listing not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+  /api/listings/{listingId}/disable:
+    post:
+      tags:
+        - listings
+      summary: Disable listing
+      description: This can only be done by the logged in user
+      operationId: disableListing
+      parameters:
+        - name: listingId
+          in: path
+          description: The ID of the listing to disable
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '400':
+          description: Bad request
+        '404':
+          description: Listing not found
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
   /api/devices:
     post:
       tags:

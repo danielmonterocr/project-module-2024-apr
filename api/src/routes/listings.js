@@ -67,42 +67,6 @@ router.get('/api/listings/:listingId',
         }
     })
 
-// PUT: Update details of a specific listing 
-router.patch('/api/listings/:listingId',
-    verifyToken,
-    validator.validate('patch', '/api/listings/{listingId}'),
-    async (req, res) => {
-        var update = {};
-        try {
-            const listing = await Listing.findById(req.params.listingId);
-            if (!listing) {
-                return res.status(404).send({ message: 'Listing not found' });
-            }
-
-            if (req.body.title !== undefined) {
-                update.title = req.body.title
-            }
-            if (req.body.description !== undefined) {
-                update.description = req.body.description
-            }
-            if (req.body.location !== undefined) {
-                update.location = req.body.location
-            }
-
-            const updateListingById = await Listing.updateOne(
-                { _id: req.params.listingId },
-                {
-                    $set: update
-                }
-            )
-
-            res.status(200).send({ message: 'Listing updated' });
-        } catch (err) {
-            logger.error(err.message)
-            res.status(500).send({ message: 'err' })
-        }
-    })
-
 // DELETE: Delete a listing
 router.delete('/api/listings/:listingId',
     verifyToken,
@@ -117,6 +81,65 @@ router.delete('/api/listings/:listingId',
             }
 
             res.status(200).send({ message: 'Listing deleted' });
+        } catch (err) {
+            logger.error(err.message)
+            res.status(500).send({ message: err })
+        }
+    })
+
+// POST: Enable a listing
+router.post('/api/listings/:listingId/enable',
+    verifyToken,
+    validator.validate('post', '/api/listings/{listingId}/enable'),
+    async (req, res) => {
+        var update = {};
+        try {
+            const listing = await Listing.findById(req.params.listingId);
+            if (!listing) {
+                return res.status(404).send({ message: 'Listing not found' });
+            }
+
+            update.enabled = true;
+            const updateListingById = await Listing.updateOne(
+                { _id: req.params.listingId },
+                {
+                    $set: update
+                }
+            )
+
+            // TODO: Create job that runs every day at 2pm and checks for active reservations. Then calculates 
+            // consumption of last 24h.
+
+            res.status(200).send({ message: 'Listing enabled' });
+        } catch (err) {
+            logger.error(err.message)
+            res.status(500).send({ message: err })
+        }
+    })
+
+// PUT: Disable a listing
+router.post('/api/listings/:listingId/disable',
+    verifyToken,
+    validator.validate('post', '/api/listings/{listingId}/disable'),
+    async (req, res) => {
+        var update = {};
+        try {
+            const listing = await Listing.findById(req.params.listingId);
+            if (!listing) {
+                return res.status(404).send({ message: 'Listing not found' });
+            }
+
+            update.enabled = false;
+            const updateListingById = await Listing.updateOne(
+                { _id: req.params.listingId },
+                {
+                    $set: update
+                }
+            )
+
+            // TODO: Delete job created in enable endpoint
+
+            res.status(200).send({ message: 'Listing disabled' });
         } catch (err) {
             logger.error(err.message)
             res.status(500).send({ message: err })
