@@ -15,13 +15,13 @@ router.post('/api/providers',
     async (req, res) => {
         try {
             // Check if provider already exists
-            const providerExists = await Provider.findOne({ providerId: req.body.providerId })
+            const providerExists = await Provider.findOne({ provider: req.body.provider })
             if (providerExists) {
                 return res.status(400).send({ message: 'Provider already exists' })
             }
             // Save provider on DB
             const provider = new Provider({
-                providerId: req.body.providerId,
+                provider: req.body.provider,
                 userId: req.body.userId
             })
             const savedProvider = await provider.save()
@@ -38,8 +38,14 @@ router.delete('/api/providers',
     validator.validate('delete', '/api/providers'),
     async (req, res) => {
         try {
+            // Check if provider already exists
+            const providerExists = await Provider.findOne({ provider: req.body.provider })
+            if (!providerExists) {
+                return res.status(404).send({ message: 'Provider not found' })
+            }
+
             const deleteById = await Provider.deleteOne(
-                { providerId: req.body.providerId, userId: req.body.userId }
+                { provider: req.body.provider, userId: req.body.userId }
             )
             if (deleteById.deletedCount != 1) {
                 return res.status(400).send({ message: 'Failed to delete provider' })
@@ -47,8 +53,8 @@ router.delete('/api/providers',
 
             // Delete sync schedules linked to user and provider
             const query = {
-                'data.userId': req.body.userId,
-                'data.provider': req.body.provider
+                'data.userId': providerExists.userId,
+                'data.provider': providerExists.provider
             }
             agenda.cancel(query, (err, numRemoved) => {
                 if (err) {

@@ -122,11 +122,11 @@ describe('POST /api/providers', function () {
             .post('/api/providers')
             .set('token', token)
             .set('Accept', 'application/json')
-            .send({ providerId: 'airbnb', userId: userId })
+            .send({ provider: 'airbnb', userId: userId })
             .expect(200)
             .then((res) => {
                 expect(validateResponse(res)).to.be.undefined
-                expect(res.body.providerId).to.equal('airbnb')
+                expect(res.body.provider).to.equal('airbnb')
             })
             .catch((err) => expect(err).to.be.undefined)
     });
@@ -205,7 +205,7 @@ describe('DELETE /api/providers/', function () {
             .delete('/api/providers')
             .set('token', token)
             .set('Accept', 'application/json')
-            .send({ providerId: 'airbnb', userId: userId })
+            .send({ provider: 'airbnb', userId: userId })
             .expect(200)
             .then((res) => {
                 // expect(validateResponse(res)).to.be.undefined

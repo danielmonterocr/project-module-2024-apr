@@ -607,7 +607,7 @@ components:
     Provider:
       type: object
       properties:
-        providerId:
+        provider:
           type: string
           examples: [1234567890]
         userId:

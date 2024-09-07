@@ -1,7 +1,7 @@
 import mongoose from 'mongoose'
 
 const providerSchema = mongoose.Schema({
-    providerId: {
+    provider: {
         type: String,
         require: true,
         min: 3,
