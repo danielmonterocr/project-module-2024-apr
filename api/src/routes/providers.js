@@ -46,10 +46,9 @@ router.delete('/api/providers',
             }
 
             // Delete sync schedules linked to user and provider
-            const query = { 
-                name: 'sync-provider',
+            const query = {
                 'data.userId': req.body.userId,
-                'data.provider': req.body.providerId
+                'data.provider': req.body.provider
             }
             agenda.cancel(query, (err, numRemoved) => {
                 if (err) {

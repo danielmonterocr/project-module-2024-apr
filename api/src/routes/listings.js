@@ -6,6 +6,7 @@ import { Listing } from '../models/Listing.js'
 
 import { auth as verifyToken } from '../verifyToken.js'
 import { validator } from '../validations/validator.js'
+import { agenda } from '../jobs/agenda.js';
 
 // POST: Create listing
 router.post('/api/listings',
@@ -107,8 +108,8 @@ router.post('/api/listings/:listingId/enable',
                 }
             )
 
-            // TODO: Create job that runs every day at 2pm and checks for active reservations. Then calculates 
-            // consumption of last 24h.
+            // Create job that runs every day at 2pm and checks for reservations and calculates consumption
+            await agenda.now("calculate-consumption", { listingId: req.params.listingId });
 
             res.status(200).send({ message: 'Listing enabled' });
         } catch (err) {
@@ -137,7 +138,19 @@ router.post('/api/listings/:listingId/disable',
                 }
             )
 
-            // TODO: Delete job created in enable endpoint
+            // Delete job created in enable endpoint
+            const query = {
+                name: 'sync-provider',
+                'data.userId': listing.userId,
+                'data.provider': listing.provider
+            }
+            agenda.cancel(query, (err, numRemoved) => {
+                if (err) {
+                    logger.error(err);
+                } else {
+                    logger.info(`removed ${numRemoved} jobs`);
+                }
+            });
 
             res.status(200).send({ message: 'Listing disabled' });
         } catch (err) {

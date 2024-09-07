@@ -113,6 +113,10 @@ router.post('/api/users/:userId/sync',
                 // Create a new job to sync listings from Airbnb
                 await agenda.now("sync-provider", { userId: req.params.userId, provider: 'airbnb' });
             }
+            if (providersList.includes('booking')) {
+                // Create a new job to sync listings from Booking
+                // await agenda.now("sync-provider", { userId: req.params.userId, providerId: 'booking' });
+            }
 
             res.status(200).send({ message: 'User account synced' });
 
