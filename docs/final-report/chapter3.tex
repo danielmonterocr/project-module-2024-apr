@@ -7,80 +7,70 @@
 
 \section{Sensing Nodes}
 
-\subsection{Energy Node}
+\subsection{Power Node}
 
-Energy consumed can be calculated by summing the power over the 60 seconds:
+Energy consumed can be calculated by summing the power every second for 60 seconds, and then dividing by 60:
 
 \begin{equation}
-    \text{Energy} = \sum_{i=1}^{120} (I_i \times V_i)
+    \text{Energy} = \frac{1}{60} \sum_{i=1}^{60} (I_i \times V_i)
 \end{equation}
 
-This gives the total energy used in that minute (in watt-seconds or joules).
+This gives the total energy used in that minute (in watt-seconds or Joules).
 
-\begin{figure}[h!]
+\begin{figure}[!ht]
     \centering
     \includegraphics[width=0.5\textwidth]{energy-node-schematic.png}
-    \caption{Energy node schematic}
+    \caption{Power node schematic}
     \label{fig:energy-node-schematic}
-\end{figure}
-
-\begin{figure}[h!]
-    \centering
-    \includegraphics[width=0.5\textwidth]{energy-node-flow-chart.png}
-    \caption{Energy node flow chart}
-    \label{fig:energy-node-flow-chart}
 \end{figure}
 
 \subsection{Water Flow Node}
 
-Read water flow every second for 120 seconds, sum the values and upload them.
+Read water flow and calculate liters every second for 60 seconds, sum the values and upload them.
 
 \begin{align}
-    \text{Volume} &{}= \sum_{i=1}^{120} Q_i \times \underbrace{\Delta t}_{=1\text{s}}\\
-                  &{}= \sum_{i=1}^{120} Q_i
+    \text{Volume} &{}= \sum_{i=1}^{60} Q_i \times \underbrace{\Delta t}_{=1\text{s}}\\
+                  &{}= \sum_{i=1}^{60} Q_i
 \end{align}
 
-\begin{figure}[h!]
+Since we are reading every second, just add the values to get the total volume.
+
+\begin{figure}[!ht]
     \centering
     \includegraphics[width=0.5\textwidth]{water-flow-node-schematic.png}
     \caption{Water flow node schematic}
     \label{fig:water-flow-node-schematic}
 \end{figure}
 
-\begin{figure}[h!]
-    \centering
-    \includegraphics[width=0.5\textwidth]{water-flow-node-flow-chart.png}
-    \caption{Water flow node flow chart}
-    \label{fig:water-flow-node-flow-chart}
-\end{figure}
-
 \subsection{Temperature Node}
 
-Calculate the average temperature over 120 seconds, then upload it.
+Calculate the average temperature over 120 seconds (reading every two seconds), then upload it.
 
 \begin{equation}
-    \text{Average Temperature} = \frac{1}{120} \sum_{i=1}^{120} T_i
+    \text{Average Temperature} = \frac{1}{30} \sum_{i=1}^{120} T_i
 \end{equation}
 
-\begin{figure}[h!]
+\begin{figure}[!ht]
     \centering
     \includegraphics[width=0.5\textwidth]{temp-node-schematic.png}
     \caption{Temperature node schematic}
     \label{fig:temp-node-schematic}
 \end{figure}
 
-\begin{figure}[h!]
+\section{Sensing Nodes Firmware}
+
+\begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.5\textwidth]{temp-node-flow-chart.png}
-    \caption{Temperature node flow chart}
-    \label{fig:temp-node-flow-chart}
+    \includegraphics[width=1\textwidth]{monitoring-node-flow-chart.png}
+    \caption{Monitoring nodes flow chart}
+    \label{fig:monitoring-node-flow-chart}
 \end{figure}
 
 \section{Databases}
 
 \subsection{Main Database}
 
-\begin{figure}[h!]
+\begin{figure}[!ht]
     \centering
     \includegraphics[width=0.5\textwidth]{entity-relationship-diagram.png}
     \caption{Entity relationship diagram}
@@ -90,6 +80,33 @@ Calculate the average temperature over 120 seconds, then upload it.
 \subsection{Timeseries Database}
 
 \section{REST API}
+
+This API is designed to manage users, providers, property listings, and devices for a platform similar to Airbnb, where properties are listed and managed by users. It enables seamless integration with third-party providers like Airbnb, VRBO, and HomeAway, and facilitates the management of property data along with smart devices (such as energy or water usage sensors) associated with those properties.
+Users
+
+The API includes a comprehensive user management system. Users can register by providing essential information such as their username, email, and password. Upon successful registration, the system confirms that the user has been created. If the user already exists, the API will return an error.
+Once registered, users can log in by providing their credentials (username and password), which are authenticated by the system. If successful, the user is provided with an authentication token that must be used in subsequent requests to ensure security. If login credentials are incorrect, the system will reject the login attempt, returning an error message.
+Users can also view a list of all registered users in the system. This operation requires proper authentication and is likely restricted to administrative users. Each user has a unique ID, which can be used to fetch more detailed information about the user, such as their profile details. Updates to a user’s profile, like changing their email address or name, can be done by sending a patch request to the system. Similarly, users can be deleted from the system if necessary.
+
+In addition to managing personal information, users can also sync their property listings with third-party providers such as Airbnb or HomeAway. This ensures that all the properties the user has listed on these platforms are automatically updated in the system.
+Providers
+Providers are third-party platforms like Airbnb, VRBO, or HomeAway, where properties are listed. The API allows users to create and manage these provider connections. When a user adds a new provider, the system stores the provider information, linking it to the user. If the provider already exists for the user, the system returns an error to prevent duplication.
+Providers can be deleted as well if the user decides to remove the connection. For example, if a user no longer wants to sync their Airbnb listings, they can delete the Airbnb provider from their account.
+Listings
+
+Listings represent the properties users manage on the platform. These properties are usually listed on third-party services like Airbnb or VRBO and can be synced with the system. The API provides functionality to create new listings, where users input details like the title, description, location, and the provider (such as Airbnb) the listing is associated with.
+Once listings are created, they can be viewed as a list or individually by their unique ID. Users can fetch all their listings to see which properties they are currently managing. Additionally, the system allows for editing or deleting listings, giving users full control over their property data.
+There is also the capability to enable or disable listings. Enabling a listing marks it as active, making it visible to potential renters. Conversely, disabling a listing temporarily deactivates it, which might be useful if the property is undergoing maintenance or unavailable for some time.
+Devices
+
+Devices refer to the hardware installed at a property to monitor usage or conditions, such as sensors that track energy consumption, water usage, or temperature. These devices are tied to specific listings and can be managed through the API.
+The API supports adding new devices by providing details like the type of device (e.g., energy meter), its unique identifier, and the token that authenticates the device. Each device is associated with a listing so that users can monitor specific properties.
+Users can retrieve a list of all devices associated with their listings. If a user wants to see detailed information about a particular device, they can fetch it using the device’s unique ID. The API also supports updating device information or removing devices from the system when they are no longer needed.
+Schema Components
+
+The API uses specific schemas to define the structure of data objects exchanged between the client and server. For example, the User schema defines fields like username, email, and password that are required when registering a user. The Provider schema defines the fields necessary for creating a provider, such as the provider name and the associated user ID. Similarly, the Listing schema outlines the structure for properties, including details like title, location, and provider.
+Each device follows a schema as well, which includes fields for the device type, its unique ID, the token for authentication, and the associated listing. This consistent structure allows for easy integration and ensures data integrity.
+In addition, the API provides a standardized ApiResponse schema to maintain consistent error and success messages across different endpoints. Whether it's creating a user or fetching device details, the response messages provide clarity on the status of the operation.
 
 \section{User Interface}
 
