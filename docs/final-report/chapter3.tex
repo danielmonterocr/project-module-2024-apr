@@ -7,9 +7,12 @@
 
 \section{Sensing Nodes}
 
+Three types of sensing nodes were developed for the project: power, water flow, and temperature. Each node is based on 
+the ESP32 microcontroller and uses different sensors to measure the desired parameters.
+
 \subsection{Power Node}
 
-Energy consumed can be calculated by summing the power every second for 60 seconds, and then dividing by 60:
+Energy consumed was calculated by summing the power every second for 60 seconds, and then dividing by 60:
 
 \begin{equation}
     \text{Energy} = \frac{1}{60} \sum_{i=1}^{60} (I_i \times V_i)
@@ -19,32 +22,34 @@ This gives the total energy used in that minute (in watt-seconds or Joules).
 
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.5\textwidth]{energy-node-schematic.png}
+    \includegraphics[width=0.8\textwidth]{energy-node-schematic.png}
     \caption{Power node schematic}
     \label{fig:energy-node-schematic}
 \end{figure}
 
 \subsection{Water Flow Node}
 
-Read water flow and calculate liters every second for 60 seconds, sum the values and upload them.
+The water flow node uses a flow sensor to measure the flow rate of water. The flow sensor outputs a pulse every time a
+certain volume of water passes through it. The volume of water is calculated by counting the number of pulses over a 
+period of one second. The volume is then uploaded to the cloud.
 
 \begin{align}
     \text{Volume} &{}= \sum_{i=1}^{60} Q_i \times \underbrace{\Delta t}_{=1\text{s}}\\
                   &{}= \sum_{i=1}^{60} Q_i
 \end{align}
 
-Since we are reading every second, just add the values to get the total volume.
+Since we are reading every second, it just adds the values to get the total volume.
 
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.5\textwidth]{water-flow-node-schematic.png}
+    \includegraphics[width=0.8\textwidth]{water-flow-node-schematic.png}
     \caption{Water flow node schematic}
     \label{fig:water-flow-node-schematic}
 \end{figure}
 
 \subsection{Temperature Node}
 
-Calculate the average temperature over 120 seconds (reading every two seconds), then upload it.
+Calculates the average temperature over 120 seconds (reading every two seconds), then uploads it.
 
 \begin{equation}
     \text{Average Temperature} = \frac{1}{30} \sum_{i=1}^{120} T_i
@@ -52,16 +57,19 @@ Calculate the average temperature over 120 seconds (reading every two seconds), 
 
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.5\textwidth]{temp-node-schematic.png}
+    \includegraphics[width=0.8\textwidth]{temp-node-schematic.png}
     \caption{Temperature node schematic}
     \label{fig:temp-node-schematic}
 \end{figure}
 
 \section{Sensing Nodes Firmware}
 
+The firmware for the sensing nodes was developed using the PlatformIO build system. The firmware is responsible for
+managing the ESP32 microcontrollers. Snippets of the main parts of the code are shown in Appendix \ref{code-listing}.
+
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=1\textwidth]{monitoring-node-flow-chart.png}
+    \includegraphics[width=0.8\textwidth]{monitoring-node-flow-chart.png}
     \caption{Monitoring nodes flow chart}
     \label{fig:monitoring-node-flow-chart}
 \end{figure}
@@ -70,19 +78,25 @@ Calculate the average temperature over 120 seconds (reading every two seconds), 
 
 \subsection{Main Database}
 
+Mongo DB was used as the main database for storing user, provider, property listing, and device information. The 
+database schema is shown in Figure \ref{fig:entity-relationship-diagram}.
+
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.5\textwidth]{entity-relationship-diagram.png}
+    \includegraphics[width=0.8\textwidth]{entity-relationship-diagram.png}
     \caption{Entity relationship diagram}
     \label{fig:entity-relationship-diagram}
 \end{figure}
 
 \subsection{Timeseries Database}
 
+ThingsBoard was used as the timeseries database for storing historical data from the sensing nodes.
+
 \section{REST API}
 
 This API is designed to manage users, providers, property listings, and devices for a platform similar to Airbnb, where properties are listed and managed by users. It enables seamless integration with third-party providers like Airbnb, VRBO, and HomeAway, and facilitates the management of property data along with smart devices (such as energy or water usage sensors) associated with those properties.
-Users
+
+\subsection{Users}
 
 The API includes a comprehensive user management system. Users can register by providing essential information such as their username, email, and password. Upon successful registration, the system confirms that the user has been created. If the user already exists, the API will return an error.
 Once registered, users can log in by providing their credentials (username and password), which are authenticated by the system. If successful, the user is provided with an authentication token that must be used in subsequent requests to ensure security. If login credentials are incorrect, the system will reject the login attempt, returning an error message.
@@ -92,17 +106,20 @@ In addition to managing personal information, users can also sync their property
 Providers
 Providers are third-party platforms like Airbnb, VRBO, or HomeAway, where properties are listed. The API allows users to create and manage these provider connections. When a user adds a new provider, the system stores the provider information, linking it to the user. If the provider already exists for the user, the system returns an error to prevent duplication.
 Providers can be deleted as well if the user decides to remove the connection. For example, if a user no longer wants to sync their Airbnb listings, they can delete the Airbnb provider from their account.
-Listings
+
+\subsection{Listings}
 
 Listings represent the properties users manage on the platform. These properties are usually listed on third-party services like Airbnb or VRBO and can be synced with the system. The API provides functionality to create new listings, where users input details like the title, description, location, and the provider (such as Airbnb) the listing is associated with.
 Once listings are created, they can be viewed as a list or individually by their unique ID. Users can fetch all their listings to see which properties they are currently managing. Additionally, the system allows for editing or deleting listings, giving users full control over their property data.
 There is also the capability to enable or disable listings. Enabling a listing marks it as active, making it visible to potential renters. Conversely, disabling a listing temporarily deactivates it, which might be useful if the property is undergoing maintenance or unavailable for some time.
-Devices
+
+\subsection{Devices}
 
 Devices refer to the hardware installed at a property to monitor usage or conditions, such as sensors that track energy consumption, water usage, or temperature. These devices are tied to specific listings and can be managed through the API.
 The API supports adding new devices by providing details like the type of device (e.g., energy meter), its unique identifier, and the token that authenticates the device. Each device is associated with a listing so that users can monitor specific properties.
 Users can retrieve a list of all devices associated with their listings. If a user wants to see detailed information about a particular device, they can fetch it using the device’s unique ID. The API also supports updating device information or removing devices from the system when they are no longer needed.
-Schema Components
+
+\subsection{Schema Components}
 
 The API uses specific schemas to define the structure of data objects exchanged between the client and server. For example, the User schema defines fields like username, email, and password that are required when registering a user. The Provider schema defines the fields necessary for creating a provider, such as the provider name and the associated user ID. Similarly, the Listing schema outlines the structure for properties, including details like title, location, and provider.
 Each device follows a schema as well, which includes fields for the device type, its unique ID, the token for authentication, and the associated listing. This consistent structure allows for easy integration and ensures data integrity.
@@ -111,6 +128,33 @@ In addition, the API provides a standardized ApiResponse schema to maintain cons
 \section{User Interface}
 
 \section{Continous Integration}
+
+A continuous integration pipeline was set up to automate the build and test process. The pipeline consists of several 
+stages, each responsible for a specific task. The pipeline is triggered whenever changes are pushed to the repository, 
+ensuring that the code is always up-to-date and tested.
+
+\subsection{Firmware}
+
+The code is built using the PlatformIO build system, which compiles the firmware for the sensing nodes.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{firmware-build.png}
+    \caption{Firmware build}
+    \label{fig:firmware-build}
+\end{figure}
+
+\subsection{API}
+
+The API is built and the unit and integration tests are run to ensure that the changes made to the code do not break 
+existing functionality.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{api-build.png}
+    \caption{API build}
+    \label{fig:api-build}
+\end{figure}
 
 \subsection{Development Environment}
 
