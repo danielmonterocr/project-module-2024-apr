@@ -96,22 +96,23 @@ router.post('/api/listings/:listingId/enable',
     async (req, res) => {
         var update = {};
         try {
-            const listing = await Listing.findById(req.params.listingId);
+            const listing = await Listing.findOne({ listingId: req.params.listingId });
             if (!listing) {
                 return res.status(404).send({ message: 'Listing not found' });
             }
 
             update.enabled = true;
             const updateListingById = await Listing.updateOne(
-                { _id: req.params.listingId },
+                { listingId: req.params.listingId },
                 {
                     $set: update
                 }
             )
 
             // Create job that runs every day at 2pm and checks for reservations and calculates consumption
-            await agenda.now("calculate-consumption", { listingId: req.params.listingId });
-
+            await jobServices.every('3 minutes', "calculate-consumption", { listingId: req.params.listingId });
+            logger.info('Calcualte consumption job created');
+            logger.info('Listing enabled');
             res.status(200).send({ message: 'Listing enabled' });
         } catch (err) {
             logger.error(err.message)
@@ -126,14 +127,14 @@ router.post('/api/listings/:listingId/disable',
     async (req, res) => {
         var update = {};
         try {
-            const listing = await Listing.findById(req.params.listingId);
+            const listing = await Listing.findOne({ listingId: req.params.listingId });
             if (!listing) {
                 return res.status(404).send({ message: 'Listing not found' });
             }
 
             update.enabled = false;
             const updateListingById = await Listing.updateOne(
-                { _id: req.params.listingId },
+                { listingId: req.params.listingId },
                 {
                     $set: update
                 }
@@ -141,9 +142,8 @@ router.post('/api/listings/:listingId/disable',
 
             // Delete job created in enable endpoint
             const query = {
-                name: 'sync-provider',
-                'data.userId': listing.userId,
-                'data.provider': listing.provider
+                name: 'calculate-consumption',
+                'data.listingId': req.params.listingId,
             }
             agenda.cancel(query, (err, numRemoved) => {
                 if (err) {
@@ -152,7 +152,8 @@ router.post('/api/listings/:listingId/disable',
                     logger.info(`removed ${numRemoved} jobs`);
                 }
             });
-
+            logger.info('Calculate consumption job deleted');
+            logger.info('Listing disabled');
             res.status(200).send({ message: 'Listing disabled' });
         } catch (err) {
             logger.error(err.message)

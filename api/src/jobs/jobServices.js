@@ -2,10 +2,6 @@ import { logger } from '../logger.js'
 import { agenda } from './agenda.js';
 import { syncAirbnb } from '../utils/provider-utils.js';
 
-agenda.define("send-welcome-mail", async job => {
-    console.log("Hello Welcome To Our Newsletter");
-});
-
 agenda.define("sync-provider", async job => {
     logger.info("Syncing Airbnb listings and reservations");
     syncAirbnb();
