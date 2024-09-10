@@ -110,15 +110,15 @@ router.post('/api/users/:userId/sync',
             const providersList = providers.map(provider => provider.provider);
 
             if (providersList.includes('airbnb')) {
-                // Create a new job to sync listings from Airbnb
+                // Create a new job to sync listings from Airbnb                
                 logger.info("Create Airbnb sync job")
-                await jobServices.now("sync-provider", { userId: req.params.userId, provider: 'airbnb' });
-                // TODO: create another job to sync in the future
+                await jobServices.every('2 minutes', "sync-provider", { userId: req.params.userId, provider: 'airbnb' });
             }
-            if (providersList.includes('booking')) {
+            // if (providersList.includes('booking')) {
                 // Create a new job to sync listings from Booking
-                // await jobServices.now("sync-provider", { userId: req.params.userId, provider: 'booking' });
-            }
+                // logger.info("Create Booking sync job")
+                // await jobServices.every('2 minutes', "sync-provider", { userId: req.params.userId, provider: 'booking' });
+            // }
 
             res.status(200).send({ message: 'User account synced' });
 

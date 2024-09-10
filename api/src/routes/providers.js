@@ -25,6 +25,7 @@ router.post('/api/providers',
                 userId: req.body.userId
             })
             const savedProvider = await provider.save()
+            logger.info("Provider registered")
             return res.send(savedProvider)
         } catch (err) {
             logger.error(err.message)

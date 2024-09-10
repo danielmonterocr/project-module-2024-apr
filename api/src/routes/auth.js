@@ -31,6 +31,7 @@ router.post('/api/users/register',
                 password: hashedPassword
             })
             const savedUser = await user.save()
+            logger.info("User registered")
             return res.send(savedUser)
         } catch (err) {
             logger.error(err.message)
@@ -57,6 +58,7 @@ router.post('/api/users/login',
 
             // Generate token
             const token = jsonwebtoken.sign({ _id: user._id }, process.env.TOKEN_SECRET)
+            logger.info("User logged in")
             return res.header('token', token).send({ message: 'User logged in' })
         } catch (err) {
             logger.error(err.message)
