@@ -204,16 +204,16 @@ describe('DELETE /api/listings/:listingId', function () {
 });
 
 describe('POST /api/listings/:listingId/enable', function () {
-    let app, verifyStub, findByIdStub, updateOneStub, agendaStub;
+    let app, verifyStub, findOneStub, updateOneStub, agendaStub;
 
     beforeEach(function () {
         app = express();
         app.use(express.json());
         app.use(router);
         verifyStub = sinon.stub(jsonwebtoken, 'verify');
-        findByIdStub = sinon.stub(Listing, 'findById');
+        findOneStub = sinon.stub(Listing, 'findOne');
         updateOneStub = sinon.stub(Listing, 'updateOne');
-        agendaStub = sinon.stub(agenda, 'now');
+        agendaStub = sinon.stub(agenda, 'every');
     });
 
     afterEach(function () {
@@ -223,7 +223,7 @@ describe('POST /api/listings/:listingId/enable', function () {
     it('should enable listing', async function () {
         const listing = { listingId: 'Listing 1', userId: 'User 1' };
         verifyStub.returns(true);
-        findByIdStub.returns(listing);
+        findOneStub.returns(listing);
         updateOneStub.resolves({});
         agendaStub.resolves({});
 
@@ -231,46 +231,46 @@ describe('POST /api/listings/:listingId/enable', function () {
 
         expect(res.statusCode).to.equal(200);
         expect(res.body.message).to.equal('Listing enabled');
-        sinon.assert.calledOnce(findByIdStub);
+        sinon.assert.calledOnce(findOneStub);
         sinon.assert.calledOnce(updateOneStub);
     });
 
     it('should handle listing not found', async function () {
         verifyStub.returns(true);
-        findByIdStub.returns(null);
+        findOneStub.returns(null);
 
         const res = (await request(app).post('/api/listings/123/enable').set({ token: '1234567890' }));
 
         expect(res.statusCode).to.equal(404);
         expect(res.body.message).to.equal('Listing not found');
-        sinon.assert.calledOnce(findByIdStub);
+        sinon.assert.calledOnce(findOneStub);
         sinon.assert.notCalled(updateOneStub);
     });
 
     it('should handle errors when enabling listing', async function () {
         const listing = { listingId: 'Listing 1', userId: 'User 1' };
         verifyStub.returns(true);
-        findByIdStub.returns(listing);
+        findOneStub.returns(listing);
         updateOneStub.throws(new Error('DB Error'));
 
         const res = (await request(app).post('/api/listings/123/enable').set({ token: '1234567890' }));
 
         expect(res.statusCode).to.equal(500);
         expect(res.body.message).to.deep.equal({});
-        sinon.assert.calledOnce(findByIdStub);
+        sinon.assert.calledOnce(findOneStub);
         sinon.assert.calledOnce(updateOneStub);
     });
 });
 
 describe('POST /api/listings/:listingId/disable', function () {
-    let app, verifyStub, findByIdStub, updateOneStub, agendaStub;
+    let app, verifyStub, findOneStub, updateOneStub, agendaStub;
 
     beforeEach(function () {
         app = express();
         app.use(express.json());
         app.use(router);
         verifyStub = sinon.stub(jsonwebtoken, 'verify');
-        findByIdStub = sinon.stub(Listing, 'findById');
+        findOneStub = sinon.stub(Listing, 'findOne');
         updateOneStub = sinon.stub(Listing, 'updateOne');
         agendaStub = sinon.stub(agenda, 'cancel');
     });
@@ -282,7 +282,7 @@ describe('POST /api/listings/:listingId/disable', function () {
     it('should disable listing', async function () {
         const listing = { listingId: 'Listing 1', userId: 'User 1' };
         verifyStub.returns(true);
-        findByIdStub.returns(listing);
+        findOneStub.returns(listing);
         updateOneStub.resolves({});
         agendaStub.resolves({});
 
@@ -290,33 +290,33 @@ describe('POST /api/listings/:listingId/disable', function () {
 
         expect(res.statusCode).to.equal(200);
         expect(res.body.message).to.equal('Listing disabled');
-        sinon.assert.calledOnce(findByIdStub);
+        sinon.assert.calledOnce(findOneStub);
         sinon.assert.calledOnce(updateOneStub);
     });
 
     it('should handle listing not found', async function () {
         verifyStub.returns(true);
-        findByIdStub.returns(null);
+        findOneStub.returns(null);
 
         const res = (await request(app).post('/api/listings/123/disable').set({ token: '1234567890' }));
 
         expect(res.statusCode).to.equal(404);
         expect(res.body.message).to.equal('Listing not found');
-        sinon.assert.calledOnce(findByIdStub);
+        sinon.assert.calledOnce(findOneStub);
         sinon.assert.notCalled(updateOneStub);
     });
 
     it('should handle errors when disabling listing', async function () {
         const listing = { listingId: 'Listing 1', userId: 'User 1' };
         verifyStub.returns(true);
-        findByIdStub.returns(listing);
+        findOneStub.returns(listing);
         updateOneStub.throws(new Error('DB Error'));
 
         const res = (await request(app).post('/api/listings/123/disable').set({ token: '1234567890' }));
 
         expect(res.statusCode).to.equal(500);
         expect(res.body.message).to.deep.equal({});
-        sinon.assert.calledOnce(findByIdStub);
+        sinon.assert.calledOnce(findOneStub);
         sinon.assert.calledOnce(updateOneStub);
     });
 });
