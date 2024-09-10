@@ -17,6 +17,4 @@ agenda
   .on("ready", () => console.log("Agenda started!"))
   .on("error", () => console.log("Agenda connection error!"));
 
-agenda.start();
-
 export { agenda };

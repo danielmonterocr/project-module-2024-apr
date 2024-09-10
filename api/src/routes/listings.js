@@ -7,6 +7,7 @@ import { Listing } from '../models/Listing.js'
 import { auth as verifyToken } from '../verifyToken.js'
 import { validator } from '../validations/validator.js'
 import { agenda } from '../jobs/agenda.js';
+import { jobServices } from '../jobs/jobServices.js';
 
 // POST: Create listing
 router.post('/api/listings',

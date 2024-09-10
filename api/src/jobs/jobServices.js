@@ -1,5 +1,10 @@
 import { logger } from '../logger.js'
-import { syncAirbnb } from '../utils/provider-utils';
+import { agenda } from './agenda.js';
+import { syncAirbnb } from '../utils/provider-utils.js';
+
+agenda.define("send-welcome-mail", async job => {
+    console.log("Hello Welcome To Our Newsletter");
+});
 
 agenda.define("sync-provider", async job => {
     logger.info("Syncing Airbnb listings and reservations");
@@ -13,3 +18,7 @@ agenda.define("calculate-consumption", async job => {
 
     // If reservation is due, fetch data of entire stay from ThingsBoard and calculate total electricity and water used.
 });
+
+agenda.start();
+
+export { agenda as jobServices };

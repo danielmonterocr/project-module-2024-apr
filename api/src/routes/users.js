@@ -7,7 +7,7 @@ import { Provider } from '../models/Provider.js';
 
 import { auth as verifyToken } from '../verifyToken.js';
 import { validator } from '../validations/validator.js';
-import { agenda } from '../jobs/agenda.js';
+import { jobServices } from '../jobs/jobServices.js';
 
 // GET: List all users
 router.get('/api/users',
@@ -111,11 +111,13 @@ router.post('/api/users/:userId/sync',
 
             if (providersList.includes('airbnb')) {
                 // Create a new job to sync listings from Airbnb
-                await agenda.now("sync-provider", { userId: req.params.userId, provider: 'airbnb' });
+                logger.info("Create Airbnb sync job")
+                await jobServices.now("sync-provider", { userId: req.params.userId, provider: 'airbnb' });
+                // TODO: create another job to sync in the future
             }
             if (providersList.includes('booking')) {
                 // Create a new job to sync listings from Booking
-                // await agenda.now("sync-provider", { userId: req.params.userId, provider: 'booking' });
+                // await jobServices.now("sync-provider", { userId: req.params.userId, provider: 'booking' });
             }
 
             res.status(200).send({ message: 'User account synced' });
