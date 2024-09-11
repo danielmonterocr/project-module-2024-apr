@@ -616,6 +616,9 @@ components:
     Listing:
       type: object
       properties:
+        listingId:
+          type: string
+          examples: [1234567890]
         provider:
           type: string
           examples: [Airbnb, VRBO, HomeAway]
@@ -631,6 +634,9 @@ components:
         userId:
           type: string
           examples: [1234567890]
+        enabled:
+          type: boolean
+          examples: [true]
     Device:
       type: object
       properties:

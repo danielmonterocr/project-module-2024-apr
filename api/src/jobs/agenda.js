@@ -1,4 +1,5 @@
 import { uri } from '../constants/config.js';
+import { logger } from '../logger.js';
 import agendaPkg from 'agenda';
 
 // Instatiate Agenda & Connect to Mongo_URI.
@@ -14,7 +15,7 @@ const agenda = new agendaPkg.Agenda({
 
 // listen for the ready or error event.
 agenda
-  .on("ready", () => console.log("Agenda started!"))
-  .on("error", () => console.log("Agenda connection error!"));
+  .on("ready", () => logger.info("Agenda started!"))
+  .on("error", () => logger.info("Agenda connection error!"));
 
 export { agenda };

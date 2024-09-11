@@ -13,7 +13,7 @@ const importListingsFromAirbnb = (filePath) => {
     return new Promise((resolve, reject) => {
         fs.readFile(filePath, 'utf8', (err, data) => {
             if (err) {
-                console.log(filePath)
+                logger.error(filePath)
                 return reject('Error reading file:', err);
             }
 
@@ -85,7 +85,6 @@ const saveListingsFromAirbnbToDb = async (userId, listings) => {
     // Save each listing to MongoDB if it doesn't already exist
     const savePromises = listings.map(async (listing) => {
         const existingListing = await Listing.findOne({ userId: userId, title: listing.title });
-
         if (!existingListing) {
             const newListing = new Listing(listing);
             newListing.userId = userId;
@@ -105,8 +104,12 @@ const saveListingsFromAirbnbToDb = async (userId, listings) => {
 const saveReservationsFromAirbnbToDb = async (reservations) => {
     // Save each reservation to MongoDB if it doesn't already exist
     const savePromises = reservations.map(async (reservation) => {
-        const existingReservation = await Reservation.findOne({ listingId: reservation.listingId });
-
+        const query = {
+            listingId: reservation.listingId,
+            startDate: reservation.startDate,
+            endDate: reservation.endDate
+        };
+        const existingReservation = await Reservation.findOne(query);
         if (!existingReservation) {
             const newReservation = new Reservation(reservation);
             return newReservation.save();

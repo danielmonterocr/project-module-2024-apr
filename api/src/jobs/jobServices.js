@@ -4,7 +4,8 @@ import { syncAirbnb } from '../utils/provider-utils.js';
 
 agenda.define("sync-provider", async job => {
     logger.info("Syncing Airbnb listings and reservations");
-    syncAirbnb();
+    const userId = job.attrs.data.userId;
+    syncAirbnb(userId);
 });
 
 agenda.define("calculate-consumption", async job => {

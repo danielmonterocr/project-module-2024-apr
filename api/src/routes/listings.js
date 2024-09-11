@@ -23,6 +23,7 @@ router.post('/api/listings',
 
             // Save listing on DB
             const listing = new Listing({
+                listingId: req.body.listingId,
                 title: req.body.title,
                 description: req.body.description,
                 location: req.body.location,
@@ -111,7 +112,7 @@ router.post('/api/listings/:listingId/enable',
 
             // Create job that runs every day at 2pm and checks for reservations and calculates consumption
             await jobServices.every('3 minutes', "calculate-consumption", { listingId: req.params.listingId });
-            logger.info('Calcualte consumption job created');
+            logger.info('Calculate consumption job created');
             logger.info('Listing enabled');
             res.status(200).send({ message: 'Listing enabled' });
         } catch (err) {

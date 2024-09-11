@@ -1,4 +1,5 @@
 import { PORT, uri } from './constants/config.js';
+import { logger } from './logger.js';
 import express from 'express';
 const app = express();
 
@@ -24,6 +25,6 @@ app.use('/', providersRoute);
 
 mongoose.connect(uri);
 
-app.listen(PORT, () => console.log('App listening on port: ' + PORT));
+app.listen(PORT, () => logger.info('App listening on port: ' + PORT));
 
 export { app };

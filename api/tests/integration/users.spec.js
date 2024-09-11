@@ -151,21 +151,25 @@ describe('POST /api/users/{userId}/sync', function () {
     });
 });
 
-describe('importListingsFromAirbnb', function () {
-    it('should import listings and reservations from Airbnb JSON files', async function () {
-        return syncAirbnb(userId)
-            .then((ret) => {
-                expect(ret).to.be.true
-            })
-            .catch((err) => expect(err).to.be.undefined)
-    });
-});
-
 describe('GET /api/listings', function () {
     // Validate response against the OpenAPI document (swagger.yml)
     const validateResponse = validator.validateResponse('get', '/api/listings')
 
     it('should list all listings', async function () {
+        let response = { body: [] };
+        let retries = 0;
+
+        // Wait for job to save listings and reservations to the database
+        while (response.body.length < 1 && retries < 5) {
+            response = await request(app)
+                .get('/api/listings')
+                .set('token', token)
+        }
+        if (!response) {
+            throw new Error('Failed to get listings');
+        }
+
+        // Now we can validate the response
         return request(app)
             .get('/api/listings')
             .set('token', token)
@@ -173,7 +177,7 @@ describe('GET /api/listings', function () {
             .then((res) => {
                 expect(validateResponse(res)).to.be.undefined
                 expect(res.body).to.be.an('array')
-                listingId = res.body[0]._id
+                listingId = res.body[0]._id;
             })
             .catch((err) => expect(err).to.be.undefined)
     });

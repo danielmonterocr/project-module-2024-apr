@@ -7,6 +7,7 @@ import { testValidator as validator } from '../../src/validations/validator.js'
 var userId = '';
 var token = '';
 var listingId = '';
+var providerListingId = '';
 
 describe('POST /api/users/register', function () {
     // Validate response against the OpenAPI document (swagger.yml)
@@ -56,6 +57,7 @@ describe('POST /api/listings', function () {
             .set('token', token)
             .set('Accept', 'application/json')
             .send({
+                listingId: '123456',
                 provider: 'Airbnb',
                 title: 'Nour',
                 description: 'Tiny Footprint Getaway',
@@ -82,6 +84,7 @@ describe('POST /api/listings', function () {
             .set('token', token)
             .set('Accept', 'application/json')
             .send({
+                listingId: '123456',
                 provider: 'Airbnb',
                 title: 'Nour',
                 description: 'Tiny Footprint Getaway',
@@ -126,6 +129,7 @@ describe('GET /api/listings/{listingId}', function () {
             .then((res) => {
                 expect(validateResponse(res)).to.be.undefined
                 expect(res.body._id).to.equal(listingId)
+                providerListingId = res.body.listingId;
             })
             .catch((err) => expect(err).to.be.undefined)
     });
@@ -137,7 +141,7 @@ describe('POST /api/listings/{listingId}/enable', function () {
 
     it('should enable a listing', async function () {
         return request(app)
-            .post('/api/listings/' + listingId + '/enable')
+            .post('/api/listings/' + providerListingId + '/enable')
             .set('token', token)
             .expect(200)
             .then((res) => {
@@ -151,10 +155,9 @@ describe('POST /api/listings/{listingId}/enable', function () {
 describe('POST /api/listings/{listingId}/disable', function () {
     // Validate response against the OpenAPI document (swagger.yml)
     const validateResponse = validator.validateResponse('post', '/api/listings/{listingId}/disable')
-
     it('should disable a listing', async function () {
         return request(app)
-            .post('/api/listings/' + listingId + '/disable')
+            .post('/api/listings/' + providerListingId + '/disable')
             .set('token', token)
             .expect(200)
             .then((res) => {
