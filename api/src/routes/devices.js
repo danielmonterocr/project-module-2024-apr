@@ -36,6 +36,8 @@ router.post('/api/devices',
             const data = await response.json();
             logger.info("Response from ThingsBoard API: " + JSON.stringify(data));
 
+            if (data.status !== 'SUCCESS') return res.status(500).send({ message: data.errorMsg })
+
             if (response.status === 200) {
                 // Save device on DB
                 const device = new Device({

@@ -28,7 +28,7 @@ describe('POST /api/devices', function () {
         verifyStub.returns(true);
         findOneStub.returns(null);
         saveStub.resolves(device);
-        fetchStub.resolves({ status: 200, json: () => ({ credentialsValue: 'CREDS_VALUE' }) });
+        fetchStub.resolves({ status: 200, json: () => ({ status: "SUCCESS", credentialsValue: 'CREDS_VALUE' }) });
 
         const res = (await request(app).post('/api/devices').send(device).set({ token: '1234567890' }));
 
@@ -55,7 +55,7 @@ describe('POST /api/devices', function () {
         verifyStub.returns(true);
         findOneStub.returns(null);
         saveStub.throws(new Error('DB Error'));
-        fetchStub.resolves({ status: 200, json: () => ({ credentialsValue: 'CREDS_VALUE' }) });
+        fetchStub.resolves({ status: 200, json: () => ({ status: "SUCCESS", credentialsValue: 'CREDS_VALUE' }) });
 
         const res = (await request(app).post('/api/devices').send(device).set({ token: '1234567890' }));
 
