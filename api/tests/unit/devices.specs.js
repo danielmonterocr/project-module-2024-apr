@@ -24,7 +24,7 @@ describe('POST /api/devices', function () {
     });
 
     it('should create device', async function () {
-        const device = { deviceId: 'Device 1', userId: 'User 1' };
+        const device = { deviceName: 'Device 1', userId: 'User 1' };
         verifyStub.returns(true);
         findOneStub.returns(null);
         saveStub.resolves(device);
@@ -38,7 +38,7 @@ describe('POST /api/devices', function () {
     });
 
     it('should handle device already exists', async function () {
-        const device = { deviceId: 'Device 1', userId: 'User 1' };
+        const device = { deviceName: 'Device 1', userId: 'User 1' };
         verifyStub.returns(true);
         findOneStub.returns(device);
 
@@ -51,7 +51,7 @@ describe('POST /api/devices', function () {
     });
 
     it('should handle errors when saving device', async function () {
-        const device = { deviceId: 'Device 1', userId: 'User 1' };
+        const device = { deviceName: 'Device 1', userId: 'User 1' };
         verifyStub.returns(true);
         findOneStub.returns(null);
         saveStub.throws(new Error('DB Error'));
@@ -80,7 +80,7 @@ describe('GET /api/devices', function () {
     });
 
     it('should get all devices', async function () {
-        const devices = [{ deviceId: 'Device 1', userId: 'User 1' }];
+        const devices = [{ deviceName: 'Device 1', userId: 'User 1' }];
         verifyStub.returns(true);
         findStub.returns(devices);
 

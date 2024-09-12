@@ -15,7 +15,7 @@ router.post('/api/devices',
     async (req, res) => {
         try {
             // Check if device already exists
-            const deviceExists = await Device.findOne({ deviceId: req.body.deviceId })
+            const deviceExists = await Device.findOne({ deviceName: req.body.deviceName })
             if (deviceExists) {
                 return res.status(400).send({ message: 'Device already exists' })
             }

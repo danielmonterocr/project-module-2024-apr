@@ -640,7 +640,7 @@ components:
     Device:
       type: object
       properties:
-        deviceId:
+        deviceName:
           type: string
           examples: [1234567890]
         deviceType:

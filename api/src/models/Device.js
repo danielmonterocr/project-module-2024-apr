@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const deviceSchema = mongoose.Schema({
-    deviceId: {
+    deviceName: {
         type: String,
         require: true,
         min: 3,
