@@ -17,7 +17,7 @@ describe('POST /api/users/register', function () {
         return request(app)
             .post('/api/users/register')
             .set('Accept', 'application/json')
-            .send({ username: 'Nick', email: 'nick@cloud.com', password: '123456' })
+            .send({ username: 'Nick', email: 'nick@cloud.com', password: '1234567890' })
             .expect(200)
             .then((res) => {
                 expect(validateResponse(res)).to.be.undefined
@@ -36,7 +36,7 @@ describe('POST /api/users/login', function () {
         return request(app)
             .post('/api/users/login')
             .set('Accept', 'application/json')
-            .send({ email: 'nick@cloud.com', password: '123456' })
+            .send({ email: 'nick@cloud.com', password: '1234567890' })
             .expect(200)
             .then((res) => {
                 expect(validateResponse(res)).to.be.undefined
@@ -57,7 +57,7 @@ describe('POST /api/listings', function () {
             .set('token', token)
             .set('Accept', 'application/json')
             .send({
-                listingId: '123456',
+                listingId: '1065162203416824771',
                 provider: 'Airbnb',
                 title: 'Nour',
                 description: 'Tiny Footprint Getaway',
@@ -84,7 +84,7 @@ describe('POST /api/listings', function () {
             .set('token', token)
             .set('Accept', 'application/json')
             .send({
-                listingId: '123456',
+                listingId: '1065162203416824771',
                 provider: 'Airbnb',
                 title: 'Nour',
                 description: 'Tiny Footprint Getaway',
