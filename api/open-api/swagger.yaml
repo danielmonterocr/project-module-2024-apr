@@ -652,6 +652,9 @@ components:
         listingId:
           type: string
           examples: [1234567890]
+        deviceId:
+          type: string
+          examples: [1234567890]
     ApiResponse:
       type: object
       properties:

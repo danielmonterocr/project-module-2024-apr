@@ -1,3 +1,4 @@
+import { THINGSBOARD_TOKEN } from '../constants/config.js';
 import express from 'express';
 const router = express.Router()
 import { logger } from '../logger.js'
@@ -28,23 +29,33 @@ router.post('/api/devices',
             }
 
             logger.info("Calling ThingsBoard API with payload: " + JSON.stringify(payload));
-            const response = await fetch(THINGSBOARD_URL + '/api/v1/provision', {
+            const response1 = await fetch(THINGSBOARD_URL + '/api/v1/provision', {
                 method: 'post',
                 body: JSON.stringify(payload),
             });
 
-            const data = await response.json();
-            logger.info("Response from ThingsBoard API: " + JSON.stringify(data));
+            const data1 = await response1.json();
+            logger.info("Response from ThingsBoard API: " + JSON.stringify(data1));
 
-            if (data.status !== 'SUCCESS') return res.status(500).send({ message: data.errorMsg })
+            if (data1.status !== 'SUCCESS') return res.status(500).send({ message: data1.errorMsg })
 
-            if (response.status === 200) {
+            logger.info("Calling ThingsBoard API");
+            const response2 = await fetch(THINGSBOARD_URL + '/api/tenant/devices?deviceName=' + req.body.deviceName, {
+                method: 'get',
+                headers: {'X-Authorization': 'Bearer ' + THINGSBOARD_TOKEN}
+            });
+
+            const data2 = await response2.json();
+            logger.info("Response from ThingsBoard API: " + JSON.stringify(data2));
+
+            if (response2.status === 200) {
                 // Save device on DB
                 const device = new Device({
                     deviceName: req.body.deviceName,
                     deviceType: req.body.deviceType,
-                    deviceToken: data.credentialsValue,
-                    listingId: req.body.listingId
+                    deviceToken: data1.credentialsValue,
+                    listingId: req.body.listingId,
+                    deviceId: data2.id.id
                 })
                 const savedDevice = await device.save()
                 return res.send(savedDevice)

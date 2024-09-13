@@ -122,6 +122,7 @@ const saveReservationsFromAirbnbToDb = async (reservations) => {
 /**
  * Sync Airbnb data
  * 
+ * @param {string} userId - User ID
  * @returns {Boolean} - True if the sync was successful
  */
 const syncAirbnb = async (userId) => {

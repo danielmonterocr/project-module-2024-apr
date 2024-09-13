@@ -19,3 +19,4 @@ export const uri = `${DB_PREFIX}://${DB_USER}:${DB_PASSWORD}@${DB_DOMAIN}/${DB_N
 export const THINGSBOARD_URL = process.env.THINGSBOARD_URL;
 export const PROVISION_DEVICE_KEY = process.env.PROVISION_DEVICE_KEY;
 export const PROVISION_DEVICE_SECRET = process.env.PROVISION_DEVICE_SECRET;
+export const THINGSBOARD_TOKEN = process.env.THINGSBOARD_TOKEN;

@@ -111,7 +111,8 @@ router.post('/api/listings/:listingId/enable',
             )
 
             // Create job that runs every day at 2pm and checks for reservations and calculates consumption
-            await jobServices.every('3 minutes', "calculate-consumption", { listingId: req.params.listingId });
+            // await jobServices.every('3 minutes', "calculate-consumption", { listingId: req.params.listingId });
+            await jobServices.now("calculate-consumption", { listingId: req.params.listingId });
             logger.info('Calculate consumption job created');
             logger.info('Listing enabled');
             res.status(200).send({ message: 'Listing enabled' });

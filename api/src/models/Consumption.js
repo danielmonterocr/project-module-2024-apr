@@ -1,37 +1,33 @@
 import mongoose from "mongoose";
 
-const deviceSchema = mongoose.Schema({
-    deviceName: {
+const consumptionSchema = mongoose.Schema({
+    reservationId: {
         type: String,
         require: true,
         min: 3,
         max: 256,
     },
-    deviceType: {
+    type: {
         type: String,
         require: true,
         min: 3,
         max: 256,
     },
-    deviceToken: {
+    date: {
         type: String,
         require: true,
         min: 3,
         max: 256,
     },
-    listingId: {
-        type: String,
+    electricityUsed: {
+        type: Number,
         require: true,
-        min: 3,
-        max: 256,
     },
-    deviceId: {
-        type: String,
+    waterUsed: {
+        type: Number,
         require: true,
-        min: 3,
-        max: 256,
     },
 });
 
-const Device = mongoose.model("Device", deviceSchema);
-export { Device };
+const Consumption = mongoose.model("Consumption", consumptionSchema);
+export { Consumption };

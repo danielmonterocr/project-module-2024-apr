@@ -2,29 +2,41 @@ import { Reservation } from '../models/Reservation.js';
 
 import moment from 'moment';
 
-const getActiveReservations = async (listingId) => {
+/**
+ * Get active reservation for a listing
+ * 
+ * @param {string} listingId 
+ * @returns {Reservation} activeReservation - Active reservation
+ */
+const getActiveReservation = async (listingId) => {
     let today = new Date().toISOString();
     today = moment(today).format('YYYY-MM-DD');
 
-    const activeReservations = await Reservation.find({
+    const activeReservation = await Reservation.find({
         listingId: listingId,
-        startDate: { $lt: today },
+        startDate: { $lte: today },
         endDate: { $gt: today }
     });
 
-    return activeReservations;
+    return activeReservation;
 };
 
-const getFinishedReservations = async (listingId) => {
+/**
+ * Get finished reservation for a listing
+ * 
+ * @param {string} listingId 
+ * @returns {Reservation} finishedReservation - Finished reservation
+ */
+const getFinishedReservation = async (listingId) => {
     let today = new Date().toISOString();
     today = moment(today).format('YYYY-MM-DD');
 
-    const finishedReservations = await Reservation.find({
+    const finishedReservation = await Reservation.findOne({
         listingId: listingId,
         endDate: today
     });
 
-    return finishedReservations;
+    return finishedReservation;
 };
 
-export { getActiveReservations, getFinishedReservations };
+export { getActiveReservation, getFinishedReservation };
