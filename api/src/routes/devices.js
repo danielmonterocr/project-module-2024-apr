@@ -1,10 +1,10 @@
-import { THINGSBOARD_TOKEN } from '../constants/config.js';
 import express from 'express';
 const router = express.Router()
 import { logger } from '../logger.js'
-import { THINGSBOARD_URL, PROVISION_DEVICE_KEY, PROVISION_DEVICE_SECRET } from '../constants/config.js'
+import { THINGSBOARD_URL } from '../constants/config.js'
 
 import { Device } from '../models/Device.js'
+import { getUserJwtToken, getDeviceKeyAndSecret} from '../utils/thingsboard-utils.js';
 
 import { auth as verifyToken } from '../verifyToken.js'
 import { validator } from '../validations/validator.js'
@@ -21,11 +21,14 @@ router.post('/api/devices',
                 return res.status(400).send({ message: 'Device already exists' })
             }
 
+            // Get device key and device secret
+            const deviceKeyAndSecret = await getDeviceKeyAndSecret();
+
             // Create device in ThingsBoard
             const payload = {
                 "deviceName": req.body.deviceName,
-                "provisionDeviceKey": PROVISION_DEVICE_KEY,
-                "provisionDeviceSecret": PROVISION_DEVICE_SECRET
+                "provisionDeviceKey": deviceKeyAndSecret.key,
+                "provisionDeviceSecret": deviceKeyAndSecret.secret,
             }
 
             logger.info("Calling ThingsBoard API with payload: " + JSON.stringify(payload));
@@ -39,10 +42,12 @@ router.post('/api/devices',
 
             if (data1.status !== 'SUCCESS') return res.status(500).send({ message: data1.errorMsg })
 
+            const token = await getUserJwtToken();
+
             logger.info("Calling ThingsBoard API");
             const response2 = await fetch(THINGSBOARD_URL + '/api/tenant/devices?deviceName=' + req.body.deviceName, {
                 method: 'get',
-                headers: {'X-Authorization': 'Bearer ' + THINGSBOARD_TOKEN}
+                headers: {'X-Authorization': 'Bearer ' + token}
             });
 
             const data2 = await response2.json();

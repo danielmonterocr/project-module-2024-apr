@@ -45,6 +45,7 @@ router.get('/api/listings',
         try {
             // Fetch all listings
             const listings = await Listing.find();
+            logger.info('Listings retrieved');
             res.send(listings);
         } catch (err) {
             logger.error(err.message)
