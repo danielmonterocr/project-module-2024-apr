@@ -78,7 +78,7 @@ router.delete('/api/listings/:listingId',
     async (req, res) => {
         try {
             const deleteById = await Listing.deleteOne(
-                { _id: req.params.listingId }
+                { listingId: req.params.listingId }
             )
             if (deleteById.deletedCount != 1) {
                 return res.status(400).send({ message: 'Failed to delete listing' })
