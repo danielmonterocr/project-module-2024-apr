@@ -297,7 +297,7 @@
                             "cursor": "X192aWFkdWN0OmlkeDow",
                             "node": {
                                 "__typename": "StaySupplyListing",
-                                "id": "U3RheVN1cHBseUxpc3Rpbmc6MTA2NTE2MjIwMzQxNjgyNDc3MQ==",
+                                "id": "U3RheVN1cHBseUxpc3Rpbmc6MTA2NTE2MjIwMzQxNjgyNDc3Mg==",
                                 "permissions": {
                                     "__typename": "StayListingManagementPermissions",
                                     "permissions": [
@@ -541,6 +541,267 @@
                                     "nickname": null
                                 },
                                 "nameOrPlaceholderName": "NourTinyFootprint Getaway 2",
+                                "location": {
+                                    "__typename": "StaySupplyListingLocation",
+                                    "defaultAddress": {
+                                        "__typename": "StayAddress",
+                                        "locality": "Playa Hermosa",
+                                        "administrativeZone": "Puntarenas Province"
+                                    }
+                                },
+                                "isApiListing": false,
+                                "apiListingSettings": null
+                            }
+                        },
+                        {
+                            "__typename": "UserToStaySupplyListingEdge",
+                            "cursor": "X192aWFkdWN0OmlkeDow",
+                            "node": {
+                                "__typename": "StaySupplyListing",
+                                "id": "U3RheVN1cHBseUxpc3Rpbmc6MTA2NTE2MjIwMzQxNjgyNDc3Mw==",
+                                "permissions": {
+                                    "__typename": "StayListingManagementPermissions",
+                                    "permissions": [
+                                        {
+                                            "__typename": "StayListingManagementPermission",
+                                            "feature": "DELETE_IN_PROGRESS_LISTING",
+                                            "permission": "READ_WRITE"
+                                        }
+                                    ]
+                                },
+                                "shouldShowLvfTask": false,
+                                "listingVerificationFrameworkScreen": {
+                                    "__typename": "ListingVerificationFrameworkScreen",
+                                    "allowedToPublish": true
+                                },
+                                "qualityStandardsStateDetail": {
+                                    "__typename": "QualityStandardsStateDetail",
+                                    "state": "GOOD",
+                                    "metadata": null
+                                },
+                                "statuses": {
+                                    "__typename": "StaySupplyListingStatuses",
+                                    "availabilityStatus": "LISTED",
+                                    "suspensionStatus": null,
+                                    "snoozeMode": null,
+                                    "listingDisplayStatus": "LISTED"
+                                },
+                                "media": {
+                                    "__typename": "StaySupplyListingMedia",
+                                    "mediaCollection": {
+                                        "__typename": "MediaCollectionV2",
+                                        "media": [
+                                            {
+                                                "__typename": "ImageEntity",
+                                                "imageId": "1816720903",
+                                                "uri": "https://a0.muscache.com/im/pictures/miso/Hosting-1065162203416824771/original/a46d09de-1cfa-4dc4-a514-db0633259aa9.jpeg",
+                                                "altText": null,
+                                                "captions": null
+                                            },
+                                            {
+                                                "__typename": "ImageEntity",
+                                                "imageId": "1816721174",
+                                                "uri": "https://a0.muscache.com/im/pictures/miso/Hosting-1065162203416824771/original/cb007923-e214-431f-bb2f-60aa636d998c.jpeg",
+                                                "altText": null,
+                                                "captions": {
+                                                    "__typename": "UGCText",
+                                                    "localizedString": ""
+                                                }
+                                            },
+                                            {
+                                                "__typename": "ImageEntity",
+                                                "imageId": "1816721535",
+                                                "uri": "https://a0.muscache.com/im/pictures/miso/Hosting-1065162203416824771/original/1e4f19b9-a35e-4b26-be25-167c8e8ff5f7.jpeg",
+                                                "altText": null,
+                                                "captions": {
+                                                    "__typename": "UGCText",
+                                                    "localizedString": ""
+                                                }
+                                            },
+                                            {
+                                                "__typename": "ImageEntity",
+                                                "imageId": "1816719388",
+                                                "uri": "https://a0.muscache.com/im/pictures/miso/Hosting-1065162203416824771/original/cd027fc9-ca03-45ff-90a8-5e6574ae086f.jpeg",
+                                                "altText": null,
+                                                "captions": {
+                                                    "__typename": "UGCText",
+                                                    "localizedString": "Tiny bathroom, with full shower!\nThis might be your introduction to a dry toilet! "
+                                                }
+                                            },
+                                            {
+                                                "__typename": "ImageEntity",
+                                                "imageId": "1816719942",
+                                                "uri": "https://a0.muscache.com/im/pictures/miso/Hosting-1065162203416824771/original/1d421e1c-330d-4fd3-8208-faf3f2ca8fa5.jpeg",
+                                                "altText": null,
+                                                "captions": null
+                                            },
+                                            {
+                                                "__typename": "ImageEntity",
+                                                "imageId": "1816822305",
+                                                "uri": "https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTA2NTE2MjIwMzQxNjgyNDc3MQ%3D%3D/original/02df871b-2495-4ff3-9853-dfa029af46ca.jpeg",
+                                                "altText": null,
+                                                "captions": {
+                                                    "__typename": "UGCText",
+                                                    "localizedString": "Steps away from refreshing mountain water"
+                                                }
+                                            },
+                                            {
+                                                "__typename": "ImageEntity",
+                                                "imageId": "1816822661",
+                                                "uri": "https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTA2NTE2MjIwMzQxNjgyNDc3MQ%3D%3D/original/712043db-fcba-482a-b8a1-fb09836f5035.jpeg",
+                                                "altText": null,
+                                                "captions": {
+                                                    "__typename": "UGCText",
+                                                    "localizedString": "One of our beloved inhabintants Dendrobates auratus"
+                                                }
+                                            },
+                                            {
+                                                "__typename": "ImageEntity",
+                                                "imageId": "1830025962",
+                                                "uri": "https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTA2NTE2MjIwMzQxNjgyNDc3MQ%3D%3D/original/0c65afed-8ff6-4a2b-b9b5-852825aaa75e.jpeg",
+                                                "altText": null,
+                                                "captions": null
+                                            },
+                                            {
+                                                "__typename": "ImageEntity",
+                                                "imageId": "1830027077",
+                                                "uri": "https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTA2NTE2MjIwMzQxNjgyNDc3MQ%3D%3D/original/0d981e4e-ef78-47d3-90d6-ef11d746a41e.jpeg",
+                                                "altText": null,
+                                                "captions": null
+                                            },
+                                            {
+                                                "__typename": "ImageEntity",
+                                                "imageId": "1830027826",
+                                                "uri": "https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTA2NTE2MjIwMzQxNjgyNDc3MQ%3D%3D/original/0d35fcec-a1db-4b7b-9d85-ea0c19751fa7.jpeg",
+                                                "altText": null,
+                                                "captions": null
+                                            },
+                                            {
+                                                "__typename": "ImageEntity",
+                                                "imageId": "1859145973",
+                                                "uri": "https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTA2NTE2MjIwMzQxNjgyNDc3MQ%3D%3D/original/e514946b-2a9e-4a8c-9d30-90408f2237ab.jpeg",
+                                                "altText": null,
+                                                "captions": null
+                                            }
+                                        ]
+                                    }
+                                },
+                                "descriptions": {
+                                    "__typename": "StaySupplyListingDescriptions",
+                                    "id": "U3RheVN1cHBseUxpc3RpbmdEZXNjcmlwdGlvbnM6MTA2NTE2MjIwMzQxNjgyNDc3MQ==",
+                                    "descriptions": [
+                                        {
+                                            "__typename": "StaySupplyListingDescription",
+                                            "descriptionType": "NAME",
+                                            "values": [
+                                                {
+                                                    "__typename": "ListingUGC",
+                                                    "language": "en",
+                                                    "languageName": "English",
+                                                    "value": "NourTinyFootprint Getaway 3"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "__typename": "StaySupplyListingDescription",
+                                            "descriptionType": "SUMMARY",
+                                            "values": [
+                                                {
+                                                    "__typename": "ListingUGC",
+                                                    "language": "en",
+                                                    "languageName": "English",
+                                                    "value": "Welcome to Nour Tiny Footprint Getaway 2\nEmbrace adventure where the essence of living lies in simplicity and mindful connection with nature. Enjoy birdwatching, surfing, hiking or writing immersed in nature with a a taste of life beyond consumerism. \nExperience the charm of our thoughtfully designed for sustainability tinyhouse nestled in the heart of a tropical forest minutes away from World-Class surfing.   Participate in the initial stages of our project and contribute to the ongoing evolution"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "__typename": "StaySupplyListingDescription",
+                                            "descriptionType": "SPACE",
+                                            "values": [
+                                                {
+                                                    "__typename": "ListingUGC",
+                                                    "language": "en",
+                                                    "languageName": "English",
+                                                    "value": "The Tiny footprint Getaway\n\nIs a 35m2 tiny house with plenty of windows for you to enjoy the outdoor scenery. It features a yoga mini loft,  main bedroom loft, open kitchen, living room area and an enjoyable outdoors balcony. \n\nThe kitchen is fully equiped with cooking utensils, a mini oven, and a mini fridge.  The bathroom has a full cold shower bathroom, and a waterless, eco-friendly dry toilet with urine divertion. \n\nSituated on an ample property, with other house, where secondary forest preservation is being prioritized.  Access involves walking uphill. The property offers outdoor spaces for birdwatching, reading, and relaxation. A river and hiking trails with ocean views are nearby.\n\nConveniently located, we're a 15-minute drive from Playa Hermosa and 20 minutes from Jacó. Experience tranquility and eco-conscious living at the Tiny Footprint Getaway."
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "__typename": "StaySupplyListingDescription",
+                                            "descriptionType": "INTERACTION",
+                                            "values": [
+                                                {
+                                                    "__typename": "ListingUGC",
+                                                    "language": "en",
+                                                    "languageName": "English",
+                                                    "value": "Happy to answer any message providing assitance on your stay or planning your trip around the area or my beautiful country. \n\nWe might be at home to meet too."
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "__typename": "StaySupplyListingDescription",
+                                            "descriptionType": "ACCESS",
+                                            "values": [
+                                                {
+                                                    "__typename": "ListingUGC",
+                                                    "language": "en",
+                                                    "languageName": "English",
+                                                    "value": "Access is intentionally challenging, ensuring a journey that resonates with the intrepid adventure seeking individuals.\n\n-ONLY 4x4\n-Terrible shape access road!\n-Gravel with potholes!\n-River crossing!\n-At night there's little light\n\nJust as Costa Rican rural areas, if you haven't  drive around, this will be just a preparation for your trip in wild and natural surrounded v areas."
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "__typename": "StaySupplyListingDescription",
+                                            "descriptionType": "NOTES",
+                                            "values": [
+                                                {
+                                                    "__typename": "ListingUGC",
+                                                    "language": "en",
+                                                    "languageName": "English",
+                                                    "value": "You will be immersed in nature, this also means:\n- Monkey visits\n- Morning bird orchestra\n- Plenty of insects and mosquitos as any mountain retreat.\n- Electricity might fail once every 3 months  ( we will provide a gas mini and candels stove if this happens )\n\nReview the sustainability features which include dry toilet and organic/recyclable waste separation."
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "__typename": "StaySupplyListingDescription",
+                                            "descriptionType": "HOUSE_RULES",
+                                            "values": [
+                                                {
+                                                    "__typename": "ListingUGC",
+                                                    "language": "en",
+                                                    "languageName": "English",
+                                                    "value": "Please follow the instructions in the house manual :)"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "__typename": "StaySupplyListingDescription",
+                                            "descriptionType": "NEIGHBORHOOD_OVERVIEW",
+                                            "values": [
+                                                {
+                                                    "__typename": "ListingUGC",
+                                                    "language": "en",
+                                                    "languageName": "English",
+                                                    "value": null
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "__typename": "StaySupplyListingDescription",
+                                            "descriptionType": "TRANSIT",
+                                            "values": [
+                                                {
+                                                    "__typename": "ListingUGC",
+                                                    "language": "en",
+                                                    "languageName": "English",
+                                                    "value": "The best way to move around is a  4x4 car. \nTaxis are also available, and if you are more energetic we have bikes too!"
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "nickname": null
+                                },
+                                "nameOrPlaceholderName": "NourTinyFootprint Getaway 3",
                                 "location": {
                                     "__typename": "StaySupplyListingLocation",
                                     "defaultAddress": {
