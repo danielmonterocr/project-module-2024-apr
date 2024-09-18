@@ -5,7 +5,7 @@
             "start_date": "2024-08-18",
             "end_date": "2024-08-19",
             "listing_id": 1065162203416824800,
-            "listing_name": "NourTinyFootprint Getaway",
+            "listing_name": "NourTinyFootprint Getaway 1",
             "booked_date": "2024-08-16",
             "nights": 1,
             "guest_user": {
@@ -73,6 +73,154 @@
             "listing_rate_plan_enabled": false,
             "host_calendar_reservation_status": "STATUS_CURRENT",
             "listing_id_str": "1065162203416824771"
+        },
+        {
+            "confirmation_code": "HMRMDPWTAT",
+            "start_date": "2024-08-18",
+            "end_date": "2024-08-19",
+            "listing_id": 1065162203416824800,
+            "listing_name": "NourTinyFootprint Getaway 2",
+            "booked_date": "2024-08-16",
+            "nights": 1,
+            "guest_user": {
+                "first_name": "Tayi",
+                "full_name": "Tayi Fonseca",
+                "id": 60551129,
+                "phone": "+506 7202 7103",
+                "thumbnail_url": "https://a0.muscache.com/im/pictures/user/71253a9e-14cc-40b1-89c2-dfa3e252d3c9.jpg?aki_policy=profile_small",
+                "profile_picture_url": "https://a0.muscache.com/im/pictures/user/71253a9e-14cc-40b1-89c2-dfa3e252d3c9.jpg?aki_policy=profile_x_medium",
+                "location": "Cartago, Costa Rica",
+                "reviews_count_as_guest_and_cotraveler": 4,
+                "identity_verified": true
+            },
+            "guest_details": {
+                "number_of_adults": 2,
+                "number_of_children": 0,
+                "number_of_infants": 0,
+                "localized_description": "2 guests",
+                "number_of_guests": 2,
+                "number_of_pets": 0
+            },
+            "earnings": "$73.42",
+            "host_vat_invoices": [
+                {
+                    "id": 976946348,
+                    "invoice_number": "976946348"
+                }
+            ],
+            "tier_id": 0,
+            "user_facing_status_key": "current",
+            "user_facing_status_localized": "Checking out today",
+            "property": {},
+            "listing_picture_url": "https://a0.muscache.com/im/pictures/miso/Hosting-1065162203416824771/original/a46d09de-1cfa-4dc4-a514-db0633259aa9.jpeg?aki_policy=small",
+            "booking_time_type": "checkout_today",
+            "reservation_type": "DEFAULT",
+            "is_covid19_responder_booking": false,
+            "flexible_cancellation_request_status": "NOT_REQUESTED",
+            "booked_hour_localized": "4:56 PM CT",
+            "cancellation_policy_id": 3,
+            "team_permissions": {
+                "alter_reservation": {
+                    "permission_component_u_i_capability": "ENABLED"
+                },
+                "cancel_reservation": {
+                    "permission_component_u_i_capability": "ENABLED"
+                },
+                "contact_guest": {
+                    "permission_component_u_i_capability": "ENABLED"
+                },
+                "resolution_center_link": {
+                    "permission_component_u_i_capability": "ENABLED"
+                },
+                "reviews": {
+                    "permission_component_u_i_capability": "ENABLED"
+                },
+                "print_function": {
+                    "permission_component_u_i_capability": "ENABLED"
+                }
+            },
+            "is_check_out_today": true,
+            "is_check_in_today": false,
+            "bessie_thread_id": 1907011470,
+            "other_guests": [],
+            "pending_expires_at": "2024-08-17T21:53:46.936Z",
+            "listing_rate_plan_enabled": false,
+            "host_calendar_reservation_status": "STATUS_CURRENT",
+            "listing_id_str": "1065162203416824772"
+        },
+        {
+            "confirmation_code": "HMRMDPWTAT",
+            "start_date": "2024-08-18",
+            "end_date": "2024-08-19",
+            "listing_id": 1065162203416824800,
+            "listing_name": "NourTinyFootprint Getaway 3",
+            "booked_date": "2024-08-16",
+            "nights": 1,
+            "guest_user": {
+                "first_name": "Tayi",
+                "full_name": "Tayi Fonseca",
+                "id": 60551129,
+                "phone": "+506 7202 7103",
+                "thumbnail_url": "https://a0.muscache.com/im/pictures/user/71253a9e-14cc-40b1-89c2-dfa3e252d3c9.jpg?aki_policy=profile_small",
+                "profile_picture_url": "https://a0.muscache.com/im/pictures/user/71253a9e-14cc-40b1-89c2-dfa3e252d3c9.jpg?aki_policy=profile_x_medium",
+                "location": "Cartago, Costa Rica",
+                "reviews_count_as_guest_and_cotraveler": 4,
+                "identity_verified": true
+            },
+            "guest_details": {
+                "number_of_adults": 2,
+                "number_of_children": 0,
+                "number_of_infants": 0,
+                "localized_description": "2 guests",
+                "number_of_guests": 2,
+                "number_of_pets": 0
+            },
+            "earnings": "$73.42",
+            "host_vat_invoices": [
+                {
+                    "id": 976946348,
+                    "invoice_number": "976946348"
+                }
+            ],
+            "tier_id": 0,
+            "user_facing_status_key": "current",
+            "user_facing_status_localized": "Checking out today",
+            "property": {},
+            "listing_picture_url": "https://a0.muscache.com/im/pictures/miso/Hosting-1065162203416824771/original/a46d09de-1cfa-4dc4-a514-db0633259aa9.jpeg?aki_policy=small",
+            "booking_time_type": "checkout_today",
+            "reservation_type": "DEFAULT",
+            "is_covid19_responder_booking": false,
+            "flexible_cancellation_request_status": "NOT_REQUESTED",
+            "booked_hour_localized": "4:56 PM CT",
+            "cancellation_policy_id": 3,
+            "team_permissions": {
+                "alter_reservation": {
+                    "permission_component_u_i_capability": "ENABLED"
+                },
+                "cancel_reservation": {
+                    "permission_component_u_i_capability": "ENABLED"
+                },
+                "contact_guest": {
+                    "permission_component_u_i_capability": "ENABLED"
+                },
+                "resolution_center_link": {
+                    "permission_component_u_i_capability": "ENABLED"
+                },
+                "reviews": {
+                    "permission_component_u_i_capability": "ENABLED"
+                },
+                "print_function": {
+                    "permission_component_u_i_capability": "ENABLED"
+                }
+            },
+            "is_check_out_today": true,
+            "is_check_in_today": false,
+            "bessie_thread_id": 1907011470,
+            "other_guests": [],
+            "pending_expires_at": "2024-08-17T21:53:46.936Z",
+            "listing_rate_plan_enabled": false,
+            "host_calendar_reservation_status": "STATUS_CURRENT",
+            "listing_id_str": "1065162203416824773"
         }
     ],
     "metadata": {
