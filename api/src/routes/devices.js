@@ -78,7 +78,11 @@ router.get('/api/devices',
     verifyToken,
     async (req, res) => {
         try {
-            const devices = await Device.find()
+            let filter = {};
+            if (req.query.listingId) {
+                filter.listingId = req.query.listingId;
+            }
+            const devices = await Device.find(filter)
             return res.send(devices)
         } catch (err) {
             logger.error(err.message)

@@ -105,6 +105,17 @@ describe('GET /api/devices', function () {
         expect(res.statusCode).to.equal(500);
         expect(res.body.message).to.deep.equal({});
     });
+
+    it('should get all devices by filtering using listingId', async function () {
+        const devices = [{ deviceName: 'Device 1', deviceType: 'Type 1', listingId: '1', deviceId: '1' }];
+        verifyStub.returns(true);
+        findStub.returns(devices);
+
+        const res = (await request(app).get('/api/devices?userId=1').set({ token: '1234567890' }).query({ listingId: '1' }));
+
+        expect(res.statusCode).to.equal(200);
+        expect(res.body).to.deep.equal(devices);
+    });
 });
 
 describe('GET /api/devices/:deviceId', function () {

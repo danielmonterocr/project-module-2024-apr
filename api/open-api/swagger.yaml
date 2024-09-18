@@ -478,6 +478,13 @@ paths:
       summary: List all devices
       description: This can only be done by the logged in user
       operationId: listDevices
+      query:
+        - name: listingId
+          in: query
+          description: The ID of the listing to retrieve devices from
+          required: false
+          schema:
+            type: string
       responses:
         '200':
           description: Successful operation
