@@ -84,7 +84,7 @@ router.delete('/api/listings/:listingId',
                 return res.status(400).send({ message: 'Failed to delete listing' })
             }
 
-            res.status(200).send({ message: 'Listing deleted' });
+            res.send({ message: 'Listing deleted' });
         } catch (err) {
             logger.error(err.message)
             res.status(500).send({ message: err })
@@ -116,7 +116,7 @@ router.post('/api/listings/:listingId/enable',
             await jobServices.now("calculate-consumption", { listingId: req.params.listingId });
             logger.info('Calculate consumption job created');
             logger.info('Listing enabled');
-            res.status(200).send({ message: 'Listing enabled' });
+            res.send({ message: 'Listing enabled' });
         } catch (err) {
             logger.error(err.message)
             res.status(500).send({ message: err })
@@ -157,7 +157,7 @@ router.post('/api/listings/:listingId/disable',
             });
             logger.info('Calculate consumption job deleted');
             logger.info('Listing disabled');
-            res.status(200).send({ message: 'Listing disabled' });
+            res.send({ message: 'Listing disabled' });
         } catch (err) {
             logger.error(err.message)
             res.status(500).send({ message: err })

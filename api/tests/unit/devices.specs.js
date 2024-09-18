@@ -4,10 +4,11 @@ import request from 'supertest';
 import express from 'express';
 import { Device } from '../../src/models/Device.js';
 import { devices as router } from '../../src/routes/devices.js';
-import jsonwebtoken from 'jsonwebtoken'
+import jsonwebtoken from 'jsonwebtoken';
+import thingsboardUtils from '../../src/utils/thingsboard-utils.js';
 
 describe('POST /api/devices', function () {
-    let app, verifyStub, findOneStub, saveStub, fetchStub;
+    let app, verifyStub, findOneStub, saveStub, fetchStub, getDeviceKeyAndSecretStub, getUserJwtTokenStub;
 
     beforeEach(function () {
         app = express();
@@ -17,6 +18,8 @@ describe('POST /api/devices', function () {
         findOneStub = sinon.stub(Device, 'findOne')
         saveStub = sinon.stub(Device.prototype, 'save')
         fetchStub = sinon.stub(global, 'fetch');
+        getDeviceKeyAndSecretStub = sinon.stub(thingsboardUtils, 'getDeviceKeyAndSecret');
+        getUserJwtTokenStub = sinon.stub(thingsboardUtils, 'getUserJwtToken');
     });
 
     afterEach(function () {
@@ -28,7 +31,10 @@ describe('POST /api/devices', function () {
         verifyStub.returns(true);
         findOneStub.returns(null);
         saveStub.resolves(device);
-        fetchStub.resolves({ status: 200, json: () => ({ status: "SUCCESS", credentialsValue: 'CREDS_VALUE' }) });
+        getDeviceKeyAndSecretStub.returns({ key: 'DEVICE_KEY', secret: 'DEVICE_SECRET' });
+        fetchStub.onCall(0).resolves({ status: 200, json: () => ({ status: "SUCCESS", credentialsValue: 'CREDS_VALUE' }) });
+        getUserJwtTokenStub.returns('USER_TOKEN');
+        fetchStub.onCall(1).resolves({ status: 200, json: () => ({ status: "SUCCESS", id: { id: "Id" } }) });
 
         const res = (await request(app).post('/api/devices').send(device).set({ token: '1234567890' }));
 

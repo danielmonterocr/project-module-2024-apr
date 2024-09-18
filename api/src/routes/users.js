@@ -68,7 +68,7 @@ router.patch('/api/users/:userId',
                 }
             )
 
-            res.status(200).send({ message: 'User updated' });
+            res.send({ message: 'User updated' });
         } catch (err) {
             logger.error(err.message)
             res.status(400).send({ message: err })
@@ -88,7 +88,7 @@ router.delete('/api/users/:userId',
                 return res.status(400).send({ message: 'Failed to delete user' })
             }
 
-            res.status(200).send({ message: 'User deleted' });
+            res.send({ message: 'User deleted' });
         } catch (err) {
             logger.error(err.message)
             res.status(400).send({ message: err })
@@ -120,7 +120,7 @@ router.post('/api/users/:userId/sync',
                 // await jobServices.every('2 minutes', "sync-provider", { userId: req.params.userId, provider: 'booking' });
             // }
 
-            res.status(200).send({ message: 'User account synced' });
+            res.send({ message: 'User account synced' });
 
         } catch (err) {
             logger.error(err.message)

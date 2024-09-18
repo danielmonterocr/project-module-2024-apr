@@ -214,6 +214,7 @@ describe('POST /api/listings/:listingId/enable', function () {
         findOneStub = sinon.stub(Listing, 'findOne');
         updateOneStub = sinon.stub(Listing, 'updateOne');
         agendaStub = sinon.stub(agenda, 'every');
+        agendaStub = sinon.stub(agenda, 'now');
     });
 
     afterEach(function () {

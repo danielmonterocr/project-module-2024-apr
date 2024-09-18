@@ -18,9 +18,9 @@ describe('Provider Utils', () => {
         const listings = await importListingsFromAirbnb(filePath);
 
         expect(listings).to.be.an('array');
-        expect(listings).to.have.length(1);
+        expect(listings).to.have.length(2);
         expect(listings[0]).to.have.property('provider', 'airbnb');
-        expect(listings[0]).to.have.property('title', 'NourTinyFootprint Getaway');
+        expect(listings[0]).to.have.property('title', 'NourTinyFootprint Getaway 1');
         expect(listings[0]).to.have.property('location', 'Playa Hermosa, Puntarenas Province');
         expect(listings[0]).to.have.property('listingId', '1065162203416824771');
     });

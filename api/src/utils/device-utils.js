@@ -2,7 +2,7 @@ import { THINGSBOARD_URL } from '../constants/config.js';
 import { logger } from '../logger.js'
 import { Device } from '../models/Device.js';
 import { Consumption } from '../models/Consumption.js';
-import { getUserJwtToken } from './thingsboard-utils.js';
+import thingsboardUtils from './thingsboard-utils.js';
 
 /**
  * Get active devices for a listing
@@ -27,7 +27,7 @@ const getActiveDevices = async (listingId) => {
  * @returns {float} totalPower - Total electricity used in the last 24h
  */
 const getElectricityUsed = async (deviceId, startDate, endDate) => {
-    const token = await getUserJwtToken();
+    const token = await thingsboardUtils.getUserJwtToken();
     // Use interval of 86400000 to get the last 24h
     // 1440 max number of data points per second for 24h
     // agg=SUM is used to get the energy used in each interval
@@ -59,7 +59,7 @@ const getElectricityUsed = async (deviceId, startDate, endDate) => {
  * @returns {float} totalLiters - Total water used in the last 24h
  */
 const getWaterUsed = async (deviceId, startDate, endDate) => {
-    const token = await getUserJwtToken();
+    const token = await thingsboardUtils.getUserJwtToken();
     // Use interval of 86400000 to get the last 24h
     // 1440 max number of data points per second for 24h
     // agg=SUM is used to get the energy used in each interval

@@ -4,7 +4,7 @@ import { logger } from '../logger.js'
 import { THINGSBOARD_URL } from '../constants/config.js'
 
 import { Device } from '../models/Device.js'
-import { getUserJwtToken, getDeviceKeyAndSecret} from '../utils/thingsboard-utils.js';
+import thingsboardUtils from '../utils/thingsboard-utils.js';
 
 import { auth as verifyToken } from '../verifyToken.js'
 import { validator } from '../validations/validator.js'
@@ -22,7 +22,7 @@ router.post('/api/devices',
             }
 
             // Get device key and device secret
-            const deviceKeyAndSecret = await getDeviceKeyAndSecret();
+            const deviceKeyAndSecret = await thingsboardUtils.getDeviceKeyAndSecret();
 
             // Create device in ThingsBoard
             const payload = {
@@ -42,7 +42,7 @@ router.post('/api/devices',
 
             if (data1.status !== 'SUCCESS') return res.status(500).send({ message: data1.errorMsg })
 
-            const token = await getUserJwtToken();
+            const token = await thingsboardUtils.getUserJwtToken();
 
             logger.info("Calling ThingsBoard API");
             const response2 = await fetch(THINGSBOARD_URL + '/api/tenant/devices?deviceName=' + req.body.deviceName, {

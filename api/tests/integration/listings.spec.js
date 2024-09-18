@@ -174,7 +174,7 @@ describe('DELETE /api/listings/{listingId}', function () {
 
     it('should delete a listing', async function () {
         return request(app)
-            .delete('/api/listings/' + listingId)
+            .delete('/api/listings/' + providerListingId)
             .set('token', token)
             .expect(200)
             .then((res) => {
