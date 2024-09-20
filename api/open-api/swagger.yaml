@@ -579,6 +579,36 @@ paths:
           description: Bad request
         '404':
           description: Device not found
+  /api/consumptions:
+    get:
+      tags:
+        - consumptions
+      summary: List all consumptions
+      description: This can only be done by the logged in user
+      operationId: listConsumptions
+      query:
+        - name: reservationId
+          in: query
+          description: The ID of the reservation to retrieve consumptions from
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  anyOf:
+                    - $ref: '#/components/schemas/Consumption'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
 components:
   schemas:
     User:
@@ -662,6 +692,22 @@ components:
         deviceId:
           type: string
           examples: [1234567890]
+    Consumption:
+      type: object
+      properties:
+        reservationId:
+          type: string
+          examples: [1234567890]
+        type:
+          type: string
+        startDate:
+          type: string
+        endDate:
+          type: string
+        electricityUsed:
+          type: number
+        waterUsed:
+          type: number          
     ApiResponse:
       type: object
       properties:
