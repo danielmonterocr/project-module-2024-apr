@@ -2,23 +2,23 @@ import express from 'express';
 const router = express.Router()
 import { logger } from '../logger.js'
 
-import { Consumption } from '../models/Consumption.js'
+import { Report } from '../models/Report.js'
 
 import { auth as verifyToken } from '../verifyToken.js'
 import { validator } from '../validations/validator.js'
 
-// GET: Get consumptions
-router.get('/api/consumptions',
+// GET: Get reports
+router.get('/api/reports',
     verifyToken,
-    validator.validate('get', '/api/consumptions'),
+    validator.validate('get', '/api/reports'),
     async (req, res) => {
         try {
             let filter = {};
             if (req.query.reservationId) {
                 filter.reservationId = req.query.reservationId;
             }
-            const consumptions = await Consumption.find(filter);
-            res.json(consumptions);
+            const reports = await Report.find(filter);
+            res.json(reports);
         } catch (error) {
             logger.error(error);
             res.status(500).send({ message: 'Internal server error' });
@@ -26,4 +26,4 @@ router.get('/api/consumptions',
     }
 );
 
-export { router as consumptions };
+export { router as reports };

@@ -579,17 +579,17 @@ paths:
           description: Bad request
         '404':
           description: Device not found
-  /api/consumptions:
+  /api/reports:
     get:
       tags:
-        - consumptions
-      summary: List all consumptions
+        - reports
+      summary: List all reports
       description: This can only be done by the logged in user
-      operationId: listConsumptions
+      operationId: listReports
       query:
         - name: reservationId
           in: query
-          description: The ID of the reservation to retrieve consumptions from
+          description: The ID of the reservation to retrieve reports from
           required: false
           schema:
             type: string
@@ -602,7 +602,7 @@ paths:
                 type: array
                 items:
                   anyOf:
-                    - $ref: '#/components/schemas/Consumption'
+                    - $ref: '#/components/schemas/Report'
         '500':
           description: Internal server error
           content:
@@ -692,7 +692,7 @@ components:
         deviceId:
           type: string
           examples: [1234567890]
-    Consumption:
+    Report:
       type: object
       properties:
         reservationId:

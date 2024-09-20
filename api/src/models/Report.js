@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const consumptionSchema = mongoose.Schema({
+const reportSchema = mongoose.Schema({
     reservationId: {
         type: String,
         require: true,
@@ -33,7 +33,13 @@ const consumptionSchema = mongoose.Schema({
         type: Number,
         require: true,
     },
+    details: {
+        type: String,
+        require: true,
+        min: 3,
+        max: 1024,
+    },
 });
 
-const Consumption = mongoose.model("Consumption", consumptionSchema);
-export { Consumption };
+const Report = mongoose.model("Report", reportSchema);
+export { Report };

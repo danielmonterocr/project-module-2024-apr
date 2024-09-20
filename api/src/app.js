@@ -18,14 +18,14 @@ import { users as usersRoute } from './routes/users.js';
 import { listings as listingsRoute } from './routes/listings.js';
 import { providers as providersRoute } from './routes/providers.js';
 import { devices as devicesRoute } from './routes/devices.js';
-import { consumptions as consumptionsRoute } from './routes/consumptions.js';
+import { reports as reportsRoute } from './routes/reports.js';
 
 app.use('/', authRoute);
 app.use('/', usersRoute);
 app.use('/', listingsRoute);
 app.use('/', providersRoute);
 app.use('/', devicesRoute);
-app.use('/', consumptionsRoute);
+app.use('/', reportsRoute);
 
 mongoose.connect(uri);
 
