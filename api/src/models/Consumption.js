@@ -13,7 +13,13 @@ const consumptionSchema = mongoose.Schema({
         min: 3,
         max: 256,
     },
-    date: {
+    startDate: {
+        type: String,
+        require: true,
+        min: 3,
+        max: 256,
+    },
+    endDate: {
         type: String,
         require: true,
         min: 3,

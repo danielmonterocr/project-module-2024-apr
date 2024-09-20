@@ -36,8 +36,7 @@ agenda.define("calculate-consumption", async job => {
     if (finishedReservation) {
         // calculate total consumption
         logger.info("Calculating total consumption");
-        await calculateTotalConsumption(activeReservation._id, activeDevices);
-        // delete reservation
+        await calculateTotalConsumption(activeReservation._id, activeReservation.startDate, activeReservation.endDate);
     }
 });
 

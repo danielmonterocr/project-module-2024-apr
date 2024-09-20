@@ -110,7 +110,8 @@ const calculate24hConsumption = async (reservationId, activeDevices) => {
     const consumption = new Consumption({
         reservationId: reservationId,
         type: "24h",
-        date: new Date().toISOString(),
+        startDate: new Date(Date.now() - 86400000).toISOString().split('T')[0], // current date minus one day in format YYYY-MM-DD
+        endDate: new Date().toISOString().split('T')[0], // current date in format YYYY-MM-DD
         electricityUsed: electricityUsed,
         waterUsed: waterUsed
     });
@@ -121,10 +122,11 @@ const calculate24hConsumption = async (reservationId, activeDevices) => {
 /**
  * Calculate total consumption
  * 
- * @param {string} reservationId 
- * @param {string} activeDevices 
+ * @param {string} reservationId
+ * @param {string} startDate
+ * @param {string} endDate
  */
-const calculateTotalConsumption = async (reservationId, activeDevices) => {
+const calculateTotalConsumption = async (reservationId, startDate, endDate) => {
     // calculate total consumption
     const consumptions = await Consumption.find({reservationId: reservationId, type: "24h"});
 
@@ -140,7 +142,8 @@ const calculateTotalConsumption = async (reservationId, activeDevices) => {
     const consumption = new Consumption({
         reservationId: reservationId,
         type: "total",
-        date: new Date().toISOString(),
+        startDate: startDate,
+        endDate: endDate,
         electricityUsed: totalElectricityUsed,
         waterUsed: totalWaterUsed
     });

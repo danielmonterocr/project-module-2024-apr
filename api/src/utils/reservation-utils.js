@@ -12,7 +12,7 @@ const getActiveReservation = async (listingId) => {
     let today = new Date().toISOString();
     today = moment(today).format('YYYY-MM-DD');
 
-    const activeReservation = await Reservation.find({
+    const activeReservation = await Reservation.findOne({
         listingId: listingId,
         startDate: { $lte: today },
         endDate: { $gt: today }

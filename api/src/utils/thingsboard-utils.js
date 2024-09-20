@@ -18,7 +18,7 @@ const thingsboardUtils = {
             });
 
             const data = await response.json();
-            logger.info("Response from ThingsBoard API: " + JSON.stringify(data));
+            logger.debug("Response from ThingsBoard API: " + JSON.stringify(data));
 
             if (response.status === 200) {
                 return data.token;
@@ -67,7 +67,7 @@ const thingsboardUtils = {
             });
 
             const data2 = await response2.json();
-            logger.info("Response from ThingsBoard API: " + JSON.stringify(data2));
+            logger.debug("Response from ThingsBoard API: " + JSON.stringify(data2));
 
             if (response2.status === 200) {
                 return {
