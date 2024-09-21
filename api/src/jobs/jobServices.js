@@ -2,7 +2,13 @@ import { logger } from '../logger.js'
 import { agenda } from './agenda.js';
 import { syncAirbnb } from '../utils/provider-utils.js';
 import { getActiveReservation, getFinishedReservation } from '../utils/reservation-utils.js';
-import { getActiveDevices, calculate24hConsumption, calculateTotalConsumption } from '../utils/device-utils.js';
+import { getActiveDevices, calculateDailyConsumption, calculateTotalConsumption } from '../utils/device-utils.js';
+import { 
+    generateDailyConsumptionReport, 
+    generateTotalConsumptionReport,
+    saveDailyReportToDB,
+    saveTotalReportToDB
+} from '../utils/reports-utils.js';
 
 /**
  * Sync provider job
@@ -19,24 +25,53 @@ agenda.define("sync-provider", async job => {
 agenda.define("calculate-consumption", async job => {
     logger.info("Calculating consumption for active reservations");
     const listingId = job.attrs.data.listingId;
+    let utilitiesUsed = {};
+    let report = "";
 
-    // get active devices
-    const activeDevices = await getActiveDevices(listingId);
+    try {
+        // get active devices
+        const activeDevices = await getActiveDevices(listingId);
+        logger.info("Active devices: " + JSON.stringify(activeDevices));
 
-    // get active reservation
-    const activeReservation = await getActiveReservation(listingId);
-    if (activeReservation) {
-        // calculate consumption in last 24h
-        logger.info("Calculating consumption in last 24h");
-        await calculate24hConsumption(activeReservation._id, activeDevices);
-    }
+        // get active reservation
+        const activeReservation = await getActiveReservation(listingId);
+        logger.info("Active reservation: " + JSON.stringify(activeReservation));
+        if (activeReservation) {
+            // calculate daily consumption
+            logger.info("Calculating daily consumption");
+            utilitiesUsed = await calculateDailyConsumption(activeDevices);
+            logger.info("Generating daily report");
+            report = generateDailyConsumptionReport(utilitiesUsed.electricityUsed, utilitiesUsed.waterUsed);
+            saveDailyReportToDB(activeReservation._id, utilitiesUsed.electricityUsed, utilitiesUsed.waterUsed, report);
+        }
 
-    // get finished reservation
-    const finishedReservation = await getFinishedReservation(listingId);
-    if (finishedReservation) {
-        // calculate total consumption
-        logger.info("Calculating total consumption");
-        await calculateTotalConsumption(activeReservation._id, activeReservation.startDate, activeReservation.endDate);
+        // get finished reservation
+        const finishedReservation = await getFinishedReservation(listingId);
+        if (finishedReservation) {
+            // calculate total consumption
+            logger.info("Calculating total consumption");
+            utilitiesUsed = await calculateTotalConsumption(
+                activeReservation._id,
+                activeReservation.startDate,
+                activeReservation.endDate
+            );
+            const numberOfDays = (new Date(activeReservation.endDate) - new Date(activeReservation.startDate)) / (1000 * 60 * 60 * 24);
+            report = generateTotalConsumptionReport(
+                utilitiesUsed.totalElectricityUsed, 
+                utilitiesUsed.totalWaterUsed,
+                numberOfDays
+            );
+            saveTotalReportToDB(
+                activeReservation._id, 
+                activeReservation.startDate, 
+                activeReservation.endDate, 
+                utilitiesUsed.totalElectricityUsed, 
+                utilitiesUsed.totalWaterUsed, 
+                report
+            );
+        }
+    } catch (error) {
+        logger.error("Error calculating consumption: " + error);
     }
 });
 

@@ -85,13 +85,15 @@ const getWaterUsed = async (deviceId, startDate, endDate) => {
  * 
  * @param {string} reservationId 
  * @param {string} activeDevices 
+ * @returns {object} - Object with electricityUsed and waterUsed
  */
-const calculate24hConsumption = async (reservationId, activeDevices) => {
+const calculateDailyConsumption = async (activeDevices) => {
     const endDate = Date.now();
     const startDate = endDate - 86400000; // 24h in milliseconds
     let electricityUsed = 0;
     let waterUsed = 0;
 
+    logger.info("Active devices: " + JSON.stringify(activeDevices));
     // calculate consumption
     for (const device of activeDevices) {
         if (device.deviceType === 'power') {
@@ -109,18 +111,10 @@ const calculate24hConsumption = async (reservationId, activeDevices) => {
     // Convert totalElectricityUsed and totalWaterUsed to kW in 24h and liters
     electricityUsed = (electricityUsed / 3600000).toFixed(2); // convert from W to kW
     waterUsed = waterUsed.toFixed(2);
+    logger.info("Electricity used: " + electricityUsed + " kW");
+    logger.info("Water used: " + waterUsed + " L");
 
-    logger.info("Save last 24h report in DB");
-    const report = new Report({
-        reservationId: reservationId,
-        type: "24h",
-        startDate: new Date(Date.now() - 86400000).toISOString().split('T')[0], // current date minus one day in format YYYY-MM-DD
-        endDate: new Date().toISOString().split('T')[0], // current date in format YYYY-MM-DD
-        electricityUsed: electricityUsed,
-        waterUsed: waterUsed
-    });
-    const result = await report.save();
-    logger.info("Report saved in DB: " + JSON.stringify(result));
+    return { electricityUsed, waterUsed };
 };
 
 /**
@@ -129,10 +123,11 @@ const calculate24hConsumption = async (reservationId, activeDevices) => {
  * @param {string} reservationId
  * @param {string} startDate
  * @param {string} endDate
+ * @returns {object} - Object with totalElectricityUsed and totalWaterUsed
  */
 const calculateTotalConsumption = async (reservationId, startDate, endDate) => {
     // calculate total consumption
-    const reports = await Report.find({reservationId: reservationId, type: "24h"});
+    const reports = await Report.find({reservationId: reservationId, type: "daily"});
 
     let totalElectricityUsed = 0;
     let totalWaterUsed = 0;
@@ -142,17 +137,7 @@ const calculateTotalConsumption = async (reservationId, startDate, endDate) => {
         totalWaterUsed += report.waterUsed;
     }
 
-    logger.info("Save final report in DB");
-    const report = new Report({
-        reservationId: reservationId,
-        type: "total",
-        startDate: startDate,
-        endDate: endDate,
-        electricityUsed: totalElectricityUsed,
-        waterUsed: totalWaterUsed
-    });
-    const result = await report.save();
-    logger.info("Report saved in DB: " + JSON.stringify(result));
+    return { totalElectricityUsed, totalWaterUsed };
 };
 
-export { getActiveDevices, calculate24hConsumption, calculateTotalConsumption };
+export { getActiveDevices, calculateDailyConsumption, calculateTotalConsumption };
