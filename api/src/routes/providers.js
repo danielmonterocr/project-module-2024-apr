@@ -25,7 +25,7 @@ router.post('/api/providers',
                 userId: req.body.userId
             })
             const savedProvider = await provider.save()
-            logger.info("Provider registered")
+            logger.debug("Provider created: " + JSON.stringify(savedProvider));
             return res.send(savedProvider)
         } catch (err) {
             logger.error(err.message)
@@ -33,7 +33,7 @@ router.post('/api/providers',
         }
     })
 
-// DELETE: Delete provider
+// DELETE: Remove provider
 router.delete('/api/providers',
     verifyToken,
     validator.validate('delete', '/api/providers'),
@@ -64,7 +64,7 @@ router.delete('/api/providers',
                     logger.info(`removed ${numRemoved} jobs`);
                 }
             });
-
+            logger.debug("Provider deleted: " + JSON.stringify(deleteById));
             return res.send({ message: 'Provider deleted' })
         } catch (err) {
             logger.error(err.message)

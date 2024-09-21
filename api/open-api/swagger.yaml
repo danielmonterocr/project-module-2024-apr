@@ -28,6 +28,8 @@ tags:
     description: APIs related to listing operations
   - name: devices
     description: APIs related to device operations
+  - name: reports
+    description: APIs related to report operations
 paths:
   /api/users/register:
     post:
@@ -502,30 +504,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/ApiResponse'
   /api/devices/{deviceId}:
-    get:
-      tags:
-        - devices
-      summary: Retrieve details of a specific device
-      description: This can only be done by the logged in user
-      operationId: getDeviceById
-      parameters:
-        - name: deviceId
-          in: path
-          description: The ID of the device to retrieve
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Device'
-        '400':
-          description: Bad request
-        '404':
-          description: Device not found
     patch:
       tags:
         - devices
@@ -544,30 +522,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Device'
-      responses:
-        '200':
-          description: Succesful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-        '400':
-          description: Bad request
-        '404':
-          description: Device not found
-    delete:
-      tags:
-        - devices
-      summary: Delete device
-      description: This can only be done by the logged in user
-      operationId: deleteDevice
-      parameters:
-        - name: deviceId
-          in: path
-          description: The name of the device that needs to be deleted
-          required: true
-          schema:
-            type: string
       responses:
         '200':
           description: Succesful operation

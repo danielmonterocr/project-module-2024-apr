@@ -17,6 +17,7 @@ router.get('/api/users',
         try {
             // Fetch all users
             const users = await User.find();
+            logger.debug("Users fetched: " + JSON.stringify(users));
             res.send(users);
         } catch (err) {
             logger.error(err.message)
@@ -34,7 +35,7 @@ router.get('/api/users/:userId',
             if (!user) {
                 return res.status(404).send({ message: 'User not found' });
             }
-
+            logger.debug("User fetched: " + JSON.stringify(user));
             return res.send(user);
         } catch (err) {
             logger.error(err.message)
@@ -60,14 +61,13 @@ router.patch('/api/users/:userId',
             if (req.body.email !== undefined) {
                 update.email = req.body.email
             }
-
             const updateUserById = await User.updateOne(
                 { _id: req.params.userId },
                 {
                     $set: update
                 }
             )
-
+            logger.debug("User updated: " + JSON.stringify(updateUserById));
             res.send({ message: 'User updated' });
         } catch (err) {
             logger.error(err.message)
@@ -75,7 +75,7 @@ router.patch('/api/users/:userId',
         }
     })
 
-// DELETE: Delete a user
+// DELETE: Remove a user
 router.delete('/api/users/:userId',
     verifyToken,
     validator.validate('delete', '/api/users/{userId}'),
@@ -87,10 +87,10 @@ router.delete('/api/users/:userId',
             if (deleteById.deletedCount != 1) {
                 return res.status(400).send({ message: 'Failed to delete user' })
             }
-
+            logger.debug("User deleted: " + JSON.stringify(deleteById));
             res.send({ message: 'User deleted' });
         } catch (err) {
-            logger.error(err.message)
+            logger.error(err.message);
             res.status(400).send({ message: err })
         }
     })
@@ -108,7 +108,6 @@ router.post('/api/users/:userId/sync',
 
             const providers = await Provider.find({ userId: req.params.userId });
             const providersList = providers.map(provider => provider.provider);
-
             if (providersList.includes('airbnb')) {
                 // Create a new job to sync listings from Airbnb                
                 logger.info("Create Airbnb sync job")
@@ -120,8 +119,8 @@ router.post('/api/users/:userId/sync',
                 // await jobServices.every('2 minutes', "sync-provider", { userId: req.params.userId, provider: 'booking' });
             // }
 
+            logger.info("User account synced");
             res.send({ message: 'User account synced' });
-
         } catch (err) {
             logger.error(err.message)
             res.status(500).send({ message: err });

@@ -118,37 +118,53 @@ describe('GET /api/devices', function () {
     });
 });
 
-describe('GET /api/devices/:deviceId', function () {
-    let app, verifyStub, findOneStub;
+describe('PATCH /api/devices/:deviceId', function () {
+    let app, verifyStub, findByIdStub, updateOneStub;
 
     beforeEach(function () {
         app = express();
         app.use(express.json());
         app.use(router);
         verifyStub = sinon.stub(jsonwebtoken, 'verify');
-        findOneStub = sinon.stub(Device, 'findOne')
+        findByIdStub = sinon.stub(Device, 'findById')
+        updateOneStub = sinon.stub(Device, 'updateOne')
     });
 
     afterEach(function () {
         sinon.restore();
     });
 
-    it('should get device by deviceId', async function () {
+    it('should update device by deviceId', async function () {
         const device = { deviceId: 'Device 1', userId: 'User 1' };
         verifyStub.returns(true);
-        findOneStub.returns(device);
+        findByIdStub.returns(device);
+        updateOneStub.resolves({ "modifiedCount": 1 });
 
-        const res = (await request(app).get('/api/devices/1').set({ token: '1234567890' }));
+        const res = (await request(app).patch('/api/devices/1').send({ deviceId: '2' }).set({ token: '1234567890' }));
 
         expect(res.statusCode).to.equal(200);
-        expect(res.body).to.deep.equal(device);
+        expect(res.body.modifiedCount).to.equal(1);
+        sinon.assert.calledOnce(updateOneStub);
     });
 
-    it('should handle errors when getting device by deviceId', async function () {
+    it('should handle device not found', async function () {
+        const device = { deviceId: 'Device 1', userId: 'User 1' };
         verifyStub.returns(true);
-        findOneStub.throws(new Error('DB Error'));
+        findByIdStub.returns(null);
 
-        const res = (await request(app).get('/api/devices/1').set({ token: '1234567890' }));
+        const res = (await request(app).patch('/api/devices/1').send(device).set({ token: '1234567890' }));
+
+        expect(res.statusCode).to.equal(404);
+        expect(res.body.message).to.equal('Device not found');
+        sinon.assert.notCalled(updateOneStub);
+    });
+
+    it('should handle errors when updating device by deviceId', async function () {
+        const device = { deviceId: 'Device 1', userId: 'User 1' };
+        verifyStub.returns(true);
+        findByIdStub.throws(new Error('DB Error'));
+
+        const res = (await request(app).patch('/api/devices/1').send(device).set({ token: '1234567890' }));
 
         expect(res.statusCode).to.equal(500);
         expect(res.body.message).to.deep.equal({});

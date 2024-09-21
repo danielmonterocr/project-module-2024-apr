@@ -11,6 +11,7 @@ import thingsboardUtils from './thingsboard-utils.js';
  * @returns {Promise} - Promise object represents the active devices
  */
 const getActiveDevices = async (listingId) => {
+    logger.info("Getting active devices for listing: " + listingId);
     const activeDevices = await Device.find({
         listingId: listingId
     });
@@ -93,7 +94,6 @@ const calculateDailyConsumption = async (activeDevices) => {
     let electricityUsed = 0;
     let waterUsed = 0;
 
-    logger.info("Active devices: " + JSON.stringify(activeDevices));
     // calculate consumption
     for (const device of activeDevices) {
         if (device.deviceType === 'power') {

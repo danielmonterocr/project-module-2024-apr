@@ -47,6 +47,7 @@ agenda.define("calculate-consumption", async job => {
 
         // get finished reservation
         const finishedReservation = await getFinishedReservation(listingId);
+        logger.info("Finished reservation: " + JSON.stringify(finishedReservation));
         if (finishedReservation) {
             // calculate total consumption
             logger.info("Calculating total consumption");

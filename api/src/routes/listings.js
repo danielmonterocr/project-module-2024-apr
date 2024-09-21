@@ -30,6 +30,7 @@ router.post('/api/listings',
                 userId: req.body.userId
             })
             const savedListing = await listing.save()
+            logger.debug("Listing created: " + JSON.stringify(savedListing));
             return res.send(savedListing)
         } catch (err) {
             logger.error(err.message)
@@ -45,7 +46,7 @@ router.get('/api/listings',
         try {
             // Fetch all listings
             const listings = await Listing.find();
-            logger.info('Listings retrieved');
+            logger.debug("Listings fetched: " + JSON.stringify(listings));
             res.send(listings);
         } catch (err) {
             logger.error(err.message)
@@ -63,7 +64,7 @@ router.get('/api/listings/:listingId',
             if (!listing) {
                 return res.status(404).send({ message: 'Listing not found' });
             }
-
+            logger.debug("Listing fetched: " + JSON.stringify(listing));
             return res.send(listing);
         } catch (err) {
             logger.error(err.message)
@@ -71,7 +72,7 @@ router.get('/api/listings/:listingId',
         }
     })
 
-// DELETE: Delete a listing
+// DELETE: Remove a listing
 router.delete('/api/listings/:listingId',
     verifyToken,
     validator.validate('delete', '/api/listings/{listingId}'),
@@ -83,7 +84,7 @@ router.delete('/api/listings/:listingId',
             if (deleteById.deletedCount != 1) {
                 return res.status(400).send({ message: 'Failed to delete listing' })
             }
-
+            logger.debug("Listing deleted: " + JSON.stringify(deleteById));
             res.send({ message: 'Listing deleted' });
         } catch (err) {
             logger.error(err.message)
