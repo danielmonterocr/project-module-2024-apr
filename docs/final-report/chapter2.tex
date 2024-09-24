@@ -36,7 +36,7 @@
 % use your prototype on a daily basis, and see if they reduce their usage  day on day, and that they report that this
 % was caused by not being aware of their usage beforehand. You could capture this in a survey.
 
-\chapter{Plan for Developing the Solution }
+\chapter{Methodology}
 
 \section{Current State and Proposed Solution}
 
@@ -62,17 +62,21 @@ for further analysis and research.
 
 \subsection{Requirements}
 
-\begin{itemize}
-    \item Fine-grained readings (every 2 seconds)
-    \item Stable connection to the internet through WiFi
-    \item Secure data transmission
-    \item Large amounts of data storage
-    \item Data visualization
-    \item User authentication
-    \item Reports generation
-    \item Open API standard
-    \item Scalabitlity and maintainability
-\end{itemize}
+\begin{enumerate}
+    \item Fine-grained readings: The sensors should transmit readings at a minimum of 2 seconds to 
+    enable near real-time data logging of temperature, humidity, water consumption.
+    \item Stable connection to the internet through WiFi: Due to the need for near real-time transmission a stable 
+    internet connection is required to mitigate against lost packets of data.
+    \item Secure data transmission: The data transmitted from the sensors to the cloud should be encrypted to prevent 
+    unauthorized access.
+    \item Large amounts of data storage: The system should be able to store large amounts of data for historical.
+    \item Data visualization: The system should be able to visualize the data in a user-friendly way.
+    \item User authentication: The system should have a user authentication system to prevent unauthorized access.
+    \item Reports generation: The system should be able to generate daily and end-of-stay reports for guests.
+    \item Open API standard: The API should comply with the Open API standard to ensure interoperability with other 
+    systems.
+    \item Scalabitlity and maintainability: The system should be scalable and easy to maintain.
+\end{enumerate}
 
 \section{System Architecture}
 
@@ -152,11 +156,11 @@ A User Interface (UI) that can be used from personal computers, tablets and cell
 a dashboard with in-depth real-time data of every listing that shows energy and water consumption, and temperature. It 
 also provides historical data on previous stays organized by listings and guests.
 
-\section{Data Flow}
+\subsection{Data Flow}
 Figure \ref{fig:connectivity-diagram} shows a high-level diagram of the flow of data between the different components 
 of the system. The microcontrollers send data to the ThingsBoard IoT Platform through an MQTT connection, which is then
 stored in a time series database. The client application uses the API to access the data and present it to the host. 
-The API and databases are hosted on the Google Cloud for security, scalability and reliability.
+The API and databases are hosted on the Google Cloud \cite{GoogleCloud2024} for security, scalability and reliability.
 
 \begin{figure}[!ht]
     \centering
@@ -164,3 +168,162 @@ The API and databases are hosted on the Google Cloud for security, scalability a
     \caption{Connectivity diagram}
     \label{fig:connectivity-diagram}
 \end{figure}
+
+\section{Implementation}
+
+\subsection{Sensing Nodes}
+
+Three types of sensing nodes were developed for the project: power, water flow, and temperature. Each node is based on 
+the ESP32 microcontroller and uses different sensors to measure the desired parameters.
+
+\subsubsection{Power Node}
+
+Energy consumed was calculated by summing the power every second for 60 seconds, and then dividing by 60:
+
+\begin{equation}
+    \text{Energy} = \frac{1}{60} \sum_{i=1}^{60} (I_i \times V_i)
+\end{equation}
+
+This gives the total energy used in that minute (in watt-seconds or Joules).
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{energy-node-schematic.png}
+    \caption{Power node schematic}
+    \label{fig:energy-node-schematic}
+\end{figure}
+
+\subsubsection{Water Flow Node}
+
+The water flow node uses a flow sensor to measure the flow rate of water. The flow sensor outputs a pulse every time a
+certain volume of water passes through it. The volume of water is calculated by counting the number of pulses over a 
+period of one second. The volume is then uploaded to the cloud.
+
+\begin{align}
+    \text{Volume} &{}= \sum_{i=1}^{60} Q_i \times \underbrace{\Delta t}_{=1\text{s}}\\
+                  &{}= \sum_{i=1}^{60} Q_i
+\end{align}
+
+Since we are reading every second, it just adds the values to get the total volume.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{water-flow-node-schematic.png}
+    \caption{Water flow node schematic}
+    \label{fig:water-flow-node-schematic}
+\end{figure}
+
+\subsubsection{Temperature Node}
+
+Calculates the average temperature over 120 seconds (reading every two seconds), then uploads it.
+
+\begin{equation}
+    \text{Average Temperature} = \frac{1}{30} \sum_{i=1}^{120} T_i
+\end{equation}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{temp-node-schematic.png}
+    \caption{Temperature node schematic}
+    \label{fig:temp-node-schematic}
+\end{figure}
+
+\subsection{Sensing Nodes Firmware}
+
+The firmware for the sensing nodes was developed using the PlatformIO build system. The firmware is responsible for
+managing the ESP32 microcontrollers. Snippets of the main parts of the code are shown in Appendix \ref{code-listing}.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{monitoring-node-flow-chart.png}
+    \caption{Monitoring nodes flow chart}
+    \label{fig:monitoring-node-flow-chart}
+\end{figure}
+
+\subsection{Databases}
+
+\subsubsection{Main Database}
+
+Mongo DB was used as the main database for storing user, provider, property listing, and device information. The 
+database schema is shown in Figure \ref{fig:entity-relationship-diagram}.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=1\textwidth]{entity-relationship-diagram.png}
+    \caption{Entity relationship diagram}
+    \label{fig:entity-relationship-diagram}
+\end{figure}
+
+\subsubsection{Timeseries Database}
+
+ThingsBoard was used as the timeseries database for storing historical data from the sensing nodes.
+
+\subsection{REST API}
+
+This API is designed to manage users, providers, property listings, and devices for a platform similar to Airbnb, where properties are listed and managed by users. It enables seamless integration with third-party providers like Airbnb, VRBO, and HomeAway, and facilitates the management of property data along with smart devices (such as energy or water usage sensors) associated with those properties.
+
+\subsubsection{Users}
+
+The API includes a comprehensive user management system. Users can register by providing essential information such as their username, email, and password. Upon successful registration, the system confirms that the user has been created. If the user already exists, the API will return an error.
+Once registered, users can log in by providing their credentials (username and password), which are authenticated by the system. If successful, the user is provided with an authentication token that must be used in subsequent requests to ensure security. If login credentials are incorrect, the system will reject the login attempt, returning an error message.
+Users can also view a list of all registered users in the system. This operation requires proper authentication and is likely restricted to administrative users. Each user has a unique ID, which can be used to fetch more detailed information about the user, such as their profile details. Updates to a user’s profile, like changing their email address or name, can be done by sending a patch request to the system. Similarly, users can be deleted from the system if necessary.
+
+In addition to managing personal information, users can also sync their property listings with third-party providers such as Airbnb or HomeAway. This ensures that all the properties the user has listed on these platforms are automatically updated in the system.
+Providers
+Providers are third-party platforms like Airbnb, VRBO, or HomeAway, where properties are listed. The API allows users to create and manage these provider connections. When a user adds a new provider, the system stores the provider information, linking it to the user. If the provider already exists for the user, the system returns an error to prevent duplication.
+Providers can be deleted as well if the user decides to remove the connection. For example, if a user no longer wants to sync their Airbnb listings, they can delete the Airbnb provider from their account.
+
+\subsubsection{Listings}
+
+Listings represent the properties users manage on the platform. These properties are usually listed on third-party services like Airbnb or VRBO and can be synced with the system. The API provides functionality to create new listings, where users input details like the title, description, location, and the provider (such as Airbnb) the listing is associated with.
+Once listings are created, they can be viewed as a list or individually by their unique ID. Users can fetch all their listings to see which properties they are currently managing. Additionally, the system allows for editing or deleting listings, giving users full control over their property data.
+There is also the capability to enable or disable listings. Enabling a listing marks it as active, making it visible to potential renters. Conversely, disabling a listing temporarily deactivates it, which might be useful if the property is undergoing maintenance or unavailable for some time.
+
+\subsubsection{Devices}
+
+Devices refer to the hardware installed at a property to monitor usage or conditions, such as sensors that track energy consumption, water usage, or temperature. These devices are tied to specific listings and can be managed through the API.
+The API supports adding new devices by providing details like the type of device (e.g., energy meter), its unique identifier, and the token that authenticates the device. Each device is associated with a listing so that users can monitor specific properties.
+Users can retrieve a list of all devices associated with their listings. If a user wants to see detailed information about a particular device, they can fetch it using the device’s unique ID. The API also supports updating device information or removing devices from the system when they are no longer needed.
+
+\subsubsection{Schema Components}
+
+The API uses specific schemas to define the structure of data objects exchanged between the client and server. For example, the User schema defines fields like username, email, and password that are required when registering a user. The Provider schema defines the fields necessary for creating a provider, such as the provider name and the associated user ID. Similarly, the Listing schema outlines the structure for properties, including details like title, location, and provider.
+Each device follows a schema as well, which includes fields for the device type, its unique ID, the token for authentication, and the associated listing. This consistent structure allows for easy integration and ensures data integrity.
+In addition, the API provides a standardized ApiResponse schema to maintain consistent error and success messages across different endpoints. Whether it's creating a user or fetching device details, the response messages provide clarity on the status of the operation.
+
+\subsection{User Interface}
+
+\subsection{Continous Integration}
+
+A continuous integration pipeline was set up to automate the build and test process. The pipeline consists of several 
+stages, each responsible for a specific task. The pipeline is triggered whenever changes are pushed to the repository, 
+ensuring that the code is always up-to-date and tested.
+
+\subsubsection{Firmware}
+
+The code is built using the PlatformIO build system, which compiles the firmware for the sensing nodes.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{firmware-build.png}
+    \caption{Firmware build}
+    \label{fig:firmware-build}
+\end{figure}
+
+\subsubsection{API}
+
+The API is built and the unit and integration tests are run to ensure that the changes made to the code do not break 
+existing functionality.
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{api-build.png}
+    \caption{API build}
+    \label{fig:api-build}
+\end{figure}
+
+\subsubsection{Development Environment}
+
+\subsubsection{Testing}
+
+\subsubsection{Deployment}
