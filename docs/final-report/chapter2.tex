@@ -208,7 +208,7 @@ Since we are reading every second, it just adds the values to get the total volu
 
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.8\textwidth]{water-flow-node-schematic.png}
+    \includegraphics[width=0.5\textwidth]{water-flow-node-schematic.png}
     \caption{Water flow node schematic}
     \label{fig:water-flow-node-schematic}
 \end{figure}
@@ -223,7 +223,7 @@ Calculates the average temperature over 120 seconds (reading every two seconds),
 
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.8\textwidth]{temp-node-schematic.png}
+    \includegraphics[width=0.4\textwidth]{temp-node-schematic.png}
     \caption{Temperature node schematic}
     \label{fig:temp-node-schematic}
 \end{figure}
@@ -291,7 +291,18 @@ The API uses specific schemas to define the structure of data objects exchanged 
 Each device follows a schema as well, which includes fields for the device type, its unique ID, the token for authentication, and the associated listing. This consistent structure allows for easy integration and ensures data integrity.
 In addition, the API provides a standardized ApiResponse schema to maintain consistent error and success messages across different endpoints. Whether it's creating a user or fetching device details, the response messages provide clarity on the status of the operation.
 
-\subsection{User Interface}
+\subsection{Web Application}
+
+\subsubsection{Main Program}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=1\textwidth]{main-flow-chart.png}
+    \caption{Main program flow chart}
+    \label{fig:main-flow-chart}
+\end{figure}
+
+\subsubsection{User Interface}
 
 \subsection{Continous Integration}
 
