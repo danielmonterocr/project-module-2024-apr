@@ -304,6 +304,94 @@ In addition, the API provides a standardized ApiResponse schema to maintain cons
 
 \subsubsection{User Interface}
 
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=1\textwidth]{user-interface-flow-chart.png}
+    \caption{User Interface flow chart}
+    \label{fig:user-interface-flow-chart}
+\end{figure}
+
+\textbf{Authentication}
+
+%%%%%%%%%%%%%%%%%  begin figure  %%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[t]
+    % sample images are from mwe package, but should be found by latex in the tex tree w/o loading that package
+    \begin{subfigure}[c]{0.495\textwidth}
+    \centering{\includegraphics[alt={sample image},width=0.99\textwidth]{ui-sign-in.png}}%
+    \subcaption{\label{fig:ui-sign-in}}
+    \end{subfigure}
+    %%%%%%%% don't leave a break here
+    \begin{subfigure}[c]{0.495\textwidth}
+    \centering{\includegraphics[alt={sample image},width=0.99\textwidth]{ui-sign-up.png}}%
+    \subcaption{\label{fig:ui-sign-up}}%
+    \end{subfigure}%
+    \caption{Authentication: (a) Sign-in; (b) Sign-up.\label{fig:authentication}}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%  end figure  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\textbf{Listings}
+
+%%%%%%%%%%%%%%%%%  begin figure  %%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[t]
+    % sample images are from mwe package, but should be found by latex in the tex tree w/o loading that package
+    \begin{subfigure}[c]{0.495\textwidth}
+    \centering{\includegraphics[alt={sample image},width=0.99\textwidth]{ui-listings.png}}%
+    \subcaption{\label{fig:ui-listings}}
+    \end{subfigure}
+    %%%%%%%% don't leave a break here
+    \begin{subfigure}[c]{0.495\textwidth}
+    \centering{\includegraphics[alt={sample image},width=0.99\textwidth]{ui-register-provider.png}}%
+    \subcaption{\label{fig:ui-register-provider}}%
+    \end{subfigure}%
+    \caption{Listings: (a) View listings; (b) Register new provider.\label{fig:listings}}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%  end figure  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\textbf{Devices}
+
+%%%%%%%%%%%%%%%%%  begin figure  %%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[t]
+    % sample images are from mwe package, but should be found by latex in the tex tree w/o loading that package
+    \begin{subfigure}[c]{0.495\textwidth}
+    \centering{\includegraphics[alt={sample image},width=0.99\textwidth]{ui-devices.png}}%
+    \subcaption{\label{fig:ui-devices}}
+    \end{subfigure}
+    %%%%%%%% don't leave a break here
+    \begin{subfigure}[c]{0.495\textwidth}
+    \centering{\includegraphics[alt={sample image},width=0.99\textwidth]{ui-register-device.png}}%
+    \subcaption{\label{fig:ui-register-devices}}%
+    \end{subfigure}%
+    \caption{Devices: (a) View devices; (b) Register new device.\label{fig:devices}}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%  end figure  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\textbf{Reports}
+
+%%%%%%%%%%%%%%%%%  begin figure  %%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[t]
+    % sample images are from mwe package, but should be found by latex in the tex tree w/o loading that package
+    \begin{subfigure}[c]{0.495\textwidth}
+    \centering{\includegraphics[alt={sample image},width=0.99\textwidth]{ui-reports.png}}%
+    \subcaption{\label{fig:ui-reports}}
+    \end{subfigure}
+    %%%%%%%% don't leave a break here
+    \begin{subfigure}[c]{0.495\textwidth}
+    \centering{\includegraphics[alt={sample image},width=0.99\textwidth]{ui-report-details.png}}%
+    \subcaption{\label{fig:ui-report-details}}%
+    \end{subfigure}%
+    \caption{Reports: (a) View reports; (b) View report's details.\label{fig:reports}}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%  end figure  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\textbf{Dashboards}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{ui-dashboards.png}
+    \caption{View dashboard}
+    \label{fig:ui-dashboards}
+\end{figure}
+
 \subsection{Continous Integration}
 
 A continuous integration pipeline was set up to automate the build and test process. The pipeline consists of several 
