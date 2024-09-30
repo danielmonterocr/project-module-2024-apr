@@ -5,16 +5,27 @@
 
 \chapter{Results, Analysis and Evaluation}
 
-1. Design and Implement Smart Monitoring System
+\section{Measuring Achievement of Objectives}
 
-Metrics:
-Accuracy of Sensor Data: Compare sensor readings with manual measurements or benchmark values.
-Data Transmission Reliability: Monitor the frequency and success rate of data transmission from sensors to the 
-database.
+\subsection{Develop and deploy smart sensors to monitor energy consumption, water usage and temperature}
+This objective was achieved. Energy, water flow and temperature sensors were installed in a real AirBnB property. 
+Figure \ref{fig:ac-power} shows turning on a kettel to boil water, in figure \ref{fig:ac-temperature} the flow of 
+water for filling up a glass is pictured and finally, a 24 hour temperature graph is shown in figure TODO: Z.
 
-Methods:
-Perform calibration tests and cross-validate sensor readings with known values.
-Track data transmission logs and error rates to ensure consistent and reliable data flow.
+\subsection{Build an application programming Interface (API) to facilitate access to sensor-collected data}
+This objective was achieved. An API was developed to provide access to the data collected by the sensors. The API
+complies with OpenAPI standards and is documented using Swagger. Figure \ref{fig:swagger} shows the API documentation.
+
+\subsection{Design and generate comprehensive daily and end-of-stay reports for guests}
+This objective was achieved. Daily and end-of-stay reports can be generated for guests. The reports include information
+on energy consumption, water usage and temperature. Figure \ref{fig:whatsapp-daily-report} shows a sample daily report 
+and figure \ref{fig:whatsapp-final-report} shows a sample end-of-stay report.
+
+\subsection{Create a user-friendly web application for hosts to monitor and manage ther property's resource consumption}
+This objective was achieved. A web application was developed for hosts to monitor and manage their property's resource.
+Section \ref{sec:user-interface} of the methodology chapter shows the wireframes for the web application.
+
+\section{Measuring Achievement of Requirements}
 
 % 2. Develop Web Application for Hosts
 % Metrics:
@@ -68,34 +79,34 @@ Track data transmission logs and error rates to ensure consistent and reliable d
 % Use feedback forms, surveys, and interviews with both hosts and guests to gather insights on the system’s impact and 
 % performance.
 
-\section{Testing}
-* A description of the test plan, i.e., how the program/system was verified.
+% \section{Testing}
+% * A description of the test plan, i.e., how the program/system was verified.
 
-* Put the actual test results in an appendix if too long. This section may also include a user evaluation based on 
-feedback where appropriate.
+% * Put the actual test results in an appendix if too long. This section may also include a user evaluation based on 
+% feedback where appropriate.
 
-A test plan was developed to evaluate the performance of the system. The plan included the following steps:
+% A test plan was developed to evaluate the performance of the system. The plan included the following steps:
 
-\begin{itemize}
-    \item Hardware Testing: make sure the hardware components are working properly.
-    \item Unit Testing: unit tests for the code running the API.
-    \item Integration Testing: integration tests between each system layer.
-    \item System Testing: end-to-end testing (including interaction with host dashboard) using simulated stays.
-    \item Regression Testing: Github Actions integrated into the develpment process to make sure nothing breaks when changes were introduced. This included linting the code.
-    \item User Testing: A small group of users (guests and hosts) tested the system and completed a survey to collect the result of their experiences using the application.
-\end{itemize}
+% \begin{itemize}
+%     \item Hardware Testing: make sure the hardware components are working properly.
+%     \item Unit Testing: unit tests for the code running the API.
+%     \item Integration Testing: integration tests between each system layer.
+%     \item System Testing: end-to-end testing (including interaction with host dashboard) using simulated stays.
+%     \item Regression Testing: Github Actions integrated into the develpment process to make sure nothing breaks when changes were introduced. This included linting the code.
+%     \item User Testing: A small group of users (guests and hosts) tested the system and completed a survey to collect the result of their experiences using the application.
+% \end{itemize}
 
-\subsection{Hardware}
+% \subsection{Hardware}
 
-\section{Results}
+% \section{Results}
 
-* This chapter is relevant to projects where experiments or simulations were carried out with the code written.
-\begin{itemize}
-	\item Why were certain experiments carried out but not others?
-	\item What were the important parameters in the simulation and how did they affect the results?
-\end{itemize}
+% * This chapter is relevant to projects where experiments or simulations were carried out with the code written.
+% \begin{itemize}
+% 	\item Why were certain experiments carried out but not others?
+% 	\item What were the important parameters in the simulation and how did they affect the results?
+% \end{itemize}
     
-* If there are many graphs and tables associated with this chapter they may be put in an appendix, but it is generally better to keep these close to the text they illustrate, as this is easier for the reader.
+% * If there are many graphs and tables associated with this chapter they may be put in an appendix, but it is generally better to keep these close to the text they illustrate, as this is easier for the reader.
 
 % Introduction
 % Describe your methodology: provide details
@@ -108,9 +119,9 @@ A test plan was developed to evaluate the performance of the system. The plan in
 % End result: software itself
 % Conclude with implications of future work
 
-\section{Evaluation}
+% \section{Evaluation}
 
-* Evaluation and critical evaluation of the results including strong and weak points, lessons learnt, and design decisions.
-\begin{itemize}
-	\item Consider what you would do differently, are there ways in which the project could be improved or extended?
-\end{itemize}
+% * Evaluation and critical evaluation of the results including strong and weak points, lessons learnt, and design decisions.
+% \begin{itemize}
+% 	\item Consider what you would do differently, are there ways in which the project could be improved or extended?
+% \end{itemize}
