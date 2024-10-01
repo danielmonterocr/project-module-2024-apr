@@ -63,19 +63,23 @@ for further analysis and research.
 \subsection{Requirements}
 
 \begin{enumerate}
-    \item Fine-grained readings: The sensors should transmit readings at a minimum of 2 seconds to 
+    \item \textbf{Fine-grained readings:} The sensors should read at a minimum of 2 seconds to 
     enable near real-time data logging of temperature, humidity, water consumption.
-    \item Stable connection to the internet through WiFi: Due to the need for near real-time transmission a stable 
-    internet connection is required to mitigate against lost packets of data.
-    \item Secure data transmission: The data transmitted from the sensors to the cloud should be encrypted to prevent 
-    unauthorized access.
-    \item Large amounts of data storage: The system should be able to store large amounts of data for historical.
-    \item Data visualization: The system should be able to visualize the data in a user-friendly way.
-    \item User authentication: The system should have a user authentication system to prevent unauthorized access.
-    \item Reports generation: The system should be able to generate daily and end-of-stay reports for guests.
-    \item Open API standard: The API should comply with the Open API standard to ensure interoperability with other 
-    systems.
-    \item Scalabitlity and maintainability: The system should be scalable and easy to maintain.
+    \item \textbf{High frequency telemetry:} The sensors should be able to send data to the cloud at a minimum of every 
+    2 minutes.
+    \item \textbf{Continous connectivity:} The sensors should be able to maintain a connection to the cloud at all 
+    times. 
+    \item \textbf{Secure data transmission:} Authentication and encryption should be used to ensure data integrity and
+    privacy.
+    \item \textbf{Data visualization:} The system should be able to visualize the data in real time, as well as the 
+    the reports. This all should be done in a user-friendly way.
+    \item \textbf{User authentication:} The system should have a user authentication system to prevent unauthorized 
+    access.
+    \item \textbf{Reports generation:} The system should be able to generate daily and end-of-stay reports for guests.
+    \item \textbf{Open API standard:} The API should comply with the Open API standard to ensure interoperability with 
+    other systems.
+    \item \textbf{Scalabitlity and maintainability:} The system should be able to handle a large number of sensors and 
+    users. It should also be easy to maintain.
 \end{enumerate}
 
 \section{System Architecture}
