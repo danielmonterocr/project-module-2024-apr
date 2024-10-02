@@ -3,189 +3,26 @@
 % Documentation: https://ctan.org/pkg/mitthesis
 
 
-\chapter{Results, Analysis and Evaluation}
+\chapter{Conclusion}
+% Final opportunity to summarize your key findings, contributions and implications of your work.
 
-% Introduction
-% Describe your methodology: provide details
-% Present your results
-% Discuss your findings
-% Address limitations
-% Relate back to literature review
-% Explain your experiments
-% Assessment of experiments
-% End result: software itself
-% Conclude with implications of future work
+\begin{itemize}
+    \item Recap on the objectives.
+    \item Summarize the results.
+    \item Evaluate the success.
+    \item Discuss the contributions.
+    \item Recommendations and future work.
+    \item Reflect on lessons learned.
+    \item Emphazise the impact.
+    \item Strong statement.
+  \end{itemize}
 
-\section{Measuring Achievement of Objectives}
+\section{Recomendations and Future Work}
 
-\subsection{Develop and deploy smart sensors to monitor energy consumption, water usage and temperature}
-
-This objective was achieved. Energy, water flow and temperature sensors were installed in a real AirBnB property. 
-Figure \ref{fig:ac-power} shows turning on a kettel to boil water, in figure \ref{fig:ac-temperature} the flow of 
-water for filling up a glass is pictured and finally, a 24 hour temperature graph is shown in figure TODO: Z.
-
-\subsection{Build an application programming Interface (API) to facilitate access to sensor-collected data}
-
-This objective was achieved. An API was developed to provide access to the data collected by the sensors. The API
-complies with OpenAPI standards and is documented using Swagger. Figure \ref{fig:swagger} shows the API documentation.
-
-\subsection{Design and generate comprehensive daily and end-of-stay reports for guests}
-
-This objective was achieved. Daily and end-of-stay reports can be generated for guests. The reports include information
-on energy consumption, water usage and temperature. Figure \ref{fig:whatsapp-daily-report} shows a sample daily report 
-and figure \ref{fig:whatsapp-final-report} shows a sample end-of-stay report.
-
-\subsection{Create a user-friendly web application for hosts to monitor and manage ther property's resource consumption}
-
-This objective was achieved. A web application was developed for hosts to monitor and manage their property's resource.
-Section \ref{sec:user-interface} of the methodology chapter shows the wireframes for the web application.
-
-\section{Measuring Achievement of Requirements}
-
-% * A description of the test plan, i.e., how the program/system was verified.
-
-% * Put the actual test results in an appendix if too long. This section may also include a user evaluation based on 
-% feedback where appropriate.
-
-The approach used to test the system was to follow Test-Driven Development (TDD) principles. This involved writing tests 
-before writing the code to implement the functionality. Tests were written in a bottom-up fashion, starting with 
-hardware testing and then moving up the system layers. The tests were incorporated into Continous Integration (CI) 
-pipelines using GitHub Actions \cite{GitHub2024} to ensure that the tests were run automatically whenever changes were 
-made to the codebase.
-
-\section{Results and Analysis}
-
-% * This chapter is relevant to projects where experiments or simulations were carried out with the code written.
-% 1. Why were certain experiments carried out but not others?
-% 2. What were the important parameters in the simulation and how did they affect the results?
-% 3. Verify the accuracy and completeness of the data presented in reports.
-    
-% * If there are many graphs and tables associated with this chapter they may be put in an appendix, but it is generally 
-% better to keep these close to the text they illustrate, as this is easier for the reader.
-
-\subsection{Hardware Testing}
-
-Two types of tests were carried out on the hardware components: calibration and response time. The calibration tests 
-consisted of comparing the readings from the sensors with readings with off-the-shelf instruments such as multimeters,
-a graduated cylenrder and a thermometer. The response time tests consisted of measuring the time it took for the sensors
-to respond to changes in the environment, this was crucial to ensure that the sensors were able to capture changes in
-real-time, for example, turning on an appliance, filling up a glass of water or opening a window.
-
-\subsubsection{Current Sensors}
-
-The sensors were connected to a power strip together with the multimeter, an induction stove and a kettle were used to
-generate changes in current consumption. Table \ref{tab:current-sensors-calibration} shows the results of the 
-calibration tests for the current sensors. While the sensors were able to capture changes in current, there was a small 
-deviation from the readings obtained with the multimeter. The standard deviation was calculated to be less than 0.1A, 
-which was within the acceptable range for the application. Figure \ref{fig:using-kettle-and-ac} shows the change in 
-power consumption when turning on a kettel (left), the idea was to able to capture rapid change in current consumption 
-and according to this image the sensors were able to do so.
-
-\subsubsection{Water Flow Sensor}
-
-Two different tests were conducted on the water flow sensor, first the sensor was connected to a funnel and a liter of
-water was then poured into the graduated cylinder at different speeds: slow, medium and fast. The second test was to 
-capture the change in water flow when filling up the cylinder at high speed. Table 
-\ref{tab:water-flow-sensor-calibration} shows the results of the first test, here a problem with slow water flow was
-identify, this was due to the sensor not being able to capture the change in water flow at low speeds. A series of
-improvements in the code were made, like separating the code in the different tasks, to be able to capture this more 
-accuratly but it was not possible, it was concluded that a higher precision sensor was needed but it was not possible to
-get one in time for the project.
-
-Figure \ref{fig:water-flow-sensor-response} shows the response of the water flow sensor when filling up the container,
-the sensor was able to capture the change in water flow in less than 10 seconds, which was within the acceptable range
-when thinking about fast common tasks like filling up a glass of water, anything below this speed might not be captured
-by the sensor, i.e. opening the faucet to get a little stream of water.
-
-\subsubsection{Temperature Sensors}
-
-Testing the temperature sensors required two different tests, first the sensors were compared to a thermometer to check
-the accuracy of the readings in a span of 12 hours, the results were satisfactory as the standard deviation was less
-than 0.5 degrees Celsius. The second test was to check the response time of the sensors, this was done by placing one
-sensor in a glass full of ice and the other in a glass full of boiling water, figure 
-\ref{tab:temperature-sensors-calibration} shows the results of the calibration tests for the temperature sensors.
-
-Figure \ref{fig:temp-sensor-response} shows the change in temperature when the sensors were submerged, once the
-temperature reached the maximum and minimum values the sensors were swapped to check the response time, it was less than
-a minute which was within the acceptable range for the application, there are no changes so drastic in temperature
-inside or outside a room.
-
-\subsection{Back-end Testing}
-
-A set of tests were written to evaluate the performance of the back-end system. One particular detail about the unit,
-integration and system tests is that the OpenAPI specification was used to verify the payloads and responses from the
-API, this was done to ensure that the documentation was in line with the actual implementation of the API, with this
-approach, if a new feature is added to the API, the Swagger documents need to be updated first, hence it works as a 
-single source of truth.
-
-\subsubsection{Unit Testing}
-
-Unit tests were developed for every endpoint and utility function in the API. Mocha and Chai were used to write the
-tests in JavaScript. A total of 100 unit tests were written in order to test payloads, responses and error handling. 
-Figure \ref{fig:api-unit-tests-results} shows the results of the tests run locally.
-
-\subsubsection{Integration Testing}
-
-Figure \ref{fig:api-integration-tests-results} shows the results of a run of the integration tests, these tests were
-used to verify the well functioning of the different components of the API. For example, a test creates a user, then 
-logs in, it creates some listings, then it modifies this listings and finally deletes them along with the user. These
-tests were also created using Mocha \cite{Mocha2024} and Chai \cite{Chai2024}.
-
-\subsubsection{System Testing}
-
-System tests were written using Postman \cite{Postman2024}, the idea was to test the API as a whole, this included the 
-entire flow of creating a user, logging in, registering a provider, pulling the listings and reservations from AirBnB, 
-simulating a stay and finally fetching the reports. An image showing these tests can be seen in TODO: figure X.
-
-\subsubsection{Regression Testing}
-
-Unit and integration tests were run automatically using GitHub Actions every time code was pushed to the repository. An
-email was received if the code failed to be compiled or any of the tests failed to run. Figure \ref{fig:api-build} shows
-a successful build of the API.
-
-\subsection{Front-end Testing}
-
-Testing of the User Interface was done manually, first at develping time, then a small group of users (guests and hosts)
-tested the system and completed a survey to collect the result of their experiences using the application.
-
-\subsubsection{User Testing}
-
-Do to the fact that is low season in the region were the AirBnB property is located, it was not possible to get a lot of
-people to test the system, in the end only 5 people tested the system, 3 guests and 2 hosts.
-
-TODO: table X shows the results of the survey.
-
-\section{Evaluation}
-
-% * Evaluation and critical evaluation of the results including strong and weak points, lessons learnt, and design decisions.
-% \begin{itemize}
-
-% * Consider what you would do differently, are there ways in which the project could be improved or extended?
-
-% Performance Evaluation: Evaluate the performance of your system. This could be in terms of speed, resource usage, or any other relevant metrics.
-% User Feedback: If possible, gather feedback from users. This could be done through user testing, surveys, or interviews.
-% Reflection: Reflect on the development process. What went well? What didn't? What would you do differently next time?
-
-As stated in the first section of this chapter, the objectives of the project were achieved. The system is able to
-perform all basic functionalities. Some of the decisions taken in the design phase like TDD and CI were crucial to 
-deliver a robust solution eventhough they made the development process slower. In terms of security in IoT devices, the 
-use of Rust \cite{Rust2024} would have been a better choice, but do to the lack of experience with the language and the 
-small ecosystem of sensor libraries it was decided to use C++ and PlatformIO instead.
-
-Calibration of the sensors took a lot of trial and error and this should be considered for any future work as it had 
-an impact on the original schedule. Cheap sensors were sourced locally because of budget and time constrains, but using
-more precise sensors would have been a better choice, specially when talking about the water flow sensor.
-
-In terms of the API, the use of JavaScript and Node.js was a good choice, the development process was faster due to 
-extensive support of the language and the vast amount of libraries available. The use of Agenda for scheduling tasks was
-an excellent choice, it's integration with MongoDB and the ease of use made it a great tool for the job. The use of 
-OpenAPI and Swagger integrated into the code and the tests was a great decision as the documentation was written in a 
-more organic way.
-
-The User Interface was developed using low-code tools, this was changed from the original plan of using Flutter
-\cite{Flutter2024} or React \cite{React2024} because of the time constrains. Appsmith proved to be a fast and easy to 
-use tool, with the power of JavaScript underneath, in the end all the features were implemented in the span of 2 weeks.
-
-Finally, deploying to Google Cloud was a good choice, having a dedicated virtual machine available 24/7 was crucial for
-storing the data coming from the sensors. The use of Docker made the development both locally and remotely easier, as 
-it was possible to spin up the containers on both environments with the same configuration.
+\begin{itemize}
+    \item Design and build PCBs for the sensor nodes to reduce the size and complexity of the system.
+    \item Program microcontrollers using a memory safe language like Rust to improve the reliability of the system.
+    \item Implement machine learning models to identify appliances based on consumption patterns.
+    \item Deploy on top of a serverless architecture to reduce operational costs and improve scalability.
+    \item Add other providers besides AirBnB.
+\end{itemize}
