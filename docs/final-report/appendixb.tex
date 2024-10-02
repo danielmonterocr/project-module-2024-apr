@@ -3,137 +3,178 @@
 % Documentation: https://ctan.org/pkg/mitthesis
 
 
-\chapter{Tests Results}
+\chapter{Code listing}
+\label{code-listing}
 
-\section{Hardware Testing Results}
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{CadetBlue!15!white},   
+    commentstyle=\color{Red3},
+    numberstyle=\tiny\color{gray},
+    stringstyle=\color{Blue3},
+    basicstyle=\small\ttfamily,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}%
+\lstset{language=[5.3]Lua,style={mystyle}}%
 
-\subsection{Current Sensors}
+\section{Sensing nodes main code}
+
+\begin{lstlisting}[language=C++]
+/**
+ * @brief Setup function to initialize the ESP32.
+ */
+void setup() {
+// Initialize serial for debugging
+#ifdef DEBUG
+  Serial.begin(SERIAL_DEBUG_BAUD);
+#endif
+  // Initialize built-in LED
+  pinMode(LED_BUILTIN, OUTPUT);
+ 
+  setupCurrentSensors();
+  
+  /**
+   * Creates a new task and assigns it to a specific core.
+   *
+   * @param pvTaskCode A pointer to the task entry function.
+   * @param pcName A descriptive name for the task.
+   * @param usStackDepth The size of the task stack in words.
+   * @param pvParameters A pointer to the task's parameters.
+   * @param uxPriority The priority of the task.
+   * @param pxCreatedTask A pointer to a variable that will receive the task handle.
+   * @param xCoreID The ID of the core to which the task should be pinned (optional).
+   */
+  
+  // Connect to WiFi network and connection alive
+  serial_println("Create keepWifiAliveTask task");
+  xTaskCreatePinnedToCore(
+      keepWifiAliveTask,
+      "keepWifiAliveTask",
+      5000,
+      NULL,
+      1,
+      NULL,
+      ARDUINO_RUNNING_CORE);
+ 
+  serial_println("Create keepMQTTConnectionAlive task");
+  xTaskCreate(
+      keepMqttConnectionAliveTask,
+      "keepMqttConnectionAliveTask",
+      5000,
+      NULL,
+      5,
+      NULL);
+ 
+  serial_println("Create monitorTask task");
+  xTaskCreate(
+      measurePowerTask,
+      "measurePowerTask",
+      5000,
+      NULL,
+      4,
+      NULL);
+}
+\end{lstlisting}
+
+\section{Sensing nodes monitoring task}
+
+\begin{lstlisting}[language=C++]
+/**
+ * @brief Measure power task.
+ * 
+ * @param pvParameters Parameters for the task.
+ */
+void measurePowerTask(void *pvParameters) {
+  uint8_t i = 1;
+  for(;;) {
+    // serial_println("Measure power");
+    // serial_print("Iteration: ");
+    serial_println(i);
+  
+    unsigned long start = millis();
+  
+    measurePower(&tmpPower1, &tmpPower2);
+  
+    serial_print("Power 1: ");
+    serial_print(tmpPower1);
+    serial_println("W");
+    serial_print("Power 2: ");
+    serial_print(tmpPower2);
+    serial_println("W");
+  
+    power1 += tmpPower1;
+    power2 += tmpPower2;
+  
+    serial_print("Total power 1: ");
+    serial_print(power1);
+    serial_println("W");
+    serial_print("Total power 2: ");
+    serial_print(power2);
+    serial_println("W");
+  
+    if (i++ % NUM_MEASUREMENTS == 0) {
+      totalPower1 = power1;
+      totalPower2 = power2;
+      serial_print("Avg power1: ");
+      serial_print(totalPower1 / NUM_MEASUREMENTS);
+  
+      serial_println("W");
+      serial_print("Avg power2: ");
+      serial_print(totalPower2 / NUM_MEASUREMENTS);
+      serial_println("W");
+  
+      power1 = 0;
+      power2 = 0;
+  
+      xTaskCreate(
+        sendDataToThingsboard,
+        "sendDataToThingsboard",
+        10000,
+        NULL,
+        5,
+        NULL);
+  
+      i = 1;
+    }
+  
+    unsigned long end = millis();
+  
+    // Delay to keep the task running every 2 seconds,
+    // deduct the time taken to measure power
+    vTaskDelay((MQTT_PUBLISH_INTERVAL_MS - (end - start)) / portTICK_PERIOD_MS);
+  }
+}
+\end{lstlisting}
+
+\section{API}
 
 \begin{figure}[ht]
-    \centering
-    \includegraphics[width=0.8\textwidth]{ac-power.png}
-    \caption{Change in power consumption when tunring on the air conditioner.}
-    \label{fig:ac-power}
+  \centering
+  \includegraphics[width=1\textwidth]{swagger.png}
+  \caption{Swagger API documentation.}
+  \label{fig:swagger}
 \end{figure}
 
-\subsubsection{Calibration}
+\textbf{Authentication}
 
-\begin{table}[ht]
-    \caption{Current sensors calibration results with standard deviation.}
-    \label{tab:current-sensors-calibration}
-    \begin{tabular}{@{}lllll@{}}
-    \toprule
-    \textbf{Level} & \textbf{Multimeter (A)} & \textbf{Sensor 1 (A)} & \textbf{Sensor 2 (A)} & \textbf{Standard Deviation (A)} \\ \midrule
-    1              & 6.1                     & 6.19                          & 6.11          & 0.04                            \\
-    2              & 6.1                     & 6.31                          & 6.21          & 0.09                            \\
-    3              & 6.3                     & 6.42                          & 6.36          & 0.05                            \\
-    4              & 6.6                     & 6.67                          & 6.60          & 0.03                            \\
-    5              & 7.1                     & 7.21                          & 7.09          & 0.05                            \\
-    6              & 7.4                     & 7.42                          & 7.33          & 0.04                            \\
-    7              & 8.4                     & 8.43                          & 8.33          & 0.04                            \\
-    8              & 9.0                     & 9.09                          & 9.04          & 0.04                            \\
-    9              & 10.7                    & 10.74                         & 10.55         & 0.08                            \\
-    10             & 12.5                    & 12.12                         & 12.14         & 0.05                            \\ \bottomrule
-    \end{tabular}
-\end{table}
-
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=0.8\textwidth]{kettle-and-ac.png}
-    \caption{Change in current reading by using on appliances: kettle (left) and air conditioner (right).}
-    \label{fig:using-kettle-and-ac}
+%%%%%%%%%%%%%%%%%  begin figure  %%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[t]
+    % sample images are from mwe package, but should be found by latex in the tex tree w/o loading that package
+    \begin{subfigure}[c]{0.495\textwidth}
+    \centering{\includegraphics[alt={sample image},width=0.79\textwidth]{whatsapp-daily-report.jpg}}%
+    \subcaption{\label{fig:whatsapp-daily-report}}
+    \end{subfigure}
+    %%%%%%%% don't leave a break here
+    \begin{subfigure}[c]{0.495\textwidth}
+    \centering{\includegraphics[alt={sample image},width=0.79\textwidth]{whatsapp-final-report.jpg}}%
+    \subcaption{\label{fig:whatsapp-final-report}}%
+    \end{subfigure}%
+    \caption{Reports: (a) Daily report; (b) Final report.\label{fig:whatsapp-reports}}
 \end{figure}
-
-\subsection{Water Flow Sensor}
-
-\subsubsection{Calibration}
-
-\begin{table}[ht]
-    \caption{Water flow sensor calibration results with standard deviation.}
-    \label{tab:water-flow-sensor-calibration}
-    \begin{tabular}{@{}llll@{}}
-    \toprule
-    \textbf{Flow Speed} & \textbf{Volume (L)} & \textbf{Volume from Sensor (L)} & \textbf{Standard Deviation (L)} \\ \midrule
-    Slow                & 1                   & 0.70                            & 0.15                            \\
-    Medium              & 1                   & 0.78                            & 0.11                            \\
-    Fast                & 1                   & 0.92                            & 0.04                            \\ \bottomrule
-    \end{tabular}
-\end{table}
-
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=0.8\textwidth]{water-flow-sensor-response.png}
-    \caption{Water flow sensor response to changes}
-    \label{fig:water-flow-sensor-response}
-\end{figure}
-
-\subsection{Temperature Sensors}
-
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=0.8\textwidth]{ac-temperature.png}
-    \caption{Change in temperature when tunring on the air conditioner.}
-    \label{fig:ac-temperature}
-\end{figure}
-
-\subsubsection{Calibration}
-
-\begin{table}[ht]
-    \caption{Temperature sensors calibration results with deviations.}
-    \label{tab:temperature-sensors-calibration}
-    \hskip-1.2cm\begin{tabular}{@{}llllll@{}}
-    \toprule
-    \textbf{Time} & \textbf{Thermometer (°C)} & \textbf{Sensor 1 (°C)} & \textbf{Sensor 2 (°C)} & \textbf{Std Dev 1 (°C)} & \textbf{Std Dev 2 (°C)} \\ \midrule
-    6:00          & 26.4                      & 26.5                   & 26.6                   & 0.10                    & 0.20                    \\
-    7:00          & 27.5                      & 27.6                   & 27.5                   & 0.10                    & 0.00                    \\
-    8:00          & 28.3                      & 28.3                   & 28.4                   & 0.00                    & 0.10                    \\
-    9:00          & 29.5                      & 29.5                   & 29.4                   & 0.00                    & 0.10                    \\
-    10:00         & 30.6                      & 30.5                   & 30.5                   & 0.10                    & 0.10                    \\
-    11:00         & 31.7                      & 31.7                   & 31.8                   & 0.00                    & 0.10                    \\
-    12:00         & 32.4                      & 32.3                   & 32.3                   & 0.10                    & 0.10                    \\
-    13:00         & 33.1                      & 33.2                   & 33.2                   & 0.10                    & 0.10                    \\
-    14:00         & 33.4                      & 33.4                   & 33.5                   & 0.00                    & 0.10                    \\
-    15:00         & 32.6                      & 32.6                   & 32.6                   & 0.00                    & 0.00                    \\
-    16:00         & 31.4                      & 31.5                   & 31.6                   & 0.10                    & 0.20                    \\
-    17:00         & 30.5                      & 30.5                   & 30.4                   & 0.00                    & 0.10                    \\
-    18:00         & 29.6                      & 29.5                   & 29.5                   & 0.10                    & 0.10                    \\ \bottomrule
-    \end{tabular}
-\end{table}
-
-\begin{figure}[ht]
-    \centering
-    \includegraphics[width=0.8\textwidth]{temp-sensor-response.png}
-    \caption{Temperature sensor response to changes.}
-    \label{fig:temp-sensor-response}
-\end{figure}
-
-\section{Unit Testing Results}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=0.8\textwidth]{api-unit-tests-results.png}
-    \caption{REST API unit testing results.}
-    \label{fig:api-unit-tests-results}
-\end{figure}
-
-\section{Integration Testing Results}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=0.8\textwidth]{api-integration-tests-results.png}
-    \caption{REST API integration testing results.}
-    \label{fig:api-integration-tests-results}
-\end{figure}
-
-\section{Comunication Testing Results}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=0.8\textwidth]{transport-dayly-activity.png}
-    \caption{Comunication testing results.}
-    \label{fig:transport-dayly-activity}
-\end{figure}
-
-\section{System Testing Results}
-\section{Regression Testing Results}
-\section{User Testing Results}
+%%%%%%%%%%%%%%%%%%%  end figure  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%

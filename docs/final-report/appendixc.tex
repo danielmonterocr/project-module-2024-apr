@@ -1,0 +1,139 @@
+% From mitthesis package
+% Version: 1.01, 2023/07/04
+% Documentation: https://ctan.org/pkg/mitthesis
+
+
+\chapter{Tests Results}
+
+\section{Hardware Testing Results}
+
+\subsection{Current Sensors}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{ac-power.png}
+    \caption{Change in power consumption when tunring on the air conditioner.}
+    \label{fig:ac-power}
+\end{figure}
+
+\subsubsection{Calibration}
+
+\begin{table}[ht]
+    \caption{Current sensors calibration results with standard deviation.}
+    \label{tab:current-sensors-calibration}
+    \begin{tabular}{@{}lllll@{}}
+    \toprule
+    \textbf{Level} & \textbf{Multimeter (A)} & \textbf{Sensor 1 (A)} & \textbf{Sensor 2 (A)} & \textbf{Standard Deviation (A)} \\ \midrule
+    1              & 6.1                     & 6.19                          & 6.11          & 0.04                            \\
+    2              & 6.1                     & 6.31                          & 6.21          & 0.09                            \\
+    3              & 6.3                     & 6.42                          & 6.36          & 0.05                            \\
+    4              & 6.6                     & 6.67                          & 6.60          & 0.03                            \\
+    5              & 7.1                     & 7.21                          & 7.09          & 0.05                            \\
+    6              & 7.4                     & 7.42                          & 7.33          & 0.04                            \\
+    7              & 8.4                     & 8.43                          & 8.33          & 0.04                            \\
+    8              & 9.0                     & 9.09                          & 9.04          & 0.04                            \\
+    9              & 10.7                    & 10.74                         & 10.55         & 0.08                            \\
+    10             & 12.5                    & 12.12                         & 12.14         & 0.05                            \\ \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{kettle-and-ac.png}
+    \caption{Change in current reading by using on appliances: kettle (left) and air conditioner (right).}
+    \label{fig:using-kettle-and-ac}
+\end{figure}
+
+\subsection{Water Flow Sensor}
+
+\subsubsection{Calibration}
+
+\begin{table}[ht]
+    \caption{Water flow sensor calibration results with standard deviation.}
+    \label{tab:water-flow-sensor-calibration}
+    \begin{tabular}{@{}llll@{}}
+    \toprule
+    \textbf{Flow Speed} & \textbf{Volume (L)} & \textbf{Volume from Sensor (L)} & \textbf{Standard Deviation (L)} \\ \midrule
+    Slow                & 1                   & 0.70                            & 0.15                            \\
+    Medium              & 1                   & 0.78                            & 0.11                            \\
+    Fast                & 1                   & 0.92                            & 0.04                            \\ \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{water-flow-sensor-response.png}
+    \caption{Water flow sensor response to changes}
+    \label{fig:water-flow-sensor-response}
+\end{figure}
+
+\subsection{Temperature Sensors}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{ac-temperature.png}
+    \caption{Change in temperature when tunring on the air conditioner.}
+    \label{fig:ac-temperature}
+\end{figure}
+
+\subsubsection{Calibration}
+
+\begin{table}[ht]
+    \caption{Temperature sensors calibration results with deviations.}
+    \label{tab:temperature-sensors-calibration}
+    \hskip-1.2cm\begin{tabular}{@{}llllll@{}}
+    \toprule
+    \textbf{Time} & \textbf{Thermometer (°C)} & \textbf{Sensor 1 (°C)} & \textbf{Sensor 2 (°C)} & \textbf{Std Dev 1 (°C)} & \textbf{Std Dev 2 (°C)} \\ \midrule
+    6:00          & 26.4                      & 26.5                   & 26.6                   & 0.10                    & 0.20                    \\
+    7:00          & 27.5                      & 27.6                   & 27.5                   & 0.10                    & 0.00                    \\
+    8:00          & 28.3                      & 28.3                   & 28.4                   & 0.00                    & 0.10                    \\
+    9:00          & 29.5                      & 29.5                   & 29.4                   & 0.00                    & 0.10                    \\
+    10:00         & 30.6                      & 30.5                   & 30.5                   & 0.10                    & 0.10                    \\
+    11:00         & 31.7                      & 31.7                   & 31.8                   & 0.00                    & 0.10                    \\
+    12:00         & 32.4                      & 32.3                   & 32.3                   & 0.10                    & 0.10                    \\
+    13:00         & 33.1                      & 33.2                   & 33.2                   & 0.10                    & 0.10                    \\
+    14:00         & 33.4                      & 33.4                   & 33.5                   & 0.00                    & 0.10                    \\
+    15:00         & 32.6                      & 32.6                   & 32.6                   & 0.00                    & 0.00                    \\
+    16:00         & 31.4                      & 31.5                   & 31.6                   & 0.10                    & 0.20                    \\
+    17:00         & 30.5                      & 30.5                   & 30.4                   & 0.00                    & 0.10                    \\
+    18:00         & 29.6                      & 29.5                   & 29.5                   & 0.10                    & 0.10                    \\ \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.8\textwidth]{temp-sensor-response.png}
+    \caption{Temperature sensor response to changes.}
+    \label{fig:temp-sensor-response}
+\end{figure}
+
+\section{Unit Testing Results}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{api-unit-tests-results.png}
+    \caption{REST API unit testing results.}
+    \label{fig:api-unit-tests-results}
+\end{figure}
+
+\section{Integration Testing Results}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{api-integration-tests-results.png}
+    \caption{REST API integration testing results.}
+    \label{fig:api-integration-tests-results}
+\end{figure}
+
+\section{Comunication Testing Results}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{transport-dayly-activity.png}
+    \caption{Comunication testing results.}
+    \label{fig:transport-dayly-activity}
+\end{figure}
+
+\section{System Testing Results}
+\section{Regression Testing Results}
+\section{User Testing Results}

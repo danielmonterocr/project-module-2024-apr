@@ -3,178 +3,59 @@
 % Documentation: https://ctan.org/pkg/mitthesis
 
 
-\chapter{Code listing}
-\label{code-listing}
+\chapter{Available Monitoring Tools}
+\label{available-monitoring-tools}
 
-\lstdefinestyle{mystyle}{
-    backgroundcolor=\color{CadetBlue!15!white},   
-    commentstyle=\color{Red3},
-    numberstyle=\tiny\color{gray},
-    stringstyle=\color{Blue3},
-    basicstyle=\small\ttfamily,
-    breakatwhitespace=false,         
-    breaklines=true,                 
-    numbers=left,                    
-    numbersep=5pt,                  
-    showspaces=false,                
-    showstringspaces=false,
-    showtabs=false,                  
-    tabsize=2
-}%
-\lstset{language=[5.3]Lua,style={mystyle}}%
+{\renewcommand{\arraystretch}{2}%
+\begin{table}[ht]
+    \caption{Smart energy monitors comparison.}
+    \label{tab:smart-energy-monitors-comparison}
+    \hskip-1.8cm\begin{tabular}{p{0.2\linewidth} | p{0.3\linewidth} | p{0.3\linewidth} | p{0.3\linewidth}}
+    \textbf{Feature}        & \textbf{Sense} \cite{Sense2024}                & \textbf{Smappee} \cite{Smappee2024}                                        & \textbf{Curb} \cite{Elevation2024}                                                                       \\ \midrule
+    \textbf{Cost}           & Moderate                                       & Moderate                                                                   & High                                                                                                     \\
+    \textbf{Installation}   & DIY                                            & DIY                                                                        & Professional                                                                                             \\
+    \textbf{Monitoring}     & Real-time usage, appliance identification      & Real-time usage, appliance identification, energy efficiency insights      & Real-time usage, appliance identification, energy efficiency insights, demand response capabilities      \\
+    \textbf{Access to data} & Detailed historical data, customizable reports & Detailed historical data, customizable reports, API access                 & Detailed historical data, customizable reports, API access, energy management system integration         \\
+    \textbf{AI integration} & Appliance learning, energy usage predictions   & Appliance learning, energy usage predictions, personalized recommendations & Appliance learning, energy usage predictions, personalized recommendations, demand response optimization \\
+    \textbf{Access to API}  & Yes                                            & Yes                                                                        & Yes                                                                                                      \\
+    \textbf{Storage}        & Cloud-based                                    & Cloud-based                                                                & Cloud-based                                                                                              \\
+    \textbf{Price point}    & Moderate                                       & Moderate                                                                   & High                                                                                                    
+    \end{tabular}
+\end{table}
+{\renewcommand{\arraystretch}{1}%
 
-\section{Sensing nodes main code}
+{\renewcommand{\arraystretch}{2}%
+\begin{table}[ht]
+    \caption{Smart water flow monitors comparison.}
+    \label{tab:smart-water-flow-monitors-comparison}
+    \hskip-1.8cm\begin{tabular}{p{0.2\linewidth} | p{0.3\linewidth} | p{0.3\linewidth} | p{0.3\linewidth}}
+    \textbf{Feature}        & \textbf{Flume} \cite{Flume2024}           & \textbf{Flo} \cite{Flo2024}                                       & \textbf{Phyn} \cite{Phyn2024}                                                                 \\ \midrule
+    \textbf{Cost}           & Low                                       & Moderate                                                          & High                                                                                          \\
+    \textbf{Installation}   & DIY                                       & DIY                                                               & Professional                                                                                  \\
+    \textbf{Monitoring}     & Water usage, leak detection               & Water usage, leak detection, water quality                        & Water usage, leak detection, water quality, valve control                                     \\
+    \textbf{Access to data} & Historical data, leak alerts              & Historical data, leak alerts, water quality reports               & Historical data, leak alerts, water quality reports, valve control                            \\
+    \textbf{AI integration} & Leak detection algorithms, usage patterns & Leak detection algorithms, usage patterns, water quality analysis & Leak detection algorithms, usage patterns, water quality analysis, valve control optimization \\
+    \textbf{Access to API}  & Yes                                       & Yes                                                               & Yes                                                                                           \\
+    \textbf{Storage}        & Cloud-based                               & Cloud-based                                                       & Cloud-based                                                                                   \\
+    \textbf{Price point}    & Low                                       & Moderate                                                          & High                                                                                          \\
+    \end{tabular}
+\end{table}
+{\renewcommand{\arraystretch}{1}%
 
-\begin{lstlisting}[language=C++]
-/**
- * @brief Setup function to initialize the ESP32.
- */
-void setup() {
-// Initialize serial for debugging
-#ifdef DEBUG
-  Serial.begin(SERIAL_DEBUG_BAUD);
-#endif
-  // Initialize built-in LED
-  pinMode(LED_BUILTIN, OUTPUT);
- 
-  setupCurrentSensors();
-  
-  /**
-   * Creates a new task and assigns it to a specific core.
-   *
-   * @param pvTaskCode A pointer to the task entry function.
-   * @param pcName A descriptive name for the task.
-   * @param usStackDepth The size of the task stack in words.
-   * @param pvParameters A pointer to the task's parameters.
-   * @param uxPriority The priority of the task.
-   * @param pxCreatedTask A pointer to a variable that will receive the task handle.
-   * @param xCoreID The ID of the core to which the task should be pinned (optional).
-   */
-  
-  // Connect to WiFi network and connection alive
-  serial_println("Create keepWifiAliveTask task");
-  xTaskCreatePinnedToCore(
-      keepWifiAliveTask,
-      "keepWifiAliveTask",
-      5000,
-      NULL,
-      1,
-      NULL,
-      ARDUINO_RUNNING_CORE);
- 
-  serial_println("Create keepMQTTConnectionAlive task");
-  xTaskCreate(
-      keepMqttConnectionAliveTask,
-      "keepMqttConnectionAliveTask",
-      5000,
-      NULL,
-      5,
-      NULL);
- 
-  serial_println("Create monitorTask task");
-  xTaskCreate(
-      measurePowerTask,
-      "measurePowerTask",
-      5000,
-      NULL,
-      4,
-      NULL);
-}
-\end{lstlisting}
-
-\section{Sensing nodes monitoring task}
-
-\begin{lstlisting}[language=C++]
-/**
- * @brief Measure power task.
- * 
- * @param pvParameters Parameters for the task.
- */
-void measurePowerTask(void *pvParameters) {
-  uint8_t i = 1;
-  for(;;) {
-    // serial_println("Measure power");
-    // serial_print("Iteration: ");
-    serial_println(i);
-  
-    unsigned long start = millis();
-  
-    measurePower(&tmpPower1, &tmpPower2);
-  
-    serial_print("Power 1: ");
-    serial_print(tmpPower1);
-    serial_println("W");
-    serial_print("Power 2: ");
-    serial_print(tmpPower2);
-    serial_println("W");
-  
-    power1 += tmpPower1;
-    power2 += tmpPower2;
-  
-    serial_print("Total power 1: ");
-    serial_print(power1);
-    serial_println("W");
-    serial_print("Total power 2: ");
-    serial_print(power2);
-    serial_println("W");
-  
-    if (i++ % NUM_MEASUREMENTS == 0) {
-      totalPower1 = power1;
-      totalPower2 = power2;
-      serial_print("Avg power1: ");
-      serial_print(totalPower1 / NUM_MEASUREMENTS);
-  
-      serial_println("W");
-      serial_print("Avg power2: ");
-      serial_print(totalPower2 / NUM_MEASUREMENTS);
-      serial_println("W");
-  
-      power1 = 0;
-      power2 = 0;
-  
-      xTaskCreate(
-        sendDataToThingsboard,
-        "sendDataToThingsboard",
-        10000,
-        NULL,
-        5,
-        NULL);
-  
-      i = 1;
-    }
-  
-    unsigned long end = millis();
-  
-    // Delay to keep the task running every 2 seconds,
-    // deduct the time taken to measure power
-    vTaskDelay((MQTT_PUBLISH_INTERVAL_MS - (end - start)) / portTICK_PERIOD_MS);
-  }
-}
-\end{lstlisting}
-
-\section{API}
-
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=1\textwidth]{swagger.png}
-  \caption{Swagger API documentation.}
-  \label{fig:swagger}
-\end{figure}
-
-\textbf{Authentication}
-
-%%%%%%%%%%%%%%%%%  begin figure  %%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[t]
-    % sample images are from mwe package, but should be found by latex in the tex tree w/o loading that package
-    \begin{subfigure}[c]{0.495\textwidth}
-    \centering{\includegraphics[alt={sample image},width=0.79\textwidth]{whatsapp-daily-report.jpg}}%
-    \subcaption{\label{fig:whatsapp-daily-report}}
-    \end{subfigure}
-    %%%%%%%% don't leave a break here
-    \begin{subfigure}[c]{0.495\textwidth}
-    \centering{\includegraphics[alt={sample image},width=0.79\textwidth]{whatsapp-final-report.jpg}}%
-    \subcaption{\label{fig:whatsapp-final-report}}%
-    \end{subfigure}%
-    \caption{Reports: (a) Daily report; (b) Final report.\label{fig:whatsapp-reports}}
-\end{figure}
-%%%%%%%%%%%%%%%%%%%  end figure  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+{\renewcommand{\arraystretch}{2}%
+\begin{table}[ht]
+    \caption{Smart thermostats comparison.}
+    \label{tab:smart-thermostats-comparison}
+    \hskip-1.8cm\begin{tabular}{p{0.2\linewidth} | p{0.3\linewidth} | p{0.3\linewidth} | p{0.3\linewidth}}
+    \textbf{Feature}        & \textbf{Ecobee} \cite{Ecobee2024}              & \textbf{Nest} \cite{Nest2024}                                                    & \textbf{Amazon Smart Thermostat} \cite{Amazon2024b}                              \\ \midrule
+    \textbf{Cost}           & Moderate                                       & Moderate                                                                         & Low                                                                              \\
+    \textbf{Installation}   & DIY                                            & DIY                                                                              & DIY                                                                              \\
+    \textbf{Features}       & Zoning, voice control, air quality monitoring  & Zoning, voice control, air quality monitoring, energy efficiency insights        & Voice control, energy efficiency insights                                        \\
+    \textbf{Access to data} & Historical data, temperature control schedules & Historical data, temperature control schedules, energy usage reports             & Historical data, temperature control schedules, energy usage reports             \\
+    \textbf{AI integration} & Smart learning, personalized comfort settings  & Smart learning, personalized comfort settings, energy efficiency recommendations & Smart learning, personalized comfort settings, energy efficiency recommendations \\
+    \textbf{Access to API}  & Yes                                            & Yes                                                                              & Yes                                                                              \\
+    \textbf{Storage}        & Cloud-based                                    & Cloud-based                                                                      & Cloud-based                                                                      \\
+    \textbf{Price point}    & Moderate                                       & Moderate                                                                         & Low                                                                              \\
+    \end{tabular}
+\end{table}
+{\renewcommand{\arraystretch}{1}%
