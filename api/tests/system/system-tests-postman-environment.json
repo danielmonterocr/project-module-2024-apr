@@ -1,0 +1,57 @@
+{
+	"id": "955d25cc-d10a-4dc9-9169-deba71c59e4f",
+	"name": "Local nodejs server",
+	"values": [
+		{
+			"key": "baseURL",
+			"value": "34.67.116.239:3000",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "userId",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "any",
+			"enabled": true
+		},
+		{
+			"key": "",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "listingId",
+			"value": "",
+			"type": "any",
+			"enabled": true
+		},
+		{
+			"key": "deviceId1",
+			"value": "",
+			"type": "any",
+			"enabled": true
+		},
+		{
+			"key": "deviceId2",
+			"value": "",
+			"type": "any",
+			"enabled": true
+		},
+		{
+			"key": "deviceId3",
+			"value": "",
+			"type": "any",
+			"enabled": true
+		}
+	],
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2024-10-01T23:52:35.122Z",
+	"_postman_exported_using": "Postman/11.14.1"
+}
