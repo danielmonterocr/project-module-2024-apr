@@ -163,16 +163,6 @@ Transmitter) and the reading thread running on the ESP32 originally was replaced
 ports. This solution fixed the problem and the node was able to run without any issues. Figure 
 \ref{fig:energy-node-schematic} shows the schematic of the power node.
 
-\begin{equation}
-\label{eq:energy-calculation}
-    \text{Energy} = \frac{1}{60} \sum_{i=1}^{60} (I_i \times V_i)
-\end{equation}
-
-Once the current was read, EmonLib was used to calculate the correct power by multiplying the current by the fixed
-voltage. Since the data was collected every second the power over time (energy) was calculated by adding the power every 
-second for a minute and then dividing by 60 to get watt-seconds or Joules (this calculation can be seen in equation 
-\ref{eq:energy-calculation}). After the energy was calculated, it was sent to the cloud every minute. 
-
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=0.8\textwidth]{energy-node-schematic.png}
@@ -180,18 +170,23 @@ second for a minute and then dividing by 60 to get watt-seconds or Joules (this 
     \label{fig:energy-node-schematic}
 \end{figure}
 
+Once the current was read, EmonLib was used to calculate the correct power by multiplying the current by the fixed
+voltage. Since the data was collected every second the power over time (energy) was calculated by adding the power every 
+second for a minute and then dividing by 60 to get watt-seconds or Joules (this calculation can be seen in equation 
+\ref{eq:energy-calculation}). After the energy was calculated, it was sent to the cloud every minute. 
+
+\begin{equation}
+    \label{eq:energy-calculation}
+    \text{Energy} = \frac{1}{60} \sum_{i=1}^{60} (I_i \times V_i)
+\end{equation}
+
 \subsubsection{Water Flow Node}
 
-The water flow node uses a flow sensor to measure the flow rate of water. The flow sensor outputs a pulse every time a
-certain volume of water passes through it. The volume of water is calculated by counting the number of pulses over a 
-period of one second. The volume is then uploaded to the cloud.
-
-\begin{align}
-    \text{Volume} &{}= \sum_{i=1}^{60} Q_i \times \underbrace{\Delta t}_{=1\text{s}}\\
-                  &{}= \sum_{i=1}^{60} Q_i
-\end{align}
-
-Since we are reading every second, it just adds the values to get the total volume.
+This node uses a water flow sensor to measure the flow rate. This sensor uses Hall effect to generate a pulse every time
+some water passes through it. The program counts the number of pulses every second and then it multiplies by a 
+calibration factor (7.11 in this case) to calculate the flow rate, this is then divided by 1000 to get the number of
+liters that passed during that second. The sensor was connected to the ESP32 as shown in Figure 
+\ref{fig:water-flow-node-schematic}.
 
 \begin{figure}[!ht]
     \centering
@@ -200,13 +195,22 @@ Since we are reading every second, it just adds the values to get the total volu
     \label{fig:water-flow-node-schematic}
 \end{figure}
 
+Using equation \ref{eq:water-volume-calculation} the volume of water passed in the last minute was calculated and then 
+sent to the cloud.
+
+\begin{align}
+    \label{eq:water-volume-calculation}
+    \text{Volume} &{}= \sum_{i=1}^{60} Q_i \times \underbrace{\Delta t}_{=1\text{s}}\\
+                  &{}= \sum_{i=1}^{60} Q_i
+\end{align}
+
 \subsubsection{Temperature Node}
 
-Calculates the average temperature over 120 seconds (reading every two seconds), then uploads it.
-
-\begin{equation}
-    \text{Average Temperature} = \frac{1}{30} \sum_{i=1}^{120} T_i
-\end{equation}
+The temperature sensors were connected to the ESP32 as shown in Figure \ref{fig:temp-node-schematic}. These sensors were
+controlled using the OneWire library \cite{Arduino2024c}. The temperature was read every 2 seconds for 60 seconds and 
+then it was divided by 30 to get the average temperature in the past minute. Equation 
+\ref{eq:temperature-calculation} depicts how this was done. After the average temperature was calculated, it was sent to
+the cloud.
 
 \begin{figure}[!ht]
     \centering
@@ -215,10 +219,26 @@ Calculates the average temperature over 120 seconds (reading every two seconds),
     \label{fig:temp-node-schematic}
 \end{figure}
 
+\begin{equation}
+    \label{eq:temperature-calculation}
+    \text{Average Temperature} = \frac{1}{30} \sum_{i=1}^{30} T_i
+\end{equation}
+
 \subsection{Sensing Nodes Firmware}
 
 The firmware for the sensing nodes was developed using the PlatformIO build system. The firmware is responsible for
 managing the ESP32 microcontrollers. Snippets of the main parts of the code are shown in Appendix \ref{code-listing}.
+The code is divided into four main tasks:
+
+\begin{itemize}
+    \item \textbf{Task 1:} This task makes sure the connection to Internet is always up.
+    \item \textbf{Task 2:} This task ensures connection to ThingsBoard is always up.
+    \item \textbf{Task 3:} This task is responsible for reading data from the sensors.
+    \item \textbf{Task 4:} This task is responsible for sending data to the cloud.
+\end{itemize}
+
+The are two more important sections of the code: these sections setup the ESP32 and the sensors respectively. A flow
+char fo the implementation of the firmware can be seen in figure \ref{fig:monitoring-node-flow-chart}.
 
 \begin{figure}[!ht]
     \centering
@@ -231,8 +251,10 @@ managing the ESP32 microcontrollers. Snippets of the main parts of the code are 
 
 \subsubsection{Main Database}
 
-Mongo DB was used as the main database for storing user, provider, property listing, and device information. The 
-database schema is shown in Figure \ref{fig:entity-relationship-diagram}.
+Mongo DB \cite{MongoDB2024} was used as the main database for storing user, provider, property listings, and device 
+information. The reason why a relational database was chosen is because of the flexibility it offers when dealing with
+unstructured data. Also the data model is more suited for the data that is going to be stored. The database schema is 
+shown in Figure \ref{fig:entity-relationship-diagram}.
 
 \begin{figure}[!ht]
     \centering
@@ -243,22 +265,33 @@ database schema is shown in Figure \ref{fig:entity-relationship-diagram}.
 
 \subsubsection{Timeseries Database}
 
-ThingsBoard was used as the timeseries database for storing historical data from the sensing nodes.
+ThingsBoard's internal PosgrepSQL \cite{PostgreSQL2024} was used as the timeseries database for storing historical data 
+from the sensing nodes. This database was chosen because it is integrated with the ThingsBoard platform and is optimized 
+for storing big amounts of time series data. Access to this information was done through the ThingsBoard's well 
+documented API.
 
 \subsection{REST API}
 
-This API is designed to manage users, providers, property listings, and devices for a platform similar to Airbnb, where properties are listed and managed by users. It enables seamless integration with third-party providers like Airbnb, VRBO, and HomeAway, and facilitates the management of property data along with smart devices (such as energy or water usage sensors) associated with those properties.
+This API was designed to manage users, providers, property listings, and devices for a hospitality platform similar to 
+AirBnB, where properties are listed and managed by users. It enables seamless integration with third-party providers 
+like AirBnB, VRBO, and HomeAway, and facilitates the management of property data from smart devices.
 
 \subsubsection{Users}
 
-The API includes a comprehensive user management system. Users can register by providing essential information such as their username, email, and password. Upon successful registration, the system confirms that the user has been created. If the user already exists, the API will return an error.
-Once registered, users can log in by providing their credentials (username and password), which are authenticated by the system. If successful, the user is provided with an authentication token that must be used in subsequent requests to ensure security. If login credentials are incorrect, the system will reject the login attempt, returning an error message.
-Users can also view a list of all registered users in the system. This operation requires proper authentication and is likely restricted to administrative users. Each user has a unique ID, which can be used to fetch more detailed information about the user, such as their profile details. Updates to a user’s profile, like changing their email address or name, can be done by sending a patch request to the system. Similarly, users can be deleted from the system if necessary.
+The API includes a user management system. Users can register by providing essential information such as their username, 
+email, and password. Upon successful registration, the system confirms that the user has been created. Once registered, 
+users can log in by providing their credentials (username and password), which are authenticated by the system. If 
+successful, the user is provided with an authentication token that must be used in subsequent requests to ensure 
+security. Each user has a unique ID, which is tied to their providers, listings, and jobs.
 
-In addition to managing personal information, users can also sync their property listings with third-party providers such as Airbnb or HomeAway. This ensures that all the properties the user has listed on these platforms are automatically updated in the system.
-Providers
-Providers are third-party platforms like Airbnb, VRBO, or HomeAway, where properties are listed. The API allows users to create and manage these provider connections. When a user adds a new provider, the system stores the provider information, linking it to the user. If the provider already exists for the user, the system returns an error to prevent duplication.
-Providers can be deleted as well if the user decides to remove the connection. For example, if a user no longer wants to sync their Airbnb listings, they can delete the Airbnb provider from their account.
+In addition to managing personal information, users can also sync their property listings with third-party providers 
+such as Airbnb or HomeAway. This ensures that all the properties the user has listed on these platforms are 
+automatically updated in the system.
+
+\subsubsection{Providers}
+Providers are third-party platforms like Airbnb, VRBO, or HomeAway, where properties are listed. The API allows users to 
+create and manage these provider connections. When a user adds a new provider, the system stores the provider 
+information, linking it to the user.
 
 \subsubsection{Listings}
 
