@@ -60,14 +60,15 @@ for further analysis and research.
 
 The general system architecture of the proposed solution is shown in Figure \ref{fig:architecture-diagram}. The solution 
 consists of four main layers: device, data, communication, and presentation. There are two main components, the smart
-monitoring system and the web application that runs on the cloud.
+monitoring system and the web application that runs on the cloud. In the next sections, each layer and component will be
+explained in detail.
 
 \subsection{Device Layer}
 
 \subsubsection{Microcontrollers}
 
 It consists of three Espressif ESP32-DevKitC \cite{Espressif2024} microcontrollers (pictured in 
-\ref{fig:connectivity-diagram}) connected to the sensors. One measures water consumption, the other energy usage and 
+\ref{fig:connectivity-diagram}) connected to the sensors. One measures energy consumption, the other water usage and 
 the third one indoor and outdoor temperatures. This development board was chosen for it's extensive documentation, 
 integrated WiFi and compatibility with the peripherals used. The idea was to have a low cost solution with fast 
 development and deployment times.
@@ -77,22 +78,21 @@ these embedded systems (microcontrollers). This was chosen as opposed to running
 allows to run multiple tasks at the same time with a predictible execution pattern, which is ideal for sensing and 
 keeping connection with the internet alive at the same time (a requirement for this project).
 
-The microcontrollers where programed in C++ using PlatformIO IDE (Integrated Development Environment) for embedded
-systems. This development environment was chosen because of its compatibility with the microcontrollers and the sensors 
-chosen, its focus on test-driven methodologies and collaboration principles.
+The microcontrollers where programed in C++ using PlatformIO IDE (Integrated Development Environment) 
+\cite{PlatformIO2024} for embedded systems. This development environment was chosen because of its compatibility with 
+the microcontrollers and the sensors chosen, integration with thousands of libraries and collaboration principles.
 
 \subsubsection{Sensors}
 
-The interaction with the sensors was done using Arduino \cite{Arduino2024a} libraries, as these are the most common and 
+The interaction with the sensors was done using Arduino \cite{Arduino2024a} libraries, as these are the most used and 
 well documented. They have been tested by a lot of projects (even in commercial products) and have an active community. 
-The sensors used are the following:
+The sensors used were the following:
 
 \begin{itemize}
-    \item Energy usage: Non-invasive AC Current Sensor SCT-013 \cite{CRCibernetica2024b} connected to 
-    the ESP32 Energy Monitor Shield \cite{CRCibernetica2024c} and controlled by EmonLib \cite{Arduino2024b} library.
-    \item Water consumption: Liquid Flow Meter - Plastic 1/2" NPS Threaded TF-S201 \cite{CRCibernetica2024d}.
-    \item Temperature: DS18B20 Temperature Sensor \cite{CRCibernetica2024e} controlled by DallasTemperature 
-    \cite{Arduino2024c} library.
+    \item \textbf{Energy usage:} Non-invasive AC Current Sensor SCT-013 \cite{CRCibernetica2024b} connected to 
+    the ESP32 Energy Monitor Shield \cite{CRCibernetica2024c}.
+    \item \textbf{Water consumption:} Liquid Flow Meter - Plastic 1/2" NPS Threaded TF-S201 \cite{CRCibernetica2024d}.
+    \item \textbf{Temperature:} DS18B20 Temperature Sensor \cite{CRCibernetica2024e}.
 \end{itemize}
 
 Communication between the device layer and the data layer is done using the MQTT (Message Queuing Telemetry Transport) 
@@ -124,8 +124,7 @@ to extract the payload from network activity on an AirBnB account using the web 
 \subsection{Presentation Layer (User Interface)}
 
 A User Interface (UI) that can be used from personal computers, tablets and cellphones. It gives the host access to
-a dashboard with in-depth real-time data of every listing that shows energy and water consumption, and temperature. It 
-also provides historical data on previous stays organized by listings and guests.
+a dashboard with in-depth real-time data of every listing that shows energy and water consumption, and temperature.
 
 \subsection{Data Flow}
 Figure \ref{fig:connectivity-diagram} shows a high-level diagram of the flow of data between the different components 
@@ -149,13 +148,30 @@ the ESP32 microcontroller and uses different sensors to measure the desired para
 
 \subsubsection{Power Node}
 
-Energy consumed was calculated by summing the power every second for 60 seconds, and then dividing by 60:
+The power node is by far the most complex of the three nodes. It uses two current sensors attached to each phase of the 
+120V AC power line, a small circuit was built to adapt the current so it could be measured by the ADC (analog to digital
+converter) input of the microcontroller. This circuit consists of a voltage divider used to remove the negative part of 
+the sine wave combined with a capacitor to stablelize the signal, and a resistor to convert the current to voltage. The 
+calculations for the resistors and capacitors were done using Arduino's EmonLib documentation \cite{Arduino2024b}.
+
+At the begining the ESP32 was able to interact with these sensors and obtain the data with no problems but once the full
+program was loaded it kept getting stuck due to memory and CPU usage. Several optimizations were tried, like minimizing
+the use of variables, removing all log messages or simplifying tasks but it was simple not possible to fix this
+behaviour. Ultimately, an Arduino Leonardo was connected to the circuit and a script that read the data from the
+sensors was deployed on it, then the ESP32 attached to the Leonardo via UART (Universal Asysnchronous Receiver
+Transmitter) and the reading thread running on the ESP32 originally was replaced by a thread that read from the serial
+ports. This solution fixed the problem and the node was able to run without any issues. Figure 
+\ref{fig:energy-node-schematic} shows the schematic of the power node.
 
 \begin{equation}
+\label{eq:energy-calculation}
     \text{Energy} = \frac{1}{60} \sum_{i=1}^{60} (I_i \times V_i)
 \end{equation}
 
-This gives the total energy used in that minute (in watt-seconds or Joules).
+Once the current was read, EmonLib was used to calculate the correct power by multiplying the current by the fixed
+voltage. Since the data was collected every second the power over time (energy) was calculated by adding the power every 
+second for a minute and then dividing by 60 to get watt-seconds or Joules (this calculation can be seen in equation 
+\ref{eq:energy-calculation}). After the energy was calculated, it was sent to the cloud every minute. 
 
 \begin{figure}[!ht]
     \centering
