@@ -380,14 +380,14 @@ The sign in view has two fields, one for the username and another for the passwo
 one for the username, another for the email and the last one for the password.
 
 %%%%%%%%%%%%%%%%%  begin figure  %%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[t]
+\begin{figure}[!ht]
     % sample images are from mwe package, but should be found by latex in the tex tree w/o loading that package
-    \begin{subfigure}[c]{0.495\textwidth}
+    \begin{subfigure}[c]{0.3\textwidth}
     \centering{\includegraphics[alt={sample image},width=0.99\textwidth]{ui-sign-in.png}}%
     \subcaption{\label{fig:ui-sign-in}}
     \end{subfigure}
     %%%%%%%% don't leave a break here
-    \begin{subfigure}[c]{0.495\textwidth}
+    \begin{subfigure}[c]{0.3\textwidth}
     \centering{\includegraphics[alt={sample image},width=0.99\textwidth]{ui-sign-up.png}}%
     \subcaption{\label{fig:ui-sign-up}}%
     \end{subfigure}%
@@ -405,14 +405,14 @@ dashboard by clicking on the listing itself. Figure \ref{fig:ui-listings} shows 
 \ref{fig:ui-register-provider} the register provider view.
 
 %%%%%%%%%%%%%%%%%  begin figure  %%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[t]
+\begin{figure}[!ht]
     % sample images are from mwe package, but should be found by latex in the tex tree w/o loading that package
-    \begin{subfigure}[c]{0.495\textwidth}
+    \begin{subfigure}[c]{0.3\textwidth}
     \centering{\includegraphics[alt={sample image},width=0.99\textwidth]{ui-listings.png}}%
     \subcaption{\label{fig:ui-listings}}
     \end{subfigure}
     %%%%%%%% don't leave a break here
-    \begin{subfigure}[c]{0.495\textwidth}
+    \begin{subfigure}[c]{0.3\textwidth}
     \centering{\includegraphics[alt={sample image},width=0.99\textwidth]{ui-register-provider.png}}%
     \subcaption{\label{fig:ui-register-provider}}%
     \end{subfigure}%
@@ -428,14 +428,14 @@ filtering the list of devices. Figure \ref{fig:ui-devices} shows the devices vie
 \ref{fig:ui-register-devices} the register device view.
 
 %%%%%%%%%%%%%%%%%  begin figure  %%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[t]
+\begin{figure}[!ht]
     % sample images are from mwe package, but should be found by latex in the tex tree w/o loading that package
-    \begin{subfigure}[c]{0.495\textwidth}
+    \begin{subfigure}[c]{0.3\textwidth}
     \centering{\includegraphics[alt={sample image},width=0.99\textwidth]{ui-devices.png}}%
     \subcaption{\label{fig:ui-devices}}
     \end{subfigure}
     %%%%%%%% don't leave a break here
-    \begin{subfigure}[c]{0.495\textwidth}
+    \begin{subfigure}[c]{0.3\textwidth}
     \centering{\includegraphics[alt={sample image},width=0.99\textwidth]{ui-register-device.png}}%
     \subcaption{\label{fig:ui-register-devices}}%
     \end{subfigure}%
@@ -450,14 +450,14 @@ report itself. Figure \ref{fig:ui-reports} shows the reports list view and Figur
 detailed view. The user can click on the "copy" button to copy the report to the clipboard.
 
 %%%%%%%%%%%%%%%%%  begin figure  %%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[t]
+\begin{figure}[!ht]
     % sample images are from mwe package, but should be found by latex in the tex tree w/o loading that package
-    \begin{subfigure}[c]{0.495\textwidth}
+    \begin{subfigure}[c]{0.3\textwidth}
     \centering{\includegraphics[alt={sample image},width=0.99\textwidth]{ui-reports.png}}%
     \subcaption{\label{fig:ui-reports}}
     \end{subfigure}
     %%%%%%%% don't leave a break here
-    \begin{subfigure}[c]{0.495\textwidth}
+    \begin{subfigure}[c]{0.3\textwidth}
     \centering{\includegraphics[alt={sample image},width=0.99\textwidth]{ui-report-details.png}}%
     \subcaption{\label{fig:ui-report-details}}%
     \end{subfigure}%
@@ -490,24 +490,14 @@ The code is built using the PlatformIO build system, which compiles the firmware
 code would be show in the logs and the build would fail. An example run of the pipeline can be seen in Figure
 \ref{fig:firmware-build}.
 
-\begin{figure}[!ht]
-    \centering
-    \includegraphics[width=0.5\textwidth]{firmware-build.png}
-    \caption{Firmware build}
-    \label{fig:firmware-build}
-\end{figure}
-
 \subsubsection{API}
 
 Just like with the firmware the API is built and the unit and integration tests are run to ensure that the changes made 
 to the code do not break existing functionality. Figure \ref{fig:api-build} shows an example run of the pipeline.
 
-\begin{figure}[!ht]
-    \centering
-    \includegraphics[width=0.5\textwidth]{api-build.png}
-    \caption{API build}
-    \label{fig:api-build}
-\end{figure}
+\subsubsection{API}
+
+TODO: add User Interface pipeline
 
 \subsubsection{Development Environment}
 
