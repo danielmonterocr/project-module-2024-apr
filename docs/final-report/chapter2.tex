@@ -295,25 +295,58 @@ information, linking it to the user.
 
 \subsubsection{Listings}
 
-Listings represent the properties users manage on the platform. These properties are usually listed on third-party services like Airbnb or VRBO and can be synced with the system. The API provides functionality to create new listings, where users input details like the title, description, location, and the provider (such as Airbnb) the listing is associated with.
-Once listings are created, they can be viewed as a list or individually by their unique ID. Users can fetch all their listings to see which properties they are currently managing. Additionally, the system allows for editing or deleting listings, giving users full control over their property data.
-There is also the capability to enable or disable listings. Enabling a listing marks it as active, making it visible to potential renters. Conversely, disabling a listing temporarily deactivates it, which might be useful if the property is undergoing maintenance or unavailable for some time.
+Listings represent the properties users manage on the platform. The API provides functionality to import listings, 
+once listings are imported, they can be viewed as a list or individually by their unique ID. Users can fetch all their 
+listings to see which properties they are currently managing. Additionally, the system allows for enabling or disablgin 
+listings, giving users full control over which properties are being monitored.
+
+\subsubsection{Reservations}
+
+Just was Listings, Reservations are imported from the provider. They are used internally to calculate the daily and 
+end-of-stay consumption reports. The API allows for fetching all reservations for a listing, as well as individual
+reservations by their unique ID.
 
 \subsubsection{Devices}
 
-Devices refer to the hardware installed at a property to monitor usage or conditions, such as sensors that track energy consumption, water usage, or temperature. These devices are tied to specific listings and can be managed through the API.
-The API supports adding new devices by providing details like the type of device (e.g., energy meter), its unique identifier, and the token that authenticates the device. Each device is associated with a listing so that users can monitor specific properties.
-Users can retrieve a list of all devices associated with their listings. If a user wants to see detailed information about a particular device, they can fetch it using the device’s unique ID. The API also supports updating device information or removing devices from the system when they are no longer needed.
+These devices are tied to specific listings and can be managed through the API. The API supports adding new devices by 
+providing details like the type of device (e.g., energy meter), its unique identifier, and the token that authenticates 
+the device with ThingsBoard. Users can retrieve a list of all devices associated with their listings. If a user wants to 
+see detailed information about a particular device, they can fetch it using the device's unique ID. The API also 
+supports updating device information or removing devices from the system when they are no longer needed.
+
+\subsubsection{Reports}
+
+Reports are generated daily and at the end of the guest's stay. The API provides endpoints to fetch these reports for a
+specific listing.
+
+\subsubsection{Agenda Jobs}
+
+Two types of jobs were implemented, one that runs every two minutes to import the listings and reservations from the 
+provider and another on that runs every days at 2pm and calculates the consumption in the last 24 hours or the total
+one.
 
 \subsubsection{Schema Components}
 
-The API uses specific schemas to define the structure of data objects exchanged between the client and server. For example, the User schema defines fields like username, email, and password that are required when registering a user. The Provider schema defines the fields necessary for creating a provider, such as the provider name and the associated user ID. Similarly, the Listing schema outlines the structure for properties, including details like title, location, and provider.
-Each device follows a schema as well, which includes fields for the device type, its unique ID, the token for authentication, and the associated listing. This consistent structure allows for easy integration and ensures data integrity.
-In addition, the API provides a standardized ApiResponse schema to maintain consistent error and success messages across different endpoints. Whether it's creating a user or fetching device details, the response messages provide clarity on the status of the operation.
+The API uses specific schemas to define the structure of data objects exchanged between the client and server. For 
+example, the User schema defines fields like username, email, and password that are required when registering a user. 
+The Provider schema defines the fields necessary for creating a provider, such as the provider name and the associated 
+user ID. Similarly, the Listing schema outlines the structure for properties, including details like title, location, 
+and provider. Each device follows a schema as well, which includes fields for the device type, its unique ID, the token 
+for authentication, and the associated listing. This consistent structure allows for easy integration and ensures data 
+integrity.
+
+In addition, the API provides a standardized ApiResponse schema to maintain consistent error and success messages across 
+different endpoints. Whether it's creating a user or fetching device details, the response messages provide clarity on 
+the status of the operation.
 
 \subsection{Web Application}
 
 \subsubsection{Main Program}
+
+The main program and User Interface were develped using Appsmith \cite{Appsmith2024}, an Open Source low-code 
+application development tool. It uses a drag and drop of pre-built components for the graphic part and JavaScript for
+the logic. A flow chart with an overall look of the design of the main program is shown in Figure 
+\ref{fig:main-flow-chart}.
 
 \begin{figure}[!ht]
     \centering
