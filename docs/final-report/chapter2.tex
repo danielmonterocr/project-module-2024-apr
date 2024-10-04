@@ -344,9 +344,12 @@ the status of the operation.
 \subsubsection{Main Program}
 
 The main program and User Interface were develped using Appsmith \cite{Appsmith2024}, an Open Source low-code 
-application development tool. It uses a drag and drop of pre-built components for the graphic part and JavaScript for
-the logic. A flow chart with an overall look of the design of the main program is shown in Figure 
+application development tool. It uses a drag and drop approach for pre-built components for the graphic part and 
+JavaScript for the logic. A flow chart with an overall look of the design of the main program is shown in Figure 
 \ref{fig:main-flow-chart}.
+
+The main view of the application is the listings view, here the user can choose from configuring a new device, taking a
+look at the dashboards, or find the reports.
 
 \begin{figure}[!ht]
     \centering
@@ -355,8 +358,13 @@ the logic. A flow chart with an overall look of the design of the main program i
     \label{fig:main-flow-chart}
 \end{figure}
 
-\subsubsection{User Interface}
+\subsection{User Interface}
 \label{sec:user-interface}
+
+A wire frame of the User Interface can be seen in Figure \ref{fig:user-interface-flow-chart}. This diagram shows the 
+different actions that the user can perform on every view of the application. The colors on the diagram represent the
+all the sections of the main program, purple for authentication, green for the main view, blue for the devices view,
+yellos for the dashboards view and finally red for the reports view.
 
 \begin{figure}[!ht]
     \centering
@@ -365,7 +373,11 @@ the logic. A flow chart with an overall look of the design of the main program i
     \label{fig:user-interface-flow-chart}
 \end{figure}
 
-\textbf{Authentication}
+\subsubsection{Authentication View}
+
+Figure \ref{fig:ui-authentication} shows the authentication views. The user can sign in or sign up to the application.
+The sign in view has two fields, one for the username and another for the password. The sign up view has three fields,
+one for the username, another for the email and the last one for the password.
 
 %%%%%%%%%%%%%%%%%  begin figure  %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[t]
@@ -380,10 +392,17 @@ the logic. A flow chart with an overall look of the design of the main program i
     \subcaption{\label{fig:ui-sign-up}}%
     \end{subfigure}%
     \caption{Authentication: (a) Sign-in; (b) Sign-up.\label{fig:authentication}}
+    \label{fig:ui-authentication}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%  end figure  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\textbf{Listings}
+\subsubsection{Listings View}
+
+Once the user has been authenticated, the main view (listings) is shown. Here the user can see all the listings that are 
+being monitored. The user can register providers by clicking on the "plus" button. The user can also see the devices
+linked to this listing by clicking on "Devices" and the reports by clicking on "Reports". The user can also see the
+dashboard by clicking on the listing itself. Figure \ref{fig:ui-listings} shows the listings view and Figure 
+\ref{fig:ui-register-provider} the register provider view.
 
 %%%%%%%%%%%%%%%%%  begin figure  %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[t]
@@ -401,7 +420,12 @@ the logic. A flow chart with an overall look of the design of the main program i
 \end{figure}
 %%%%%%%%%%%%%%%%%%%  end figure  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\textbf{Devices}
+\subsubsection{Devices View}
+
+The devices view shows all the devices linked to a listing. The user can register a new device by clicking on the "plus"
+button, typing a name for the device and selecting the type of device. The user can also see the details of a device by
+filtering the list of devices. Figure \ref{fig:ui-devices} shows the devices view and Figure 
+\ref{fig:ui-register-devices} the register device view.
 
 %%%%%%%%%%%%%%%%%  begin figure  %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[t]
@@ -419,7 +443,11 @@ the logic. A flow chart with an overall look of the design of the main program i
 \end{figure}
 %%%%%%%%%%%%%%%%%%%  end figure  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\textbf{Reports}
+\subsubsection{Reports View}
+
+The reports view shows all the reports linked to a listing. The user can see the details of a report by clicking on the
+report itself. Figure \ref{fig:ui-reports} shows the reports list view and Figure \ref{fig:ui-report-details} the report
+detailed view. The user can click on the "copy" button to copy the report to the clipboard.
 
 %%%%%%%%%%%%%%%%%  begin figure  %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[t]
@@ -437,7 +465,11 @@ the logic. A flow chart with an overall look of the design of the main program i
 \end{figure}
 %%%%%%%%%%%%%%%%%%%  end figure  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\textbf{Dashboards}
+\subsubsection{Dashboards View}
+
+Finally the dashboards view shows the user the current state of the devices in the listing. The user can filter the 
+data by date and see the consumption of energy and water, and the temperature of the room and outside. Figure 
+\ref{fig:ui-dashboards} shows the dashboards view.
 
 \begin{figure}[!ht]
     \centering
@@ -448,35 +480,45 @@ the logic. A flow chart with an overall look of the design of the main program i
 
 \subsection{Continous Integration}
 
-A continuous integration pipeline was set up to automate the build and test process. The pipeline consists of several 
+A continuous integration pipeline was set up to automate the build and test processes. The pipeline consists of several 
 stages, each responsible for a specific task. The pipeline is triggered whenever changes are pushed to the repository, 
 ensuring that the code is always up-to-date and tested.
 
 \subsubsection{Firmware}
 
-The code is built using the PlatformIO build system, which compiles the firmware for the sensing nodes.
+The code is built using the PlatformIO build system, which compiles the firmware for the sensing nodes. Error in the 
+code would be show in the logs and the build would fail. An example run of the pipeline can be seen in Figure
+\ref{fig:firmware-build}.
 
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.8\textwidth]{firmware-build.png}
+    \includegraphics[width=0.5\textwidth]{firmware-build.png}
     \caption{Firmware build}
     \label{fig:firmware-build}
 \end{figure}
 
 \subsubsection{API}
 
-The API is built and the unit and integration tests are run to ensure that the changes made to the code do not break 
-existing functionality.
+Just like with the firmware the API is built and the unit and integration tests are run to ensure that the changes made 
+to the code do not break existing functionality. Figure \ref{fig:api-build} shows an example run of the pipeline.
 
 \begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.8\textwidth]{api-build.png}
+    \includegraphics[width=0.5\textwidth]{api-build.png}
     \caption{API build}
     \label{fig:api-build}
 \end{figure}
 
 \subsubsection{Development Environment}
 
-\subsubsection{Testing}
+The development environment was created using Docker Compose \cite{Docker2024}, which allowed for easy setup and 
+teardown. The environment consisted of a MongoDB container, a ThingsBoard container, an NodeJS (API) container, and an 
+Appsmith container, Docker Compose was used to configure all the containers and services in a single file. This made it
+easy to start and stop the environment with a single command.
 
 \subsubsection{Deployment}
+
+The complete solution was deployed on virtual machine hosted on Google Cloud. The virtual machine was configured with
+Docker and Docker Compose to run the development environment but with a slighty different configuration. The process of
+deploying the project was to SSH into the virtual machine, update the repository, and build or rebuild the containers.
+The original idea was to automate this process with a CI/CD pipeline but it was not possible due to time constraints.
