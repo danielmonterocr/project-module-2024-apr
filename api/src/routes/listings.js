@@ -45,8 +45,15 @@ router.get('/api/listings',
     validator.validate('get', '/api/listings'),
     async (req, res) => {
         try {
+            let filter = {};
+            if (req.query.provider) {
+                filter.provider = req.query.provider;
+            }
+            if (req.query.title) {
+                filter.title = req.query.title;
+            }
             // Fetch all listings
-            const listings = await Listing.find();
+            const listings = await Listing.find(filter);
             logger.debug("Listings fetched: " + JSON.stringify(listings));
             res.send(listings);
         } catch (err) {

@@ -321,6 +321,19 @@ paths:
       summary: List all listings
       description: This can only be done by the logged in user
       operationId: listListings
+      query:
+        - name: provider
+          in: query
+          description: The provider to retrieve listings from
+          required: false
+          schema:
+            type: string
+        - name: title
+          in: query
+          description: The title of the listing to retrieve
+          required: false
+          schema:
+            type: string
       responses:
         '200':
           description: Successful operation
@@ -481,6 +494,18 @@ paths:
       description: This can only be done by the logged in user
       operationId: listDevices
       query:
+        - name: deviceName
+          in: query
+          description: The name of the device to retrieve
+          required: false
+          schema:
+            type: string
+        - name: deviceType
+          in: query
+          description: The type of the device to retrieve
+          required: false
+          schema:
+            type: string
         - name: listingId
           in: query
           description: The ID of the listing to retrieve devices from

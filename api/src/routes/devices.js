@@ -74,6 +74,12 @@ router.get('/api/devices',
     async (req, res) => {
         try {
             let filter = {};
+            if (req.query.deviceName) {
+                filter.deviceName = req.query.deviceName;
+            }
+            if (req.query.deviceType){
+                filter.deviceType = req.query.deviceType;
+            }
             if (req.query.listingId) {
                 filter.listingId = req.query.listingId;
             }
