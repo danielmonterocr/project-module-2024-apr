@@ -2,7 +2,7 @@ import { logger } from '../logger.js'
 import { agenda } from './agenda.js';
 import { syncAirbnb } from '../utils/provider-utils.js';
 import { getActiveReservation, getFinishedReservation } from '../utils/reservation-utils.js';
-import { getActiveDevices, calculateDailyConsumption, calculateTotalConsumption } from '../utils/device-utils.js';
+import deviceUtils from '../utils/device-utils.js';
 import { 
     generateDailyConsumptionReport, 
     generateTotalConsumptionReport,
@@ -30,7 +30,7 @@ agenda.define("calculate-consumption", async job => {
 
     try {
         // get active devices
-        const activeDevices = await getActiveDevices(listingId);
+        const activeDevices = await deviceUtils.getActiveDevices(listingId);
         logger.info("Active devices: " + JSON.stringify(activeDevices));
 
         // get active reservation
@@ -39,7 +39,7 @@ agenda.define("calculate-consumption", async job => {
         if (activeReservation) {
             // calculate daily consumption
             logger.info("Calculating daily consumption");
-            utilitiesUsed = await calculateDailyConsumption(activeDevices);
+            utilitiesUsed = await deviceUtils.calculateDailyConsumption(activeDevices);
             logger.info("Generating daily report");
             report = generateDailyConsumptionReport(utilitiesUsed.electricityUsed, utilitiesUsed.waterUsed);
             saveDailyReportToDB(activeReservation._id, utilitiesUsed.electricityUsed, utilitiesUsed.waterUsed, report);
@@ -51,11 +51,7 @@ agenda.define("calculate-consumption", async job => {
         if (finishedReservation) {
             // calculate total consumption
             logger.info("Calculating total consumption");
-            utilitiesUsed = await calculateTotalConsumption(
-                activeReservation._id,
-                activeReservation.startDate,
-                activeReservation.endDate
-            );
+            utilitiesUsed = await deviceUtils.calculateTotalConsumption(activeReservation._id);
             const numberOfDays = (new Date(activeReservation.endDate) - new Date(activeReservation.startDate)) / (1000 * 60 * 60 * 24);
             report = generateTotalConsumptionReport(
                 utilitiesUsed.totalElectricityUsed, 

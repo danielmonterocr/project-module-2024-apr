@@ -4,140 +4,142 @@ import { Device } from '../models/Device.js';
 import { Report } from '../models/Report.js';
 import thingsboardUtils from './thingsboard-utils.js';
 
-/**
- * Get active devices for a listing
- * 
- * @param {string} listingId - Listing id
- * @returns {Promise} - Promise object represents the active devices
- */
-const getActiveDevices = async (listingId) => {
-    logger.info("Getting active devices for listing: " + listingId);
-    const activeDevices = await Device.find({
-        listingId: listingId
-    });
+const deviceUtils = {
+    /**
+     * Get active devices for a listing
+     * 
+     * @param {string} listingId - Listing id
+     * @returns {Promise} - Promise object represents the active devices
+     */
+    getActiveDevices: async (listingId) => {
+        logger.info("Getting active devices for listing: " + listingId);
+        const activeDevices = await Device.find({
+            listingId: listingId
+        });
 
-    return activeDevices;
-};
+        return activeDevices;
+    },
 
-/**
- * Get electricity used in the last 24h from Thingsboard API
- * 
- * @param {string} deviceId 
- * @param {string} startDate 
- * @param {string} endDate
- * @returns {float} totalPower - Total electricity used in the last 24h
- */
-const getElectricityUsed = async (deviceId, startDate, endDate) => {
-    const token = await thingsboardUtils.getUserJwtToken();
-    // Use interval of 86400000 to get the last 24h
-    // 1440 max number of data points per second for 24h
-    // agg=SUM is used to add the energy used in each interval
-    logger.info("Calling ThingsBoard API:");
-    const url = THINGSBOARD_URL + '/api/plugins/telemetry/DEVICE/' + deviceId + '/values/timeseries' +
-        '?keys=power1,power2&startTs=' + startDate + '&endTs=' + endDate +
-        '&interval=86400000&limit=1440&agg=SUM&useStrictDataTypes=false';
-    logger.info(url);
-    const response = await fetch(url, {
-        method: 'get',
-        headers: { 'X-Authorization': 'Bearer ' + token }
-    });
+    /**
+     * Get electricity used in the last 24h from Thingsboard API
+     * 
+     * @param {string} deviceId 
+     * @param {string} startDate 
+     * @param {string} endDate
+     * @returns {float} totalPower - Total electricity used in the last 24h
+     */
+    getElectricityUsed: async (deviceId, startDate, endDate) => {
+        const token = await thingsboardUtils.getUserJwtToken();
+        // Use interval of 86400000 to get the last 24h
+        // 1440 max number of data points per second for 24h
+        // agg=SUM is used to add the energy used in each interval
+        logger.info("Calling ThingsBoard API:");
+        const url = THINGSBOARD_URL + '/api/plugins/telemetry/DEVICE/' + deviceId + '/values/timeseries' +
+            '?keys=power1,power2&startTs=' + startDate + '&endTs=' + endDate +
+            '&interval=86400000&limit=1440&agg=SUM&useStrictDataTypes=false';
+        logger.info(url);
+        const response = await fetch(url, {
+            method: 'get',
+            headers: { 'X-Authorization': 'Bearer ' + token }
+        });
 
-    const data = await response.json();
-    logger.info("Response from ThingsBoard API: " + JSON.stringify(data));
+        const data = await response.json();
+        logger.info("Response from ThingsBoard API: " + JSON.stringify(data));
 
-    const power1 = parseFloat(data.power1[0].value);
-    const power2 = parseFloat(data.power2[0].value);
-    const totalPower = power1 + power2;
-    return totalPower;
-};
+        const power1 = parseFloat(data.power1[0].value);
+        const power2 = parseFloat(data.power2[0].value);
+        const totalPower = power1 + power2;
+        return totalPower;
+    },
 
-/**
- * Get water used in the last 24h from Thingsboard API
- * 
- * @param {string} deviceId 
- * @param {string} startDate 
- * @param {string} endDate 
- * @returns {float} totalLiters - Total water used in the last 24h
- */
-const getWaterUsed = async (deviceId, startDate, endDate) => {
-    const token = await thingsboardUtils.getUserJwtToken();
-    // Use interval of 86400000 to get the last 24h
-    // 1440 max number of data points per second for 24h
-    // agg=SUM is used to get the energy used in each interval
-    logger.info("Calling ThingsBoard API:");
-    const url = THINGSBOARD_URL + '/api/plugins/telemetry/DEVICE/' + deviceId + '/values/timeseries' +
-        '?keys=totalLiters&startTs=' + startDate + '&endTs=' + endDate +
-        '&interval=86400000&limit=1440&agg=SUM&useStrictDataTypes=false';
-    logger.info(url);
-    const response = await fetch(url, {
-        method: 'get',
-        headers: { 'X-Authorization': 'Bearer ' + token }
-    });
+    /**
+     * Get water used in the last 24h from Thingsboard API
+     * 
+     * @param {string} deviceId 
+     * @param {string} startDate 
+     * @param {string} endDate 
+     * @returns {float} totalLiters - Total water used in the last 24h
+     */
+    getWaterUsed: async (deviceId, startDate, endDate) => {
+        const token = await thingsboardUtils.getUserJwtToken();
+        // Use interval of 86400000 to get the last 24h
+        // 1440 max number of data points per second for 24h
+        // agg=SUM is used to get the energy used in each interval
+        logger.info("Calling ThingsBoard API:");
+        const url = THINGSBOARD_URL + '/api/plugins/telemetry/DEVICE/' + deviceId + '/values/timeseries' +
+            '?keys=totalLiters&startTs=' + startDate + '&endTs=' + endDate +
+            '&interval=86400000&limit=1440&agg=SUM&useStrictDataTypes=false';
+        logger.info(url);
+        const response = await fetch(url, {
+            method: 'get',
+            headers: { 'X-Authorization': 'Bearer ' + token }
+        });
 
-    const data = await response.json();
-    logger.info("Response from ThingsBoard API: " + JSON.stringify(data));
+        const data = await response.json();
+        logger.info("Response from ThingsBoard API: " + JSON.stringify(data));
 
-    const totalLiters = parseFloat(data.totalLiters[0].value);
-    return totalLiters;
-};
+        const totalLiters = parseFloat(data.totalLiters[0].value);
+        return totalLiters;
+    },
 
-/**
- * Calculate consumption in the last 24h
- * 
- * @param {string} reservationId 
- * @param {string} activeDevices 
- * @returns {object} - Object with electricityUsed and waterUsed
- */
-const calculateDailyConsumption = async (activeDevices) => {
-    const endDate = Date.now();
-    const startDate = endDate - 86400000; // 24h in milliseconds
-    let electricityUsed = 0;
-    let waterUsed = 0;
+    /**
+     * Calculate consumption in the last 24h
+     * 
+     * @param {string} reservationId 
+     * @param {string} activeDevices 
+     * @returns {object} - Object with electricityUsed and waterUsed
+     */
+    calculateDailyConsumption: async (activeDevices) => {
+        const endDate = Date.now();
+        const startDate = endDate - 86400000; // 24h in milliseconds
+        let electricityUsed = 0;
+        let waterUsed = 0;
 
-    // calculate consumption
-    for (const device of activeDevices) {
-        if (device.deviceType === 'power') {
-            // get electricity used
-            logger.info("Calculating electricity used");
-            electricityUsed = await getElectricityUsed(device.deviceId, startDate, endDate);
+        // calculate consumption
+        for (const device of activeDevices) {
+            if (device.deviceType === 'power') {
+                // get electricity used
+                logger.info("Calculating electricity used");
+                electricityUsed = await deviceUtils.getElectricityUsed(device.deviceId, startDate, endDate);
+            }
+            if (device.deviceType === 'water-flow') {
+                // get water used
+                logger.info("Calculating water used");
+                waterUsed = await deviceUtils.getWaterUsed(device.deviceId, startDate, endDate);
+            }
         }
-        if (device.deviceType === 'water-flow') {
-            // get water used
-            logger.info("Calculating water used");
-            waterUsed = await getWaterUsed(device.deviceId, startDate, endDate);
+
+        // Convert totalElectricityUsed and totalWaterUsed to kW in 24h and liters
+        electricityUsed = (electricityUsed / 3600000).toFixed(2); // convert from W to kW
+        waterUsed = waterUsed.toFixed(2);
+        logger.info("Electricity used: " + electricityUsed + " kW");
+        logger.info("Water used: " + waterUsed + " L");
+
+        return { electricityUsed, waterUsed };
+    },
+
+    /**
+     * Calculate total consumption
+     * 
+     * @param {string} reservationId
+     * @param {string} startDate
+     * @param {string} endDate
+     * @returns {object} - Object with totalElectricityUsed and totalWaterUsed
+     */
+    calculateTotalConsumption: async (reservationId) => {
+        // calculate total consumption
+        const reports = await Report.find({reservationId: reservationId, type: "daily"});
+
+        let totalElectricityUsed = 0;
+        let totalWaterUsed = 0;
+
+        for (const report of reports) {
+            totalElectricityUsed += report.electricityUsed;
+            totalWaterUsed += report.waterUsed;
         }
+
+        return { totalElectricityUsed, totalWaterUsed };
     }
-
-    // Convert totalElectricityUsed and totalWaterUsed to kW in 24h and liters
-    electricityUsed = (electricityUsed / 3600000).toFixed(2); // convert from W to kW
-    waterUsed = waterUsed.toFixed(2);
-    logger.info("Electricity used: " + electricityUsed + " kW");
-    logger.info("Water used: " + waterUsed + " L");
-
-    return { electricityUsed, waterUsed };
 };
 
-/**
- * Calculate total consumption
- * 
- * @param {string} reservationId
- * @param {string} startDate
- * @param {string} endDate
- * @returns {object} - Object with totalElectricityUsed and totalWaterUsed
- */
-const calculateTotalConsumption = async (reservationId, startDate, endDate) => {
-    // calculate total consumption
-    const reports = await Report.find({reservationId: reservationId, type: "daily"});
-
-    let totalElectricityUsed = 0;
-    let totalWaterUsed = 0;
-
-    for (const report of reports) {
-        totalElectricityUsed += report.electricityUsed;
-        totalWaterUsed += report.waterUsed;
-    }
-
-    return { totalElectricityUsed, totalWaterUsed };
-};
-
-export { getActiveDevices, calculateDailyConsumption, calculateTotalConsumption };
+export default deviceUtils;
