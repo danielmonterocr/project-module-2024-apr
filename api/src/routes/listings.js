@@ -24,6 +24,7 @@ router.post('/api/listings',
             // Save listing on DB
             const listing = new Listing({
                 listingId: req.body.listingId,
+                provider: req.body.provider,
                 title: req.body.title,
                 description: req.body.description,
                 location: req.body.location,
