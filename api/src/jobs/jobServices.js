@@ -8,7 +8,7 @@ import {
     generateTotalConsumptionReport,
     saveDailyReportToDB,
     saveTotalReportToDB
-} from '../utils/reports-utils.js';
+} from '../utils/report-utils.js';
 
 /**
  * Sync provider job

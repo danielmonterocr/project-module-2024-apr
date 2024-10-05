@@ -18,16 +18,16 @@ function generateDailyConsumptionReport(powerUsed, waterUsed) {
     const lightBulbHours = Math.round((powerUsed * 1000) / 60); // 60W light bulb for 1 hour
 
     // Comparison ratios
-    const powerRatio = (powerUsed / avgPowerPerDay) * 100;
-    const waterRatio = (waterUsed / avgWaterPerDay) * 100;
+    const powerRatio = ((powerUsed / avgPowerPerDay) * 100).toFixed(2);
+    const waterRatio = ((waterUsed / avgWaterPerDay) * 100).toFixed(2);
 
     // Recommendations based on usage
     const powerRecommendation = powerRatio > 100
-        ? "⚡ You might want to reduce electricity usage. Consider using energy-efficient appliances! 💡"
-        : "Great job keeping your electricity usage in check! 🌱 Keep it up!";
+        ? "⚡ You might want to reduce electricity usage. Consider turning off the AC or lights when not in use! 💡"
+        : "👏 Great job keeping your electricity usage in check! 🌱 Keep it up!";
     
     const waterRecommendation = waterRatio > 100
-        ? "🚿 Water usage is a bit high. Try shorter showers or fixing any leaks! 💧"
+        ? "🚿 Water usage is a bit high. Try shorter showers or turning off the tap when not in use! 💧"
         : "👏 Your water consumption is within a sustainable range! Keep conserving! 🌎";
 
     // Generate the report
@@ -72,13 +72,13 @@ function generateTotalConsumptionReport(totalPowerUsed, totalWaterUsed, numDays)
     const lightBulbHours = Math.round((totalPowerUsed * 1000) / 60); // 60W light bulb for 1 hour
 
     // Comparison ratios
-    const powerRatio = (totalPowerUsed / expectedPower) * 100;
-    const waterRatio = (totalWaterUsed / expectedWater) * 100;
+    const powerRatio = ((totalPowerUsed / expectedPower) * 100).toFixed(2);
+    const waterRatio = ((totalWaterUsed / expectedWater) * 100).toFixed(2);
 
     // Recommendations based on usage
     const powerRecommendation = powerRatio > 100
         ? `⚡ You've consumed more electricity than average. Consider energy-saving strategies! 💡`
-        : `Excellent! You're staying energy-efficient. 🌱 Keep conserving!`;
+        : `👏 Excellent! You're staying energy-efficient. 🌱 Keep conserving!`;
 
     const waterRecommendation = waterRatio > 100
         ? `🚿 Water usage is higher than usual. Try cutting down where possible! 💧`
@@ -86,7 +86,7 @@ function generateTotalConsumptionReport(totalPowerUsed, totalWaterUsed, numDays)
 
     // Generate the report
     const report = `
-        📊 **Total Consumption Report (for ${numDays} days)** 📊
+        📊 **Total Consumption Report after a ${numDays} day stay** 📊
         
         **Total Electricity Usage**: ${totalPowerUsed} kWh
         - That's like keeping a 60W light bulb on for ${lightBulbHours} hours! 💡
