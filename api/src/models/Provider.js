@@ -3,13 +3,13 @@ import mongoose from 'mongoose'
 const providerSchema = mongoose.Schema({
     provider: {
         type: String,
-        require: true,
+        required: true,
         min: 3,
         max: 256
     },
     userId: {
         type: String,
-        require: true,
+        required: true,
         min: 3,
         max: 256
     }

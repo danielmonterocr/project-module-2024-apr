@@ -3,39 +3,39 @@ import mongoose from "mongoose";
 const reportSchema = mongoose.Schema({
     reservationId: {
         type: String,
-        require: true,
+        required: true,
         min: 3,
         max: 256,
     },
     type: {
         type: String,
-        require: true,
+        required: true,
         min: 3,
         max: 256,
     },
     startDate: {
         type: String,
-        require: true,
+        required: true,
         min: 3,
         max: 256,
     },
     endDate: {
         type: String,
-        require: true,
+        required: true,
         min: 3,
         max: 256,
     },
     electricityUsed: {
         type: Number,
-        require: true,
+        required: true,
     },
     waterUsed: {
         type: Number,
-        require: true,
+        required: true,
     },
     details: {
         type: String,
-        require: true,
+        required: true,
         min: 3,
         max: 1024,
     },

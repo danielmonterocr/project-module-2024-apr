@@ -3,31 +3,31 @@ import mongoose from 'mongoose'
 const listingSchema = mongoose.Schema({
     listingId: {
         type: String,
-        require: true,
+        required: true,
         min: 3,
         max: 256
     },
     provider: {
         type: String,
-        require: true,
+        required: true,
         min: 3,
         max: 256
     },
     title: {
         type: String,
-        require: true,
+        required: true,
         min: 3,
         max: 256
     },
     location: {
         type: String,
-        require: true,
+        required: true,
         min: 3,
         max: 256
     },
     userId: {
         type: String,
-        require: true,
+        required: true,
         min: 3,
         max: 256
     },
