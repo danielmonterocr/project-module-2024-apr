@@ -72,6 +72,7 @@ void sendDataToThingsboard(void* pvParams) {
   // for more details
   tb.sendTelemetryData("power1", totalPower1 / NUM_MEASUREMENTS);
   tb.sendTelemetryData("power2", totalPower2 / NUM_MEASUREMENTS);
+  tb.sendTelemetryData("totalPower", (totalPower1 + totalPower2) / NUM_MEASUREMENTS);
   blinkLED(BUILTIN_LED, 3, 200); // Blink three times with 200ms delay
 
   vTaskDelete(NULL);
