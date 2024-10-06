@@ -16,43 +16,6 @@
 % End result: software itself
 % Conclude with implications of future work
 
-\section{Measuring Achievement of Objectives}
-
-\subsection{Develop and deploy smart sensors to monitor energy consumption, water usage and temperature}
-
-This objective was achieved. Energy, water flow and temperature sensors were installed in a real AirBnB property. 
-Figure \ref{fig:ac-power} shows turning on a kettel to boil water, in figure \ref{fig:ac-temperature} the flow of 
-water for filling up a glass is pictured and finally, a 24 hour temperature graph is shown in figure TODO: Z.
-
-\subsection{Build an application programming Interface (API) to facilitate access to sensor-collected data}
-
-This objective was achieved. An API was developed to provide access to the data collected by the sensors. The API
-complies with OpenAPI standards and is documented using Swagger. Figure \ref{fig:swagger} shows the API documentation.
-
-\subsection{Design and generate comprehensive daily and end-of-stay reports for guests}
-
-This objective was achieved. Daily and end-of-stay reports can be generated for guests. The reports include information
-on energy consumption, water usage and temperature. Figure \ref{fig:whatsapp-daily-report} shows a sample daily report 
-and figure \ref{fig:whatsapp-final-report} shows a sample end-of-stay report.
-
-\subsection{Create a user-friendly web application for hosts to monitor and manage ther property's resource consumption}
-
-This objective was achieved. A web application was developed for hosts to monitor and manage their property's resource.
-Section \ref{sec:user-interface} of the methodology chapter shows the wireframes for the web application.
-
-\section{Measuring Achievement of Requirements}
-
-% * A description of the test plan, i.e., how the program/system was verified.
-
-% * Put the actual test results in an appendix if too long. This section may also include a user evaluation based on 
-% feedback where appropriate.
-
-The approach used to test the system was to follow Test-Driven Development (TDD) principles. This involved writing tests 
-before writing the code to implement the functionality. Tests were written in a bottom-up fashion, starting with 
-hardware testing and then moving up the system layers. The tests were incorporated into Continous Integration (CI) 
-pipelines using GitHub Actions \cite{GitHub2024} to ensure that the tests were run automatically whenever changes were 
-made to the codebase.
-
 \section{Results and Analysis}
 
 % * This chapter is relevant to projects where experiments or simulations were carried out with the code written.
@@ -155,6 +118,43 @@ people to test the system, in the end only 5 people tested the system, 3 guests 
 
 TODO: table X shows the results of the survey.
 
+\section{Achievement of Objectives}
+
+\subsection{Develop and deploy smart sensors to monitor energy consumption, water usage and temperature}
+
+The objective was successfully met. Energy, water flow and temperature sensors were installed in a real AirBnB property. 
+Figure \ref{fig:ac-power} shows turning on a kettel to boil water, in figure \ref{fig:ac-temperature} the flow of 
+water for filling up a glass is pictured and finally, a 24 hour temperature graph is shown in figure TODO: Z.
+
+\subsection{Build an application programming Interface (API) to facilitate access to sensor-collected data}
+
+The aim was effectively fulfilled. An API was developed to provide access to the data collected by the sensors. The API
+complies with OpenAPI standards and is documented using Swagger. Figure \ref{fig:swagger} shows the API documentation.
+
+\subsection{Design and generate comprehensive daily and end-of-stay reports for guests}
+
+The intended goal was reached. Daily and end-of-stay reports can be generated for guests. The reports include 
+information on energy consumption, water usage and temperature. Figure \ref{fig:whatsapp-daily-report} shows a sample 
+daily report and figure \ref{fig:whatsapp-final-report} shows a sample end-of-stay report.
+
+\subsection{Create a user-friendly web application for hosts to monitor and manage ther property's resource consumption}
+
+The desired outcome was accomplised. A web application was developed for hosts to monitor and manage their property's 
+resource. Section \ref{sec:user-interface} of the methodology chapter shows the wireframes for the web application.
+
+\section{Achievement of Requirements}
+
+% * A description of the test plan, i.e., how the program/system was verified.
+
+% * Put the actual test results in an appendix if too long. This section may also include a user evaluation based on 
+% feedback where appropriate.
+
+The approach used to test the system was to follow Test-Driven Development (TDD) principles. This involved writing tests 
+before writing the code to implement the functionality. Tests were written in a bottom-up fashion, starting with 
+hardware testing and then moving up the system layers. The tests were incorporated into Continous Integration (CI) 
+pipelines using GitHub Actions \cite{GitHub2024} to ensure that the tests were run automatically whenever changes were 
+made to the codebase.
+
 \section{Evaluation}
 
 % * Evaluation and critical evaluation of the results including strong and weak points, lessons learnt, and design decisions.
@@ -173,8 +173,8 @@ use of Rust \cite{Rust2024} would have been a better choice, but do to the lack 
 small ecosystem of sensor libraries it was decided to use C++ and PlatformIO instead.
 
 Calibration of the sensors took a lot of trial and error and this should be considered for any future work as it had 
-an impact on the original schedule. Cheap sensors were sourced locally because of budget and time constrains, but using
-more precise sensors would have been a better choice, specially when talking about the water flow sensor.
+an impact on the original schedule. Low cost sensors were sourced locally because of budget and time constrains, but 
+using more precise sensors would have been a better choice, specially when talking about the water flow sensor.
 
 In terms of the API, the use of JavaScript and Node.js was a good choice, the development process was faster due to 
 extensive support of the language and the vast amount of libraries available. The use of Agenda for scheduling tasks was

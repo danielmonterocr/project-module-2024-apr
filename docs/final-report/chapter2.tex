@@ -13,12 +13,12 @@ the studies found in the literature review mentioned the use of open smart monit
 the benefits of cloud computing.
 
 The proposed solution generates a daily report for guests delivered via text message (AirBnB's chat). The report will 
-have information on the number of KiloWatts and liters of water used, and the average temperature of the room in the 
-last 24 hours. It will compare this figures with the results from the day before (if available). 
+have information on the number of KiloWatts, and liters of water used, and the average temperature of the room in the 
+last 24 hours. It will compare these figures with the results from the day before (if available). 
 
 The system will also generate an end-of-stay report for the guest. This report will have the same information as the 
 daily report, but it will also include the total amount of KiloWatts and liters of water used during the stay. It will
-highlight and improvements or deteriorations in the consumption of resources.
+highlight improvements or deteriorations in the consumption of resources.
 
 As for the hosts, a dashboard is available on the web showing historical data in form of graphs to show electricity and
 water consumption, and the temperature of the room and outside. The final report from the user is also forwarded to the 
@@ -28,6 +28,8 @@ For external users, the API has a endpoint for downloading datasets in CSV forma
 for further analysis and research.
 
 \subsection{Requirements}
+The following requirements improve the current state of solutions for monitoring resources consumption in 
+shared housing:
 
 \begin{enumerate}
     \item \textbf{Fine-grained readings:} The sensors should read at a minimum of 2 seconds to 
@@ -39,10 +41,11 @@ for further analysis and research.
     \item \textbf{Secure data transmission:} Authentication and encryption should be used to ensure data integrity and
     privacy.
     \item \textbf{Data visualization:} The system should be able to visualize the data in real time, as well as the 
-    the reports. This all should be done in a user-friendly way.
+    reports. This all should be done in a user-friendly way.
     \item \textbf{User authentication:} The system should have a user authentication system to prevent unauthorized 
     access.
-    \item \textbf{Reports generation:} The system should be able to generate daily and end-of-stay reports for guests.
+    \item \textbf{Reports generation:} The system should be able to generate daily and end-of-stay reports for guests 
+    in a comprehensible user friendly way.
     \item \textbf{Open API standard:} The API should comply with the Open API standard to ensure interoperability with 
     other systems.
     \item \textbf{Scalabitlity and maintainability:} The system should be able to handle a large number of sensors and 
@@ -69,7 +72,7 @@ explained in detail.
 
 It consists of three Espressif ESP32-DevKitC \cite{Espressif2024} microcontrollers (pictured in 
 \ref{fig:connectivity-diagram}) connected to the sensors. One measures energy consumption, the other water usage and 
-the third one indoor and outdoor temperatures. This development board was chosen for it's extensive documentation, 
+the third one indoor and outdoor temperatures. This development board was chosen for its extensive documentation, 
 integrated WiFi and compatibility with the peripherals used. The idea was to have a low cost solution with fast 
 development and deployment times.
 
