@@ -152,18 +152,18 @@ the ESP32 microcontroller and uses different sensors to measure the desired para
 \subsubsection{Power Node}
 
 The power node is by far the most complex of the three nodes. It uses two current sensors attached to each phase of the 
-120V AC power line, a small circuit was built to adapt the current so it could be measured by the ADC (analog to digital
-converter) input of the microcontroller. This circuit consists of a voltage divider used to remove the negative part of 
-the sine wave combined with a capacitor to stablelize the signal, and a resistor to convert the current to voltage. The 
+120V AC power line, a small circuit was built to adapt the current so it could be measured by the ADC (Analog to Digital
+Converter) input of the microcontroller. This circuit consists of a voltage divider used to remove the negative part of 
+the sine wave combined with a capacitor to stabilize the signal, and a resistor to convert the current to voltage. The 
 calculations for the resistors and capacitors were done using Arduino's EmonLib documentation \cite{Arduino2024b}.
 
-At the begining the ESP32 was able to interact with these sensors and obtain the data with no problems but once the full
-program was loaded it kept getting stuck due to memory and CPU usage. Several optimizations were tried, like minimizing
-the use of variables, removing all log messages or simplifying tasks but it was simple not possible to fix this
-behaviour. Ultimately, an Arduino Leonardo was connected to the circuit and a script that read the data from the
-sensors was deployed on it, then the ESP32 attached to the Leonardo via UART (Universal Asysnchronous Receiver
-Transmitter) and the reading thread running on the ESP32 originally was replaced by a thread that read from the serial
-ports. This solution fixed the problem and the node was able to run without any issues. Figure 
+At the begining, the ESP32 was able to interact with these sensors and obtain the data with no problems, but once the 
+full program was loaded it kept getting stuck due to memory and CPU usage. Several optimizations were tried, like 
+minimizing the use of variables, removing all log messages or simplifying tasks but it was simply not possible to fix 
+this behaviour. Ultimately, an Arduino Leonardo was connected to the circuit and a script that read the data from the
+sensors was deployed on it, then the ESP32 was attached to the Leonardo via UART (Universal Asysnchronous Receiver
+Transmitter) and the reading thread running on the ESP32 originally was replaced by a thread that reads from the serial
+ports. This solution fixed the problem and the node was able to monitor without any issues. Figure 
 \ref{fig:energy-node-schematic} shows the schematic of the power node.
 
 \begin{figure}[!ht]
@@ -174,9 +174,9 @@ ports. This solution fixed the problem and the node was able to run without any 
 \end{figure}
 
 Once the current was read, EmonLib was used to calculate the correct power by multiplying the current by the fixed
-voltage. Since the data was collected every second the power over time (energy) was calculated by adding the power every 
-second for a minute and then dividing by 60 to get watt-seconds or Joules (this calculation can be seen in equation 
-\ref{eq:energy-calculation}). After the energy was calculated, it was sent to the cloud every minute. 
+voltage (120V). Since the data was collected every second the power over time (energy) was calculated by adding the 
+power every second for a minute and then dividing by 60 to get watt-seconds or Joules (this calculation can be seen in 
+equation \ref{eq:energy-calculation}). After the energy was calculated, it was sent to the cloud every minute. 
 
 \begin{equation}
     \label{eq:energy-calculation}
@@ -186,7 +186,7 @@ second for a minute and then dividing by 60 to get watt-seconds or Joules (this 
 \subsubsection{Water Flow Node}
 
 This node uses a water flow sensor to measure the flow rate. This sensor uses Hall effect to generate a pulse every time
-some water passes through it. The program counts the number of pulses every second and then it multiplies by a 
+some water passes through it. The program counts the number of pulses every second and then it multiplies that by a 
 calibration factor (7.11 in this case) to calculate the flow rate, this is then divided by 1000 to get the number of
 liters that passed during that second. The sensor was connected to the ESP32 as shown in Figure 
 \ref{fig:water-flow-node-schematic}.
@@ -199,7 +199,7 @@ liters that passed during that second. The sensor was connected to the ESP32 as 
 \end{figure}
 
 Using equation \ref{eq:water-volume-calculation} the volume of water passed in the last minute was calculated and then 
-sent to the cloud.
+sent to the database.
 
 \begin{align}
     \label{eq:water-volume-calculation}
@@ -212,8 +212,8 @@ sent to the cloud.
 The temperature sensors were connected to the ESP32 as shown in Figure \ref{fig:temp-node-schematic}. These sensors were
 controlled using the OneWire library \cite{Arduino2024c}. The temperature was read every 2 seconds for 60 seconds and 
 then it was divided by 30 to get the average temperature in the past minute. Equation 
-\ref{eq:temperature-calculation} depicts how this was done. After the average temperature was calculated, it was sent to
-the cloud.
+\ref{eq:temperature-calculation} depicts the mathematical representation of this. After the average temperature was 
+calculated, it was sent to the database.
 
 \begin{figure}[!ht]
     \centering
@@ -235,13 +235,13 @@ The code is divided into four main tasks:
 
 \begin{itemize}
     \item \textbf{Task 1:} This task makes sure the connection to Internet is always up.
-    \item \textbf{Task 2:} This task ensures connection to ThingsBoard is always up.
+    \item \textbf{Task 2:} This task ensures connection to ThingsBoard is alive.
     \item \textbf{Task 3:} This task is responsible for reading data from the sensors.
     \item \textbf{Task 4:} This task is responsible for sending data to the cloud.
 \end{itemize}
 
-The are two more important sections of the code: these sections setup the ESP32 and the sensors respectively. A flow
-char fo the implementation of the firmware can be seen in figure \ref{fig:monitoring-node-flow-chart}.
+There are two more important sections of the code: these sections setup the ESP32 and the sensors respectively. A flow
+chart of the implementation of the firmware can be seen in Figure \ref{fig:monitoring-node-flow-chart}.
 
 \begin{figure}[!ht]
     \centering
@@ -268,14 +268,14 @@ shown in Figure \ref{fig:entity-relationship-diagram}.
 
 \subsubsection{Timeseries Database}
 
-ThingsBoard's internal PosgrepSQL \cite{PostgreSQL2024} was used as the timeseries database for storing historical data 
+ThingsBoard's internal PostgrepSQL \cite{PostgreSQL2024} was used as the timeseries database for storing historical data 
 from the sensing nodes. This database was chosen because it is integrated with the ThingsBoard platform and is optimized 
 for storing big amounts of time series data. Access to this information was done through the ThingsBoard's well 
 documented API.
 
 \subsection{REST API}
 
-This API was designed to manage users, providers, property listings, and devices for a hospitality platform similar to 
+This API was designed to manage users, providers, property listings, and devices for a hospitality platform like 
 AirBnB, where properties are listed and managed by users. It enables seamless integration with third-party providers 
 like AirBnB, VRBO, and HomeAway, and facilitates the management of property data from smart devices.
 
@@ -292,26 +292,26 @@ such as Airbnb or HomeAway. This ensures that all the properties the user has li
 automatically updated in the system.
 
 \subsubsection{Providers}
-Providers are third-party platforms like Airbnb, VRBO, or HomeAway, where properties are listed. The API allows users to 
-create and manage these provider connections. When a user adds a new provider, the system stores the provider 
-information, linking it to the user.
+Providers are third-party platforms like AirBnB, VRBO \cite{VRBO2024}, or Booking.com \cite{Booking2024}, where 
+properties are listed. The API allows users to create and manage these provider connections. When a user adds a new 
+provider, the system stores the provider information, linking it to the user.
 
 \subsubsection{Listings}
 
 Listings represent the properties users manage on the platform. The API provides functionality to import listings, 
 once listings are imported, they can be viewed as a list or individually by their unique ID. Users can fetch all their 
-listings to see which properties they are currently managing. Additionally, the system allows for enabling or disablgin 
+listings to see which properties they are currently managing. Additionally, the system allows for enabling or disabling 
 listings, giving users full control over which properties are being monitored.
 
 \subsubsection{Reservations}
 
-Just was Listings, Reservations are imported from the provider. They are used internally to calculate the daily and 
+Just as Listings, Reservations are imported from the provider. They are used internally to calculate the daily and 
 end-of-stay consumption reports. The API allows for fetching all reservations for a listing, as well as individual
 reservations by their unique ID.
 
 \subsubsection{Devices}
 
-These devices are tied to specific listings and can be managed through the API. The API supports adding new devices by 
+These devices are linked to specific listings and can be managed through the API. The API supports adding new devices by 
 providing details like the type of device (e.g., energy meter), its unique identifier, and the token that authenticates 
 the device with ThingsBoard. Users can retrieve a list of all devices associated with their listings. If a user wants to 
 see detailed information about a particular device, they can fetch it using the device's unique ID. The API also 
@@ -325,7 +325,7 @@ specific listing.
 \subsubsection{Agenda Jobs}
 
 Two types of jobs were implemented, one that runs every two minutes to import the listings and reservations from the 
-provider and another on that runs every days at 2pm and calculates the consumption in the last 24 hours or the total
+provider and another one that runs every days at 2pm and calculates the consumption in the last 24 hours or the total
 one.
 
 \subsubsection{Schema Components}
@@ -365,9 +365,9 @@ look at the dashboards, or find the reports.
 \label{sec:user-interface}
 
 A wire frame of the User Interface can be seen in Figure \ref{fig:user-interface-flow-chart}. This diagram shows the 
-different actions that the user can perform on every view of the application. The colors on the diagram represent the
+different actions that the user can perform on every view of the application. The colors on the diagram represent
 all the sections of the main program, purple for authentication, green for the main view, blue for the devices view,
-yellos for the dashboards view and finally red for the reports view.
+yellow for the dashboards view and finally red for the reports view.
 
 \begin{figure}[!ht]
     \centering
@@ -470,8 +470,8 @@ detailed view. The user can click on the "copy" button to copy the report to the
 
 \subsubsection{Dashboards View}
 
-Finally the dashboards view shows the user the current state of the devices in the listing. The user can filter the 
-data by date and see the consumption of energy and water, and the temperature of the room and outside. Figure 
+Finally, the dashboards view shows the user a chart with the current state of the devices in the listing. The user can 
+filter the data by date and see the consumption of energy and water, and the temperature of the room and outside. Figure 
 \ref{fig:ui-dashboards} shows the dashboards view.
 
 \begin{figure}[!ht]
@@ -481,7 +481,7 @@ data by date and see the consumption of energy and water, and the temperature of
     \label{fig:ui-dashboards}
 \end{figure}
 
-\subsection{Continous Integration}
+\subsection{Continuous Integration}
 
 A continuous integration pipeline was set up to automate the build and test processes. The pipeline consists of several 
 stages, each responsible for a specific task. The pipeline is triggered whenever changes are pushed to the repository, 
@@ -489,8 +489,8 @@ ensuring that the code is always up-to-date and tested.
 
 \subsubsection{Firmware}
 
-The code is built using the PlatformIO build system, which compiles the firmware for the sensing nodes. Error in the 
-code would be show in the logs and the build would fail. An example run of the pipeline can be seen in Figure
+The code is built using the PlatformIO build system, which compiles the firmware for the sensing nodes. Errors in the 
+code would be shown in the logs and the build would fail. An example run of the pipeline can be seen in Figure
 \ref{fig:firmware-build}.
 
 \subsubsection{API}
@@ -498,20 +498,16 @@ code would be show in the logs and the build would fail. An example run of the p
 Just like with the firmware the API is built and the unit and integration tests are run to ensure that the changes made 
 to the code do not break existing functionality. Figure \ref{fig:api-build} shows an example run of the pipeline.
 
-\subsubsection{API}
-
-TODO: add User Interface pipeline
-
 \subsubsection{Development Environment}
 
 The development environment was created using Docker Compose \cite{Docker2024}, which allowed for easy setup and 
-teardown. The environment consisted of a MongoDB container, a ThingsBoard container, an NodeJS (API) container, and an 
+teardown. The environment consisted of a MongoDB container, a ThingsBoard container, a NodeJS (API) container, and an 
 Appsmith container, Docker Compose was used to configure all the containers and services in a single file. This made it
 easy to start and stop the environment with a single command.
 
 \subsubsection{Deployment}
 
 The complete solution was deployed on virtual machine hosted on Google Cloud. The virtual machine was configured with
-Docker and Docker Compose to run the development environment but with a slighty different configuration. The process of
+Docker and Docker Compose to run the development environment, but with a slighty different configuration. The process of
 deploying the project was to SSH into the virtual machine, update the repository, and build or rebuild the containers.
 The original idea was to automate this process with a CI/CD pipeline but it was not possible due to time constraints.

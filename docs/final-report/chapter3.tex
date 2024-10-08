@@ -65,7 +65,7 @@ by the sensor, i.e. opening the faucet to get a little stream of water.
 Testing the temperature sensors required two different tests, first the sensors were compared to a thermometer to check
 the accuracy of the readings in a span of 12 hours, the results were satisfactory as the standard deviation was less
 than 0.5 degrees Celsius. The second test was to check the response time of the sensors, this was done by placing one
-sensor in a glass full of ice and the other in a glass full of boiling water, figure 
+sensor in a glass full of ice and the other in a glass full of boiling water, Figure 
 \ref{tab:temperature-sensors-calibration} shows the results of the calibration tests for the temperature sensors.
 
 Figure \ref{fig:temp-sensor-response} shows the change in temperature when the sensors were submerged, once the
@@ -98,7 +98,7 @@ tests were also created using Mocha \cite{Mocha2024} and Chai \cite{Chai2024}.
 
 System tests were written using Postman \cite{Postman2024}, the idea was to test the API as a whole, this included the 
 entire flow of creating a user, logging in, registering a provider, pulling the listings and reservations from AirBnB, 
-simulating a stay and finally fetching the reports. An image showing these tests can be seen in TODO: figure X.
+simulating a stay and finally fetching the reports. An image showing these tests can be seen in TODO: Figure X.
 
 \subsubsection{Regression Testing}
 
@@ -123,8 +123,8 @@ TODO: table X shows the results of the survey.
 \subsection{Develop and deploy smart sensors to monitor energy consumption, water usage and temperature}
 
 The objective was successfully met. Energy, water flow and temperature sensors were installed in a real AirBnB property. 
-Figure \ref{fig:ac-power} shows turning on a kettel to boil water, in figure \ref{fig:ac-temperature} the flow of 
-water for filling up a glass is pictured and finally, a 24 hour temperature graph is shown in figure TODO: Z.
+Figure \ref{fig:ac-power} shows turning on a kettel to boil water, in Figure \ref{fig:ac-temperature} the flow of 
+water for filling up a glass is pictured and finally, a 24 hour temperature graph is shown in Figure TODO: Z.
 
 \subsection{Build an application programming Interface (API) to facilitate access to sensor-collected data}
 
@@ -135,9 +135,9 @@ complies with OpenAPI standards and is documented using Swagger. Figure \ref{fig
 
 The intended goal was reached. Daily and end-of-stay reports can be generated for guests. The reports include 
 information on energy consumption, water usage and temperature. Figure \ref{fig:whatsapp-daily-report} shows a sample 
-daily report and figure \ref{fig:whatsapp-final-report} shows a sample end-of-stay report.
+daily report and Figure \ref{fig:whatsapp-final-report} shows a sample end-of-stay report.
 
-\subsection{Create a user-friendly web application for hosts to monitor and manage ther property's resource consumption}
+\subsection{Create a user-friendly web application for hosts to monitor and manage their property's resource consumption}
 
 The desired outcome was accomplised. A web application was developed for hosts to monitor and manage their property's 
 resource. Section \ref{sec:user-interface} of the methodology chapter shows the wireframes for the web application.
@@ -151,7 +151,7 @@ resource. Section \ref{sec:user-interface} of the methodology chapter shows the 
 
 The approach used to test the system was to follow Test-Driven Development (TDD) principles. This involved writing tests 
 before writing the code to implement the functionality. Tests were written in a bottom-up fashion, starting with 
-hardware testing and then moving up the system layers. The tests were incorporated into Continous Integration (CI) 
+hardware testing and then moving up the system layers. The tests were incorporated into Continuous Integration (CI) 
 pipelines using GitHub Actions \cite{GitHub2024} to ensure that the tests were run automatically whenever changes were 
 made to the codebase.
 
@@ -168,22 +168,22 @@ made to the codebase.
 
 As stated in the first section of this chapter, the objectives of the project were achieved. The system is able to
 perform all basic functionalities. Some of the decisions taken in the design phase like TDD and CI were crucial to 
-deliver a robust solution eventhough they made the development process slower. In terms of security in IoT devices, the 
-use of Rust \cite{Rust2024} would have been a better choice, but do to the lack of experience with the language and the 
+deliver a robust solution even though they made the development process slower. In terms of security in IoT devices, the 
+use of Rust \cite{Rust2024} would have been a better choice, but duo to the lack of experience with the language and the 
 small ecosystem of sensor libraries it was decided to use C++ and PlatformIO instead.
 
 Calibration of the sensors took a lot of trial and error and this should be considered for any future work as it had 
-an impact on the original schedule. Low cost sensors were sourced locally because of budget and time constrains, but 
-using more precise sensors would have been a better choice, specially when talking about the water flow sensor.
+an impact on the original schedule. Low cost sensors were sourced locally because of budget and time constraints, but 
+using more precise sensors would have been a better choice, especially when talking about the water flow sensor.
 
-In terms of the API, the use of JavaScript and Node.js was a good choice, the development process was faster due to 
+The use of JavaScript and Node.js for the API was a good choice. The development process was faster due to 
 extensive support of the language and the vast amount of libraries available. The use of Agenda for scheduling tasks was
 an excellent choice, it's integration with MongoDB and the ease of use made it a great tool for the job. The use of 
 OpenAPI and Swagger integrated into the code and the tests was a great decision as the documentation was written in a 
 more organic way.
 
 The User Interface was developed using low-code tools, this was changed from the original plan of using Flutter
-\cite{Flutter2024} or React \cite{React2024} because of the time constrains. Appsmith proved to be a fast and easy to 
+\cite{Flutter2024} or React \cite{React2024} because of the time constraints. Appsmith proved to be a fast and easy to 
 use tool, with the power of JavaScript underneath, in the end all the features were implemented in the span of 2 weeks.
 
 Finally, deploying to Google Cloud was a good choice, having a dedicated virtual machine available 24/7 was crucial for
