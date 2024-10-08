@@ -6,23 +6,80 @@
 \chapter{Conclusion}
 % Final opportunity to summarize your key findings, contributions and implications of your work.
 
-\begin{itemize}
-    \item Recap on the objectives.
-    \item Summarize the results.
-    \item Evaluate the success.
-    \item Discuss the contributions.
-    \item Recommendations and future work.
-    \item Reflect on lessons learned.
-    \item Emphazise the impact.
-    \item Strong statement.
-  \end{itemize}
+% Recap on the objectives.
+% Summarize the results.
+% Evaluate the success.
+% Discuss the contributions.
+% Recommendations and future work.
+% Reflect on lessons learned.
+% Emphazise the impact.
+% Strong statement.
 
-\section{Recomendations and Future Work}
+This project successfully developed and implemented a smart monitoring system tailored for short-term rental properties, 
+specifically for AirBnB listings. By integrating sensors to monitor energy consumption, water usage, and indoor 
+temperature, the system provided real-time feedback to both guests and hosts, helping promote more sustainable resource 
+use.
 
-\begin{itemize}
-    \item Design and build PCBs for the sensor nodes to reduce the size and complexity of the system.
-    \item Program microcontrollers using a memory safe language like Rust to improve the reliability of the system.
-    \item Implement machine learning models to identify appliances based on consumption patterns.
-    \item Deploy on top of a serverless architecture to reduce operational costs and improve scalability.
-    \item Add other providers besides AirBnB.
-\end{itemize}
+\section{Achievement of Objectives}
+
+The project achieved its primary objectives:
+
+\begin{enumerate}
+  \item \textbf{Smart sensors deployment:} Energy, water, and temperature sensors were deployed in a real AirBnB 
+  property, effectively capturing and transmitting consumption data.
+  \item \textbf{API development:} A robust REST API, adhering to OpenAPI standards, was built to allow secure access to 
+  sensor data for applications and users.
+  \item \textbf{Report generation:} The system generated daily and end-of-stay reports for guests, offering insights 
+  into their resource consumption and encouraging eco-conscious behavior during their stays.
+  \item \textbf{User-friendly web application:} A web application was created for hosts, providing them with a clear 
+  interface to monitor and manage their property's resource consumption, ensuring operational efficiency while fostering 
+  sustainability.
+\end{enumerate}
+
+\section{Key Results}
+
+The project's hardware testing showed that the sensors accurately recorded energy and water consumption, though there 
+was room for improvement in the water flow sensor's precision. The back-end API and front-end interface worked smoothly, 
+delivering data to users in a meaningful and actionable way. These results highlight the system's effectiveness in 
+enhancing transparency around resource use, which has the potential to positively influence guest and host behavior.
+
+\section{Contributions and Impact}
+
+This project contributes to the sustainable tourism movement by offering a concrete tool that promotes responsible 
+resource consumption in short-term accommodations. It highlights the importance of integrating smart monitoring 
+technologies into shared economy platforms, helping hosts reduce operational costs and waste while enabling guests to be 
+more conscious of their environmental impact. This solution could be a model for future applications in both hospitality 
+and broader sustainability efforts.
+
+\section{Recommendations for Future Work}
+
+While the project successfully met its objectives, several areas can be explored to improve system performance and 
+scalability:
+
+\begin{enumerate}
+  \item \textbf{Design and build Printed Circuit Boards (PCB):} Custom PCBs for the sensor nodes would reduce the size 
+  and complexity of the hardware, making the system more compact and easier to deploy on a larger scale.
+  \item \textbf{Memory safe microcontroller programming:} Rewriting the microcontroller firmware using Rust, a 
+  memory-safe programming language, would enhance system reliability, reduce the likelihood of bugs, and improve 
+  overall performance.
+  \item \textbf{Serverless architecture:} Deploying the system on a serverless architecture could significantly reduce 
+  operational costs and improve scalability. A serverless approach would allow the system to automatically handle 
+  changes in load without the need for manual server management.
+  \item \textbf{Improved sensors accuracy:} Higher precision sensors, particularly for water flow measurement, would 
+  improve the system's accuracy, especially in capturing low-flow data.
+  \item \textbf{Expanded platform integration:} Integrating with other platforms like VRBO \cite{VRBO2024} or 
+  Booking.com \cite{Booking2024} would extend the system's utility, allowing more hosts to adopt sustainable monitoring 
+  practices.
+  \item \textbf{Machine learning for appliance identification:} Incorporating machine learning models to identify 
+  appliances based on their consumption patterns could enhance resource management by pinpointing specific areas of 
+  improvement for hosts.
+\end{enumerate}
+    
+\section{Final Thoughts}
+
+In conclusion, this project has successfully demonstrated the potential for smart monitoring systems to drive 
+sustainability in the hospitality sector. By providing real-time feedback on resource consumption, it encourages more 
+responsible behavior from both guests and hosts. The project has laid a solid foundation for future enhancements and 
+scaling, paving the way for further innovation in sustainable tourism. The lessons learned here emphasize the critical 
+role of technology in fostering environmental awareness and creating more efficient, eco-friendly accommodation 
+experiences.
