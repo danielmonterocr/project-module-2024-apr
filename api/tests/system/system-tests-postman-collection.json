@@ -11,21 +11,50 @@
 			"name": "Register user",
 			"event": [
 				{
-					"listen": "test",
+					"listen": "prerequest",
 					"script": {
 						"exec": [
-							"const userId = pm.response.json()._id;",
-							"pm.environment.set(\"userId\", userId);"
+							""
 						],
 						"type": "text/javascript",
 						"packages": {}
 					}
 				},
 				{
-					"listen": "prerequest",
+					"listen": "test",
 					"script": {
 						"exec": [
-							""
+							"const userId = pm.response.json()._id;",
+							"pm.environment.set(\"userId\", userId);",
+							"pm.test(\"Response status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response has the required fields\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    pm.expect(responseData).to.have.property('username');",
+							"    pm.expect(responseData).to.have.property('email');",
+							"    pm.expect(responseData).to.have.property('password');",
+							"    pm.expect(responseData).to.have.property('_id');",
+							"    pm.expect(responseData).to.have.property('__v');",
+							"});",
+							"",
+							"",
+							"pm.test(\"Email is in a valid format\", function () {",
+							"  const responseData = pm.response.json();",
+							"  ",
+							"  pm.expect(responseData.email).to.match(/\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}\\b/);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Password should not be empty\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData.password).to.exist.and.to.have.lengthOf.at.least(1, \"Password should not be empty\");",
+							"});"
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -66,10 +95,39 @@
 					"script": {
 						"exec": [
 							"const token = pm.response.headers.get(\"token\");",
-							"pm.environment.set(\"token\", token);"
+							"pm.environment.set(\"token\", token);",
+							"pm.test(\"Response status code is 200\", function () {",
+							"    pm.expect(pm.response.code).to.equal(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Content-Type header is application/json\", function () {",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response message is not empty\", function () {",
+							"  const responseData = pm.response.json();",
+							"  ",
+							"  pm.expect(responseData.message).to.exist.and.to.not.be.empty;",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response message is a string\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData.message).to.be.a('string');",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response message is in the expected format\", function () {",
+							"  const responseData = pm.response.json();",
+							"  ",
+							"  pm.expect(responseData).to.be.an('object');",
+							"  pm.expect(responseData.message).to.be.a('string');",
+							"});"
 						],
-						"type": "text/javascript",
-						"packages": {}
+						"type": "text/javascript"
 					}
 				}
 			],
@@ -101,6 +159,52 @@
 		},
 		{
 			"name": "Register provider",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response status code is 200\", function () {",
+							"    pm.expect(pm.response.code).to.equal(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response Content-Type header is application/json\", function () {",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response has the required fields\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    pm.expect(responseData).to.have.property('provider');",
+							"    pm.expect(responseData).to.have.property('userId');",
+							"    pm.expect(responseData).to.have.property('_id');",
+							"    pm.expect(responseData).to.have.property('__v');",
+							"});",
+							"",
+							"",
+							"pm.test(\"Provider and userId are non-empty strings\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    pm.expect(responseData.provider).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Provider should not be empty\");",
+							"    pm.expect(responseData.userId).to.be.a('string').and.to.have.lengthOf.at.least(1, \"userId should not be empty\");",
+							"});",
+							"",
+							"",
+							"pm.test(\"Verify that the __v field is a non-negative integer\", function () {",
+							"  const responseData = pm.response.json();",
+							"  ",
+							"  pm.expect(responseData).to.be.an('object');",
+							"  pm.expect(responseData.__v).to.exist.and.to.be.a('number').and.to.satisfy(v => v >= 0, \"__v should be a non-negative integer\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"auth": {
 					"type": "noauth"
@@ -137,6 +241,39 @@
 		},
 		{
 			"name": "Sync provider",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response status code is 200\", function () {",
+							"    pm.expect(pm.response.code).to.equal(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Content-Type header is application/json\", function () {",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response message is not empty\", function () {",
+							"  const responseData = pm.response.json();",
+							"  pm.expect(responseData.message).to.exist.and.to.not.be.empty;",
+							"});",
+							"",
+							"",
+							"pm.test(\"Validate the structure of the response\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    pm.expect(responseData.message).to.exist.and.to.be.a('string');",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
 			"request": {
 				"method": "POST",
 				"header": [
@@ -186,7 +323,26 @@
 							"const responseData = pm.response.json();",
 							"const getaway1 = responseData.find(listing => listing.title === \"NourTinyFootprint Getaway 1\");",
 							"const listingId = getaway1 ? getaway1.listingId : null;",
-							"pm.environment.set(\"listingId\", listingId);"
+							"pm.environment.set(\"listingId\", listingId);",
+							"pm.test(\"Response status code is 200\", function () {",
+							"    pm.expect(pm.response.code).to.equal(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response has the correct Content-Type header\", function () {",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response body is an empty array\", function () {",
+							"    const responseData = pm.response.json();",
+							"    pm.expect(responseData).to.be.an('array').that.is.not.empty;",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response time is less than 200ms\", function () {",
+							"  pm.expect(pm.response.responseTime).to.be.below(200);",
+							"});"
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -223,7 +379,38 @@
 					"script": {
 						"exec": [
 							"const responseData = pm.response.json();",
-							"pm.environment.set(\"deviceId1\", responseData[\"_id\"]);"
+							"pm.environment.set(\"deviceId1\", responseData[\"_id\"]);",
+							"pm.test(\"Response status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response has the required fields\", function () {",
+							"  const responseData = pm.response.json();",
+							"  ",
+							"  pm.expect(responseData).to.be.an('object');",
+							"  pm.expect(responseData).to.have.property('deviceName');",
+							"  pm.expect(responseData).to.have.property('deviceType');",
+							"  pm.expect(responseData).to.have.property('deviceToken');",
+							"  pm.expect(responseData).to.have.property('listingId');",
+							"  pm.expect(responseData).to.have.property('deviceId');",
+							"  pm.expect(responseData).to.have.property('_id');",
+							"  pm.expect(responseData).to.have.property('__v');",
+							"});",
+							"",
+							"",
+							"pm.test(\"DeviceToken is not an empty string\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData.deviceToken).to.be.a('string').and.to.have.lengthOf.at.least(1, \"DeviceToken should not be empty\");",
+							"});",
+							"",
+							"",
+							"pm.test(\"DeviceId is a non-empty string\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData.deviceId).to.be.a('string').and.to.have.lengthOf.at.least(1, \"DeviceId should be a non-empty string\");",
+							"});"
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -269,7 +456,39 @@
 					"script": {
 						"exec": [
 							"const responseData = pm.response.json();",
-							"pm.environment.set(\"deviceId2\", responseData[\"_id\"]);"
+							"pm.environment.set(\"deviceId2\", responseData[\"_id\"]);",
+							"pm.test(\"Response status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response has the required fields\", function () {",
+							"    const responseData = pm.response.json();",
+							"",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    pm.expect(responseData).to.have.property('deviceName');",
+							"    pm.expect(responseData).to.have.property('deviceType');",
+							"    pm.expect(responseData).to.have.property('deviceToken');",
+							"    pm.expect(responseData).to.have.property('listingId');",
+							"    pm.expect(responseData).to.have.property('deviceId');",
+							"    pm.expect(responseData).to.have.property('_id');",
+							"    pm.expect(responseData).to.have.property('__v');",
+							"});",
+							"",
+							"",
+							"pm.test(\"DeviceToken is a non-empty string\", function () {",
+							"  const responseData = pm.response.json();",
+							"  ",
+							"  pm.expect(responseData.deviceToken).to.be.a('string').and.to.have.lengthOf.at.least(1, \"DeviceToken should be a non-empty string\");",
+							"});",
+							"",
+							"",
+							"pm.test(\"ListingId is a non-empty string\", function () {",
+							"  const responseData = pm.response.json();",
+							"  ",
+							"  pm.expect(responseData).to.be.an('object');",
+							"  pm.expect(responseData.listingId).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Value should not be empty\");",
+							"});"
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -315,7 +534,37 @@
 					"script": {
 						"exec": [
 							"const responseData = pm.response.json();",
-							"pm.environment.set(\"deviceId3\", responseData[\"_id\"]);"
+							"pm.environment.set(\"deviceId3\", responseData[\"_id\"]);",
+							"pm.test(\"Response status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response has the required fields\", function () {",
+							"  const responseData = pm.response.json();",
+							"  ",
+							"  pm.expect(responseData).to.be.an('object');",
+							"  pm.expect(responseData).to.have.property('deviceName');",
+							"  pm.expect(responseData).to.have.property('deviceType');",
+							"  pm.expect(responseData).to.have.property('deviceToken');",
+							"  pm.expect(responseData).to.have.property('listingId');",
+							"  pm.expect(responseData).to.have.property('deviceId');",
+							"  pm.expect(responseData).to.have.property('_id');",
+							"  pm.expect(responseData).to.have.property('__v');",
+							"});",
+							"",
+							"",
+							"pm.test(\"DeviceToken is a non-empty string\", function () {",
+							"  const responseData = pm.response.json();",
+							"  ",
+							"  pm.expect(responseData).to.be.an('object');",
+							"  pm.expect(responseData.deviceToken).to.be.a('string').and.to.have.lengthOf.at.least(1, \"DeviceToken should be a non-empty string\");",
+							"});",
+							"",
+							"",
+							"pm.test(\"Content-Type header is application/json\", function () {",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+							"});"
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -360,7 +609,38 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							""
+							"",
+							"pm.test(\"Response status code is 200\", function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response has the required fields\", function () {",
+							"    const responseData = pm.response.json();",
+							"",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    pm.expect(responseData).to.have.property('acknowledged');",
+							"    pm.expect(responseData).to.have.property('modifiedCount');",
+							"    pm.expect(responseData).to.have.property('upsertedId');",
+							"    pm.expect(responseData).to.have.property('upsertedCount');",
+							"    pm.expect(responseData).to.have.property('matchedCount');",
+							"});",
+							"",
+							"",
+							"pm.test(\"Acknowledged field is a boolean\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData.acknowledged).to.be.a('boolean');",
+							"});",
+							"",
+							"",
+							"pm.test(\"ModifiedCount is a non-negative integer\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    pm.expect(responseData.modifiedCount).to.exist.and.to.be.a('number');",
+							"    pm.expect(responseData.modifiedCount).to.satisfy((count) => count >= 0, \"ModifiedCount should be a non-negative integer\");",
+							"});"
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -406,7 +686,31 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							""
+							"",
+							"pm.test(\"Response status code is 200\", function () {",
+							"  pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Content type is application/json\", function () {",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+							"});",
+							"",
+							"",
+							"pm.test(\"Acknowledged field is present and has a boolean value\", function () {",
+							"  const responseData = pm.response.json();",
+							"  ",
+							"  pm.expect(responseData).to.have.property('acknowledged').that.is.a('boolean');",
+							"});",
+							"",
+							"",
+							"pm.test(\"Modified count field is present and has a non-negative integer value\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.have.property('modifiedCount');",
+							"    pm.expect(responseData.modifiedCount).to.be.a('number');",
+							"    pm.expect(responseData.modifiedCount).to.satisfy((value) => value >= 0, \"Modified count should be a non-negative integer\");",
+							"});"
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -452,7 +756,37 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							""
+							"",
+							"pm.test(\"Response status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response has the required fields\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    pm.expect(responseData).to.have.property('acknowledged');",
+							"    pm.expect(responseData).to.have.property('modifiedCount');",
+							"    pm.expect(responseData).to.have.property('upsertedId');",
+							"    pm.expect(responseData).to.have.property('upsertedCount');",
+							"    pm.expect(responseData).to.have.property('matchedCount');",
+							"});",
+							"",
+							"",
+							"pm.test(\"Acknowledged is a boolean value\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    pm.expect(responseData.acknowledged).to.be.a('boolean');",
+							"});",
+							"",
+							"",
+							"pm.test(\"Modified count should be a non-negative integer\", function () {",
+							"    const responseData = pm.response.json();",
+							"    pm.expect(responseData.modifiedCount).to.be.a('number');",
+							"    pm.expect(responseData.modifiedCount).to.be.at.least(0);",
+							"});"
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -498,7 +832,36 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							""
+							"",
+							"pm.test(\"Response status code is 200\", function () {",
+							"  pm.expect(pm.response.code).to.equal(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response has the correct Content-Type header\", function () {",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response body is an empty array\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('array').that.is.not.empty;",
+							"});",
+							"",
+							"",
+							"pm.test(\"ListingId parameter is correctly reflected in the response\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    responseData.forEach(function(device) {",
+							"        pm.expect(device.listingId).to.equal(\"1065162203416824771\");",
+							"    });",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response time is less than 200ms\", function () {",
+							"  pm.expect(pm.response.responseTime).to.be.below(200);",
+							"});"
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -535,6 +898,36 @@
 		},
 		{
 			"name": "Enable listing",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response has the required fields\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    pm.expect(responseData.message).to.exist;",
+							"});",
+							"",
+							"",
+							"pm.test(\"Message is a non-empty string\", function () {",
+							"  const responseData = pm.response.json();",
+							"  ",
+							"  pm.expect(responseData.message).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Message should not be empty\");",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
 			"request": {
 				"method": "POST",
 				"header": [
@@ -561,6 +954,35 @@
 		},
 		{
 			"name": "Disable listing",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response has the required field - message\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('object');",
+							"    pm.expect(responseData.message).to.exist;",
+							"});",
+							"",
+							"",
+							"pm.test(\"Message is a non-empty string\", function () {",
+							"    const responseData = pm.response.json();",
+							"",
+							"    pm.expect(responseData.message).to.be.a('string').and.to.have.lengthOf.at.least(1, \"Message should not be empty\");",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
 			"request": {
 				"method": "POST",
 				"header": [
@@ -592,10 +1014,37 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							""
+							"",
+							"pm.test(\"Response status code is 200\", function () {",
+							"    pm.expect(pm.response.code).to.equal(200);",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response has the correct Content-Type header of application/json\", function () {",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response body is an empty array\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('array').that.is.empty;",
+							"});",
+							"",
+							"",
+							"pm.test(\"Ensure that the response array is not null\", function () {",
+							"    const responseData = pm.response.json();",
+							"    ",
+							"    pm.expect(responseData).to.be.an('array').that.is.not.null;",
+							"});",
+							"",
+							"",
+							"pm.test(\"Response array length should be 0\", function () {",
+							"    const responseData = pm.response.json();",
+							"    pm.expect(responseData).to.be.an('array').that.is.empty;",
+							"});"
 						],
-						"type": "text/javascript",
-						"packages": {}
+						"type": "text/javascript"
 					}
 				}
 			],
