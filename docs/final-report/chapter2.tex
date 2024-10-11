@@ -146,25 +146,23 @@ The API and databases are hosted on the Google Cloud \cite{GoogleCloud2024} for 
 
 \subsection{Sensing Nodes}
 
-Three types of sensing nodes were developed for the project: power, water flow, and temperature. Each node is based on 
-the ESP32 microcontroller and uses different sensors to measure the desired parameters.
+Three types of sensing nodes were developed for the project: power, water flow, and temperature. Each node is built on 
+the ESP32 microcontroller and uses specific sensors to measure its respective parameters.
 
 \subsubsection{Power Node}
 
-The power node is by far the most complex of the three nodes. It uses two current sensors attached to each phase of the 
-120V AC power line, a small circuit was built to adapt the current so it could be measured by the ADC (Analog to Digital
-Converter) input of the microcontroller. This circuit consists of a voltage divider used to remove the negative part of 
-the sine wave combined with a capacitor to stabilize the signal, and a resistor to convert the current to voltage. The 
-calculations for the resistors and capacitors were done using Arduino's EmonLib documentation \cite{Arduino2024b}.
+The power node is the most complex of the three. It uses two current sensors connected to each phase of the 120V AC 
+power line, with a small circuit built to adapt the current for measurement by the microcontroller's ADC (Analog to 
+Digital Converter) input. This circuit includes a voltage divider to remove the negative part of the sine wave, a 
+capacitor to stabilize the signal, and a resistor to convert the current to voltage. The resistor and capacitor values 
+were calculated using Arduino's EmonLib documentation \cite{Arduino2024b}.
 
-At the begining, the ESP32 was able to interact with these sensors and obtain the data with no problems, but once the 
-full program was loaded it kept getting stuck due to memory and CPU usage. Several optimizations were tried, like 
-minimizing the use of variables, removing all log messages or simplifying tasks but it was simply not possible to fix 
-this behaviour. Ultimately, an Arduino Leonardo was connected to the circuit and a script that read the data from the
-sensors was deployed on it, then the ESP32 was attached to the Leonardo via UART (Universal Asysnchronous Receiver
-Transmitter) and the reading thread running on the ESP32 originally was replaced by a thread that reads from the serial
-ports. This solution fixed the problem and the node was able to monitor without any issues. Figure 
-\ref{fig:energy-node-schematic} shows the schematic of the power node.
+Initially, the ESP32 could interact with the sensors and retrieve data without issues, but as the full program was 
+loaded, it encountered memory and CPU limitations. Various optimizations were attempted, such as reducing variable use, 
+removing log messages, and simplifying tasks, but the problem persisted. Eventually, an Arduino Leonardo was added to 
+the circuit to handle sensor data, which was then passed to the ESP32 via UART (Universal Asynchronous Receiver 
+Transmitter). This solution resolved the issue, allowing the node to monitor without further problems. Figure 
+\ref{fig:energy-node-schematic} shows the power node schematic.
 
 \begin{figure}[!ht]
     \centering
@@ -173,10 +171,10 @@ ports. This solution fixed the problem and the node was able to monitor without 
     \label{fig:energy-node-schematic}
 \end{figure}
 
-Once the current was read, EmonLib was used to calculate the correct power by multiplying the current by the fixed
-voltage (120V). Since the data was collected every second the power over time (energy) was calculated by adding the 
-power every second for a minute and then dividing by 60 to get watt-seconds or Joules (this calculation can be seen in 
-equation \ref{eq:energy-calculation}). After the energy was calculated, it was sent to the cloud every minute. 
+After reading the current, EmonLib was used to calculate the power by multiplying the current by the fixed voltage 
+(120V). Since data was collected every second, the energy was determined by summing the power readings over a minute and 
+dividing by 60 to get watt-seconds or Joules (as shown in equation \ref{eq:energy-calculation}). The calculated energy 
+was then sent to the cloud every minute.
 
 \begin{equation}
     \label{eq:energy-calculation}
@@ -185,11 +183,10 @@ equation \ref{eq:energy-calculation}). After the energy was calculated, it was s
 
 \subsubsection{Water Flow Node}
 
-This node uses a water flow sensor to measure the flow rate. This sensor uses Hall effect to generate a pulse every time
-some water passes through it. The program counts the number of pulses every second and then it multiplies that by a 
-calibration factor (7.11 in this case) to calculate the flow rate, this is then divided by 1000 to get the number of
-liters that passed during that second. The sensor was connected to the ESP32 as shown in Figure 
-\ref{fig:water-flow-node-schematic}.
+This node uses a water flow sensor to measure the flow rate, which generates a pulse via the Hall effect each time water 
+passes through. The program counts the number of pulses per second and multiplies this by a calibration factor (7.11 in 
+this case) to calculate the flow rate, then divides by 1000 to determine the liters that flowed in that second. The 
+sensor was connected to the ESP32, as shown in Figure \ref{fig:water-flow-node-schematic}.
 
 \begin{figure}[!ht]
     \centering
@@ -198,8 +195,8 @@ liters that passed during that second. The sensor was connected to the ESP32 as 
     \label{fig:water-flow-node-schematic}
 \end{figure}
 
-Using equation \ref{eq:water-volume-calculation} the volume of water passed in the last minute was calculated and then 
-sent to the database.
+The volume of water that passed in the last minute was calculated using equation \ref{eq:water-volume-calculation} and 
+then sent to the database.
 
 \begin{align}
     \label{eq:water-volume-calculation}
@@ -209,11 +206,10 @@ sent to the database.
 
 \subsubsection{Temperature Node}
 
-The temperature sensors were connected to the ESP32 as shown in Figure \ref{fig:temp-node-schematic}. These sensors were
-controlled using the OneWire library \cite{Arduino2024c}. The temperature was read every 2 seconds for 60 seconds and 
-then it was divided by 30 to get the average temperature in the past minute. Equation 
-\ref{eq:temperature-calculation} depicts the mathematical representation of this. After the average temperature was 
-calculated, it was sent to the database.
+The temperature sensors were connected to the ESP32, as shown in Figure \ref{fig:temp-node-schematic}. These sensors 
+were managed using the OneWire library \cite{Arduino2024c}. The temperature was read every 2 seconds for 60 seconds and 
+then divided by 30 to obtain the average temperature for the past minute. Equation \ref{eq:temperature-calculation}
+shows the mathematical representation of this. Once the average temperature was calculated, it was sent to the database.
 
 \begin{figure}[!ht]
     \centering
@@ -229,19 +225,19 @@ calculated, it was sent to the database.
 
 \subsection{Sensing Nodes Firmware}
 
-The firmware for the sensing nodes was developed using the PlatformIO build system. The firmware is responsible for
-managing the ESP32 microcontrollers. Snippets of the main parts of the code are shown in Appendix \ref{code-listing}.
-The code is divided into four main tasks:
+The firmware for the sensing nodes was developed using the PlatformIO build system and manages the ESP32 
+microcontrollers. Snippets of the main code parts are provided in Appendix \ref{code-listing}. The code is divided into 
+four main tasks:
 
 \begin{itemize}
     \item \textbf{Task 1:} This task makes sure the connection to Internet is always up.
     \item \textbf{Task 2:} This task ensures connection to ThingsBoard is alive.
     \item \textbf{Task 3:} This task is responsible for reading data from the sensors.
-    \item \textbf{Task 4:} This task is responsible for sending data to the cloud.
+    \item \textbf{Task 4:} This task seds data to the cloud.
 \end{itemize}
 
-There are two more important sections of the code: these sections setup the ESP32 and the sensors respectively. A flow
-chart of the implementation of the firmware can be seen in Figure \ref{fig:monitoring-node-flow-chart}.
+Two additional important sections of the code set up the ESP32 and the sensors, respectively. A flow chart of the 
+firmware implementation is shown in Figure \ref{fig:monitoring-node-flow-chart}.
 
 \begin{figure}[!ht]
     \centering
@@ -254,10 +250,10 @@ chart of the implementation of the firmware can be seen in Figure \ref{fig:monit
 
 \subsubsection{Main Database}
 
-Mongo DB \cite{MongoDB2024} was used as the main database for storing user, provider, property listings, and device 
-information. The reason why a relational database was chosen is because of the flexibility it offers when dealing with
-unstructured data. Also the data model is more suited for the data that is going to be stored. The database schema is 
-shown in Figure \ref{fig:entity-relationship-diagram}.
+MongoDB \cite{MongoDB2024} was used as the main database for storing user, provider, property listings, and device 
+information. A relational database was chosen for its flexibility in handling unstructured data, as the data model is 
+better suited for the information to be stored. The database schema is shown in Figure 
+\ref{fig:entity-relationship-diagram}.
 
 \begin{figure}[!ht]
     \centering
@@ -268,91 +264,87 @@ shown in Figure \ref{fig:entity-relationship-diagram}.
 
 \subsubsection{Timeseries Database}
 
-ThingsBoard's internal PostgrepSQL \cite{PostgreSQL2024} was used as the timeseries database for storing historical data 
-from the sensing nodes. This database was chosen because it is integrated with the ThingsBoard platform and is optimized 
-for storing big amounts of time series data. Access to this information was done through the ThingsBoard's well 
-documented API.
+ThingsBoard's internal PostgreSQL \cite{PostgreSQL2024} was used as the timeseries database for storing historical data 
+from the sensing nodes. This database was selected due to its integration with the ThingsBoard platform and optimization 
+for large amounts of time series data. Access to this information was facilitated through ThingsBoard's well-documented 
+API.
 
 \subsection{REST API}
 
-This API was designed to manage users, providers, property listings, and devices for a hospitality platform like 
-AirBnB, where properties are listed and managed by users. It enables seamless integration with third-party providers 
-like AirBnB, VRBO, and HomeAway, and facilitates the management of property data from smart devices.
+This API was designed to manage users, providers, property listings, and devices for a hospitality platform like AirBnB, 
+allowing users to list and manage properties. It enables seamless integration with third-party providers such as AirBnB, 
+VRBO, and HomeAway, facilitating the management of property data from smart devices.
 
 \subsubsection{Users}
 
 The API includes a user management system. Users can register by providing essential information such as their username, 
 email, and password. Upon successful registration, the system confirms that the user has been created. Once registered, 
-users can log in by providing their credentials (username and password), which are authenticated by the system. If 
-successful, the user is provided with an authentication token that must be used in subsequent requests to ensure 
-security. Each user has a unique ID, which is tied to their providers, listings, and jobs.
+users can log in using their credentials (username and password), which the system authenticates. If successful, the 
+user receives an authentication token for subsequent requests to ensure security. Each user has a unique ID linked to 
+their providers, listings, and jobs.
 
-In addition to managing personal information, users can also sync their property listings with third-party providers 
-such as Airbnb or HomeAway. This ensures that all the properties the user has listed on these platforms are 
-automatically updated in the system.
+In addition to managing personal information, users can sync their property listings with third-party providers like 
+AirBnB or HomeAway, ensuring that all listed properties are automatically updated in the system.
 
 \subsubsection{Providers}
-Providers are third-party platforms like AirBnB, VRBO \cite{VRBO2024}, or Booking.com \cite{Booking2024}, where 
+
+Providers are third-party platforms like AirBnB, VRBO \cite{VRBO2024}, and Booking.com \cite{Booking2024}, where 
 properties are listed. The API allows users to create and manage these provider connections. When a user adds a new 
-provider, the system stores the provider information, linking it to the user.
+provider, the system stores the provider information and links it to the user.
 
 \subsubsection{Listings}
 
-Listings represent the properties users manage on the platform. The API provides functionality to import listings, 
-once listings are imported, they can be viewed as a list or individually by their unique ID. Users can fetch all their 
-listings to see which properties they are currently managing. Additionally, the system allows for enabling or disabling 
-listings, giving users full control over which properties are being monitored.
+Listings represent the properties that users manage on the platform. The API provides functionality to import listings; 
+once imported, they can be viewed as a list or individually by their unique ID. Users can fetch all their listings to 
+see which properties they are currently managing. Additionally, the system allows users to enable or disable listings, 
+giving them full control over which properties are monitored.
 
 \subsubsection{Reservations}
 
-Just as Listings, Reservations are imported from the provider. They are used internally to calculate the daily and 
-end-of-stay consumption reports. The API allows for fetching all reservations for a listing, as well as individual
+end-of-stay consumption reports. The API allows users to fetch all reservations for a listing, as well as individual 
 reservations by their unique ID.
 
 \subsubsection{Devices}
 
-These devices are linked to specific listings and can be managed through the API. The API supports adding new devices by 
-providing details like the type of device (e.g., energy meter), its unique identifier, and the token that authenticates 
-the device with ThingsBoard. Users can retrieve a list of all devices associated with their listings. If a user wants to 
-see detailed information about a particular device, they can fetch it using the device's unique ID. The API also 
-supports updating device information or removing devices from the system when they are no longer needed.
+These devices are linked to specific listings and can be managed through the API. The API supports adding new devices 
+by providing details such as the device type (e.g., energy meter), its unique identifier, and the token that 
+authenticates the device with ThingsBoard. Users can retrieve a list of all devices associated with their listings. 
+If a user wants detailed information about a specific device, they can fetch it using the device's unique ID. The API 
+also supports updating device information or removing devices from the system when they are no longer needed.
 
 \subsubsection{Reports}
 
-Reports are generated daily and at the end of the guest's stay. The API provides endpoints to fetch these reports for a
-specific listing.
+Reports are generated daily and at the end of the guest's stay. The API provides endpoints for fetching these reports 
+for specific listings.
 
 \subsubsection{Agenda Jobs}
 
-Two types of jobs were implemented, one that runs every two minutes to import the listings and reservations from the 
-provider and another one that runs every days at 2pm and calculates the consumption in the last 24 hours or the total
-one.
+Two types of jobs were implemented: one that runs every two minutes to import listings and reservations from the 
+provider, and another that runs daily at 2 PM to calculate the consumption for the last 24 hours or the total 
+consumption.
 
 \subsubsection{Schema Components}
 
-The API uses specific schemas to define the structure of data objects exchanged between the client and server. For 
-example, the User schema defines fields like username, email, and password that are required when registering a user. 
-The Provider schema defines the fields necessary for creating a provider, such as the provider name and the associated 
-user ID. Similarly, the Listing schema outlines the structure for properties, including details like title, location, 
-and provider. Each device follows a schema as well, which includes fields for the device type, its unique ID, the token 
-for authentication, and the associated listing. This consistent structure allows for easy integration and ensures data 
-integrity.
+The API employs specific schemas to define the structure of data objects exchanged between the client and server. For 
+instance, the User schema specifies required fields such as username, email, and password for user registration. The 
+Provider schema outlines the necessary fields for creating a provider, including the provider name and associated user 
+ID. Similarly, the Listing schema describes the structure for properties, detailing attributes like title, location, 
+and provider. Each device also adheres to a schema, which includes fields for the device type, unique ID, authentication 
+token, and associated listing. This consistent structure facilitates integration and ensures data integrity.
 
-In addition, the API provides a standardized ApiResponse schema to maintain consistent error and success messages across 
-different endpoints. Whether it's creating a user or fetching device details, the response messages provide clarity on 
-the status of the operation.
+Additionally, the API provides a standardized ApiResponse schema to maintain uniform error and success messages across 
+various endpoints. Whether creating a user or fetching device details, the response messages clarify the status of the 
+operation.
 
 \subsection{Web Application}
 
-\subsubsection{Main Program}
+The main program and User Interface were developed using Appsmith \cite{Appsmith2024}, an open-source low-code 
+application development tool. It utilizes a drag-and-drop approach for pre-built components for the graphical 
+interface and JavaScript for the underlying logic. A flow chart illustrating the overall design of the main program is 
+shown in Figure \ref{fig:main-flow-chart}.
 
-The main program and User Interface were develped using Appsmith \cite{Appsmith2024}, an Open Source low-code 
-application development tool. It uses a drag and drop approach for pre-built components for the graphic part and 
-JavaScript for the logic. A flow chart with an overall look of the design of the main program is shown in Figure 
-\ref{fig:main-flow-chart}.
-
-The main view of the application is the listings view, here the user can choose from configuring a new device, taking a
-look at the dashboards, or find the reports.
+The primary view of the application is the listings view, where users can configure new devices, view dashboards, or 
+access reports.
 
 \begin{figure}[!ht]
     \centering
@@ -364,10 +356,10 @@ look at the dashboards, or find the reports.
 \subsection{User Interface}
 \label{sec:user-interface}
 
-A wire frame of the User Interface can be seen in Figure \ref{fig:user-interface-flow-chart}. This diagram shows the 
-different actions that the user can perform on every view of the application. The colors on the diagram represent
-all the sections of the main program, purple for authentication, green for the main view, blue for the devices view,
-yellow for the dashboards view and finally red for the reports view.
+A wireframe of the User Interface is presented in Figure \ref{fig:user-interface-flow-chart}. This diagram illustrates 
+the various actions users can perform in each view of the application. The colors in the diagram represent different 
+sections of the main program: purple for authentication, green for the main view, blue for the devices view, yellow for 
+the dashboards view, and red for the reports view.
 
 \begin{figure}[!ht]
     \centering
@@ -378,9 +370,9 @@ yellow for the dashboards view and finally red for the reports view.
 
 \subsubsection{Authentication View}
 
-Figure \ref{fig:ui-authentication} shows the authentication views. The user can sign in or sign up to the application.
-The sign in view has two fields, one for the username and another for the password. The sign up view has three fields,
-one for the username, another for the email and the last one for the password.
+Figure \ref{fig:ui-authentication} illustrates the authentication views. Users can either sign in or sign up for the 
+application. The sign-in view includes two fields: one for the username and another for the password. The sign-up view 
+features three fields: one for the username, one for the email, and one for the password.
 
 %%%%%%%%%%%%%%%%%  begin figure  %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[!ht]
@@ -401,11 +393,11 @@ one for the username, another for the email and the last one for the password.
 
 \subsubsection{Listings View}
 
-Once the user has been authenticated, the main view (listings) is shown. Here the user can see all the listings that are 
-being monitored. The user can register providers by clicking on the "plus" button. The user can also see the devices
-linked to this listing by clicking on "Devices" and the reports by clicking on "Reports". The user can also see the
-dashboard by clicking on the listing itself. Figure \ref{fig:ui-listings} shows the listings view and Figure 
-\ref{fig:ui-register-provider} the register provider view.
+Once the user has been authenticated, the main view (listings) is displayed. Here, the user can view all the monitored 
+listings. Users can register providers by clicking the "plus" button. They can also view the devices linked to a listing 
+by selecting "Devices" and access reports by clicking on "Reports." Additionally, users can see the dashboard by 
+clicking on the listing itself. Figure \ref{fig:ui-listings} presents the listings view, while Figure 
+\ref{fig:ui-register-provider} shows the register provider view.
 
 %%%%%%%%%%%%%%%%%  begin figure  %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[!ht]
@@ -425,10 +417,10 @@ dashboard by clicking on the listing itself. Figure \ref{fig:ui-listings} shows 
 
 \subsubsection{Devices View}
 
-The devices view shows all the devices linked to a listing. The user can register a new device by clicking on the "plus"
-button, typing a name for the device and selecting the type of device. The user can also see the details of a device by
-filtering the list of devices. Figure \ref{fig:ui-devices} shows the devices view and Figure 
-\ref{fig:ui-register-devices} the register device view.
+The devices view displays all devices linked to a listing. Users can register a new device by clicking the "plus" 
+button, entering a name for the device, and selecting its type. Users can also view the details of a device by filtering 
+the list. Figure \ref{fig:ui-devices} illustrates the devices view, while Figure \ref{fig:ui-register-devices} depicts 
+the register device view.
 
 %%%%%%%%%%%%%%%%%  begin figure  %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[!ht]
@@ -448,9 +440,9 @@ filtering the list of devices. Figure \ref{fig:ui-devices} shows the devices vie
 
 \subsubsection{Reports View}
 
-The reports view shows all the reports linked to a listing. The user can see the details of a report by clicking on the
-report itself. Figure \ref{fig:ui-reports} shows the reports list view and Figure \ref{fig:ui-report-details} the report
-detailed view. The user can click on the "copy" button to copy the report to the clipboard.
+The reports view displays all reports linked to a listing. Users can view the details of a report by clicking on it. 
+Figure \ref{fig:ui-reports} presents the reports list view, while Figure \ref{fig:ui-report-details} shows the detailed 
+report view. Users can click the "copy" button to copy the report to the clipboard.
 
 %%%%%%%%%%%%%%%%%  begin figure  %%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[!ht]
@@ -470,9 +462,9 @@ detailed view. The user can click on the "copy" button to copy the report to the
 
 \subsubsection{Dashboards View}
 
-Finally, the dashboards view shows the user a chart with the current state of the devices in the listing. The user can 
-filter the data by date and see the consumption of energy and water, and the temperature of the room and outside. Figure 
-\ref{fig:ui-dashboards} shows the dashboards view.
+Finally, the dashboards view presents a chart displaying the current state of the devices in the listing. Users can 
+filter the data by date to view energy and water consumption, as well as the temperature both inside and outside the 
+room. Figure \ref{fig:ui-dashboards} illustrates the dashboards view.
 
 \begin{figure}[!ht]
     \centering
@@ -483,31 +475,31 @@ filter the data by date and see the consumption of energy and water, and the tem
 
 \subsection{Continuous Integration}
 
-A continuous integration pipeline was set up to automate the build and test processes. The pipeline consists of several 
-stages, each responsible for a specific task. The pipeline is triggered whenever changes are pushed to the repository, 
-ensuring that the code is always up-to-date and tested.
+A continuous integration pipeline was established to automate the build and test processes. The pipeline consists of 
+several stages, each assigned a specific task. It is triggered whenever changes are pushed to the repository, ensuring 
+that the code remains up-to-date and thoroughly tested.
 
 \subsubsection{Firmware}
 
-The code is built using the PlatformIO build system, which compiles the firmware for the sensing nodes. Errors in the 
-code would be shown in the logs and the build would fail. An example run of the pipeline can be seen in Figure
+The code is built using the PlatformIO build system, which compiles the firmware for the sensing nodes. Any errors in 
+the code are logged, and the build will fail if issues are detected. An example run of the pipeline is shown in Figure 
 \ref{fig:firmware-build}.
 
-\subsubsection{API}
+\subsubsection{REST API}
 
-Just like with the firmware the API is built and the unit and integration tests are run to ensure that the changes made 
-to the code do not break existing functionality. Figure \ref{fig:api-build} shows an example run of the pipeline.
+Similarly, the REST API is built, and unit and integration tests are conducted to verify that changes do not disrupt 
+existing functionality. Figure \ref{fig:api-build} illustrates an example run of the pipeline.
 
 \subsubsection{Development Environment}
 
-The development environment was created using Docker Compose \cite{Docker2024}, which allowed for easy setup and 
-teardown. The environment consisted of a MongoDB container, a ThingsBoard container, a NodeJS (API) container, and an 
-Appsmith container, Docker Compose was used to configure all the containers and services in a single file. This made it
-easy to start and stop the environment with a single command.
+The development environment was created using Docker Compose \cite{Docker2024}, allowing for easy setup and teardown. 
+This environment included containers for MongoDB, ThingsBoard, NodeJS (API), and Appsmith. Docker Compose configured all 
+the containers and services in a single file, enabling users to start and stop the environment with a single command.
 
 \subsubsection{Deployment}
 
-The complete solution was deployed on virtual machine hosted on Google Cloud. The virtual machine was configured with
-Docker and Docker Compose to run the development environment, but with a slighty different configuration. The process of
-deploying the project was to SSH into the virtual machine, update the repository, and build or rebuild the containers.
-The original idea was to automate this process with a CI/CD pipeline but it was not possible due to time constraints.
+The complete solution was deployed on a virtual machine hosted on Google Cloud. This virtual machine was set up with 
+Docker and Docker Compose to run the development environment, albeit with a slightly different configuration. The 
+deployment process involved SSHing into the virtual machine, updating the repository, and building or rebuilding the 
+containers. While the original plan was to automate this process with a CI/CD pipeline, time constraints prevented this 
+implementation.
