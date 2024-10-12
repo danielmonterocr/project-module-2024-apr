@@ -36,20 +36,14 @@ The project achieved its primary objectives:
   sustainability.
 \end{enumerate}
 
-\section{Key Results}
-
-The project's hardware testing showed that the sensors accurately recorded energy and water consumption, though there 
-was room for improvement in the water flow sensor's precision. The back-end API and front-end interface worked smoothly, 
-delivering data to users in a meaningful and actionable way. These results highlight the system's effectiveness in 
-enhancing transparency around resource use, which has the potential to positively influence guest and host behavior.
-
 \section{Contributions and Impact}
 
-This project contributes to the sustainable tourism movement by offering a concrete tool that promotes responsible 
-resource consumption in short-term accommodations. It highlights the importance of integrating smart monitoring 
-technologies into shared economy platforms, helping hosts reduce operational costs and waste while enabling guests to be 
-more conscious of their environmental impact. This solution could be a model for future applications in both hospitality 
-and broader sustainability efforts.
+This project can significantly contribute to various areas, including behavioral economics by motivating guests to adopt 
+sustainable practices through real-time feedback; measuring the environmental footprint of lodging and tourism; and 
+establishing awards and incentives for users who demonstrate resource conservation. Additionally, it supports the 
+greening of the shared economy by encouraging eco-friendly practices among hosts and guests. The implementation of 
+certification programs for sustainable properties can enhance marketability, while providing demonstrable, transparent, 
+and accurate measurements of resource consumption fosters trust and accountability within the hospitality sector.
 
 \section{Recommendations for Future Work}
 
@@ -57,14 +51,9 @@ While the project successfully met its objectives, several areas can be explored
 scalability:
 
 \begin{enumerate}
-  \item \textbf{Design and build Printed Circuit Boards (PCB):} Custom PCBs for the sensor nodes would reduce the size 
-  and complexity of the hardware, making the system more compact and easier to deploy on a larger scale.
   \item \textbf{Memory safe microcontroller programming:} Rewriting the microcontroller firmware using Rust, a 
   memory-safe programming language, would enhance system reliability, reduce the likelihood of bugs, and improve 
   overall performance.
-  \item \textbf{Serverless architecture:} Deploying the system on a serverless architecture could significantly reduce 
-  operational costs and improve scalability. A serverless approach would allow the system to automatically handle 
-  changes in load without the need for manual server management.
   \item \textbf{Improved sensors accuracy:} Higher precision sensors, particularly for water flow measurement, would 
   improve the system's accuracy, especially in capturing low-flow data.
   \item \textbf{Expanded platform integration:} Integrating with other platforms like VRBO or Booking.com would extend 
@@ -72,6 +61,9 @@ scalability:
   \item \textbf{Machine learning for appliance identification:} Incorporating machine learning models to identify 
   appliances based on their consumption patterns could enhance resource management by pinpointing specific areas of 
   improvement for hosts.
+  \item \textbf{Satellite internet connectivity:} A more reliable internet connection, such as satellite internet with
+  a battery backup, would ensure continuous data transmission, even in remote locations with unreliable network 
+  coverage.
 \end{enumerate}
     
 \section{Final Thoughts}

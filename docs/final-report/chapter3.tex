@@ -16,8 +16,6 @@
 % End result: software itself
 % Conclude with implications of future work
 
-\section{Results and Analysis}
-
 % * This chapter is relevant to projects where experiments or simulations were carried out with the code written.
 % 1. Why were certain experiments carried out but not others?
 % 2. What were the important parameters in the simulation and how did they affect the results?
@@ -64,6 +62,8 @@ implementing the corresponding functionality. Tests were created in a bottom-up 
 and progressing through the system layers. These tests were integrated into Continuous Integration (CI) pipelines using 
 GitHub Actions \cite{GitHub2024} to ensure that tests were executed automatically whenever changes were made to the 
 codebase.
+
+\section{Results and Analysis}
 
 \subsection{Hardware Testing}
 
@@ -142,6 +142,15 @@ and finally fetching reports. An image depicting these tests can be found in Fig
 Unit and integration tests were automatically executed using GitHub Actions every time code was pushed to the 
 repository. Notifications were sent via email if the code failed to compile or if any tests did not run successfully. 
 Figure \ref{fig:api-build} illustrates a successful build of the API.
+
+\subsection{Communications Testing}
+
+The communication between the sensors and the API was rigorously tested by analyzing the historical data transmitted to 
+the API over a 30-day period. A total of 186,398 records were sent, comprising 2,880 records from each current sensor, 
+1,440 records from the water flow sensor, and 2,880 records from the temperature sensors. This results in an aggregate 
+of 7,200 records per day, amounting to 216,000 records over the entire 30-day span. The analysis indicated a record loss 
+of 14.4\%. This loss can be attributed to connectivity issues, as the Airbnb property is situated in a rural area 
+characterized by unreliable internet access and frequent power outages.
 
 \subsection{Front-end Testing}
 
