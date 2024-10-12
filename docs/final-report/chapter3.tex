@@ -26,123 +26,31 @@
 % * If there are many graphs and tables associated with this chapter they may be put in an appendix, but it is generally 
 % better to keep these close to the text they illustrate, as this is easier for the reader.
 
-\subsection{Hardware Testing}
-
-Two types of tests were carried out on the hardware components: calibration and response time. The calibration tests 
-consisted of comparing the readings from the sensors with readings with off-the-shelf instruments such as multimeters,
-a graduated cylenrder and a thermometer. The response time tests consisted of measuring the time it took for the sensors
-to respond to changes in the environment, this was crucial to ensure that the sensors were able to capture changes in
-real-time, for example, turning on an appliance, filling up a glass of water or opening a window.
-
-\subsubsection{Current Sensors}
-
-The sensors were connected to a power strip together with the multimeter, an induction stove and a kettle were used to
-generate changes in current consumption. Table \ref{tab:current-sensors-calibration} shows the results of the 
-calibration tests for the current sensors. While the sensors were able to capture changes in current, there was a small 
-deviation from the readings obtained with the multimeter. The standard deviation was calculated to be less than 0.1A, 
-which was within the acceptable range for the application. Figure \ref{fig:using-kettle-and-ac} shows the change in 
-power consumption when turning on a kettel (left), the idea was to able to capture rapid change in current consumption 
-and according to this image the sensors were able to do so.
-
-\subsubsection{Water Flow Sensor}
-
-Two different tests were conducted on the water flow sensor, first the sensor was connected to a funnel and a liter of
-water was then poured into the graduated cylinder at different speeds: slow, medium and fast. The second test was to 
-capture the change in water flow when filling up the cylinder at high speed. Table 
-\ref{tab:water-flow-sensor-calibration} shows the results of the first test, here a problem with slow water flow was
-identify, this was due to the sensor not being able to capture the change in water flow at low speeds. A series of
-improvements in the code were made, like separating the code in the different tasks, to be able to capture this more 
-accuratly but it was not possible, it was concluded that a higher precision sensor was needed but it was not possible to
-get one in time for the project.
-
-Figure \ref{fig:water-flow-sensor-response} shows the response of the water flow sensor when filling up the container,
-the sensor was able to capture the change in water flow in less than 10 seconds, which was within the acceptable range
-when thinking about fast common tasks like filling up a glass of water, anything below this speed might not be captured
-by the sensor, i.e. opening the faucet to get a little stream of water.
-
-\subsubsection{Temperature Sensors}
-
-Testing the temperature sensors required two different tests, first the sensors were compared to a thermometer to check
-the accuracy of the readings in a span of 12 hours, the results were satisfactory as the standard deviation was less
-than 0.5 degrees Celsius. The second test was to check the response time of the sensors, this was done by placing one
-sensor in a glass full of ice and the other in a glass full of boiling water, Figure 
-\ref{tab:temperature-sensors-calibration} shows the results of the calibration tests for the temperature sensors.
-
-Figure \ref{fig:temp-sensor-response} shows the change in temperature when the sensors were submerged, once the
-temperature reached the maximum and minimum values the sensors were swapped to check the response time, it was less than
-a minute which was within the acceptable range for the application, there are no changes so drastic in temperature
-inside or outside a room.
-
-\subsection{Back-end Testing}
-
-A set of tests were written to evaluate the performance of the back-end system. One particular detail about the unit,
-integration and system tests is that the OpenAPI specification was used to verify the payloads and responses from the
-API, this was done to ensure that the documentation was in line with the actual implementation of the API, with this
-approach, if a new feature is added to the API, the Swagger documents need to be updated first, hence it works as a 
-single source of truth.
-
-\subsubsection{Unit Testing}
-
-Unit tests were developed for every endpoint and utility function in the API. Mocha and Chai were used to write the
-tests in JavaScript. A total of 100 unit tests were written in order to test payloads, responses and error handling. 
-Figure \ref{fig:api-unit-tests-results} shows the results of the tests run locally.
-
-\subsubsection{Integration Testing}
-
-Figure \ref{fig:api-integration-tests-results} shows the results of a run of the integration tests, these tests were
-used to verify the well functioning of the different components of the API. For example, a test creates a user, then 
-logs in, it creates some listings, then it modifies this listings and finally deletes them along with the user. These
-tests were also created using Mocha \cite{Mocha2024} and Chai \cite{Chai2024}.
-
-\subsubsection{System Testing}
-
-System tests were written using Postman \cite{Postman2024}, the idea was to test the API as a whole, this included the 
-entire flow of creating a user, logging in, registering a provider, pulling the listings and reservations from AirBnB, 
-simulating a stay and finally fetching the reports. An image showing these tests can be seen in Figure 
-\ref{fig:systems-tests-results}.
-
-\subsubsection{Regression Testing}
-
-Unit and integration tests were run automatically using GitHub Actions every time code was pushed to the repository. An
-email was received if the code failed to be compiled or any of the tests failed to run. Figure \ref{fig:api-build} shows
-a successful build of the API.
-
-\subsection{Front-end Testing}
-
-Testing of the User Interface was done manually, first at develping time, then a small group of users (guests and hosts)
-tested the system and completed a survey to collect the result of their experiences using the application.
-
-\subsubsection{User Testing}
-
-Do to the fact that is low season in the region were the AirBnB property is located, it was not possible to get a lot of
-people to test the system, in the end only 4 people tested the system, 2 guests and 2 hosts.
-
-Tables \ref{tab:hosts-survey-results} and \ref{tab:guests-survey-results} show the results of the surveys.
-
 \section{Achievement of Objectives}
 
 \subsection{Develop and deploy smart sensors to monitor energy consumption, water usage and temperature}
 
-The objective was successfully met. Energy, water flow and temperature sensors were installed in a real AirBnB property. 
-Figure \ref{fig:ac-power} shows turning on the air conditioning, in Figure \ref{fig:shower-water-flow} the flow of 
-water for taking a shower is pictured and finally, a 24 hour temperature graph is shown in Figure 
-\ref{fig:ac-temperature}.
+This objective was successfully achieved. Energy, water flow, and temperature sensors were installed in a real AirBnB 
+property. Figure \ref{fig:ac-power} illustrates the activation of the air conditioning, Figure 
+\ref{fig:shower-water-flow} depicts the water flow during a shower, and Figure \ref{fig:ac-temperature} presents a 
+24-hour temperature graph.
 
 \subsection{Build an application programming Interface (API) to facilitate access to sensor-collected data}
 
-The aim was effectively fulfilled. An API was developed to provide access to the data collected by the sensors. The API
-complies with OpenAPI standards and is documented using Swagger. Figure \ref{fig:swagger} shows the API documentation.
+This aim was effectively fulfilled. An API was developed to provide access to the data collected by the sensors. The API
+adheres to OpenAPI standards and is documented using Swagger. Figure \ref{fig:swagger} displays the API documentation.
 
 \subsection{Design and generate comprehensive daily and end-of-stay reports for guests}
 
-The intended goal was reached. Daily and end-of-stay reports can be generated for guests. The reports include 
-information on energy consumption, water usage and temperature. Figure \ref{fig:whatsapp-daily-report} shows a sample 
-daily report and Figure \ref{fig:whatsapp-final-report} shows a sample end-of-stay report.
+The intended goal was reached. Daily and end-of-stay reports can be generated for guests, containing information on 
+energy consumption, water usage, and temperature. Figure \ref{fig:whatsapp-daily-report} shows a sample daily report, 
+while Figure \ref{fig:whatsapp-final-report} presents a sample end-of-stay report.
 
 \subsection{Create a user-friendly web application for hosts to monitor and manage their property's resource consumption}
 
-The desired outcome was accomplised. A web application was developed for hosts to monitor and manage their property's 
-resource. Section \ref{sec:user-interface} of the methodology chapter shows the wireframes for the web application.
+The desired outcome was accomplished. A web application was developed for hosts to monitor and manage their property's 
+resource consumption. Section \ref{sec:user-interface} of the methodology chapter provides wireframes for the web 
+application.
 
 \section{Achievement of Requirements}
 
@@ -151,11 +59,101 @@ resource. Section \ref{sec:user-interface} of the methodology chapter shows the 
 % * Put the actual test results in an appendix if too long. This section may also include a user evaluation based on 
 % feedback where appropriate.
 
-The approach used to test the system was to follow Test-Driven Development (TDD) principles. This involved writing tests 
-before writing the code to implement the functionality. Tests were written in a bottom-up fashion, starting with 
-hardware testing and then moving up the system layers. The tests were incorporated into Continuous Integration (CI) 
-pipelines using GitHub Actions \cite{GitHub2024} to ensure that the tests were run automatically whenever changes were 
-made to the codebase.
+The system testing approach adhered to Test-Driven Development (TDD) principles, which involved writing tests prior to 
+implementing the corresponding functionality. Tests were created in a bottom-up manner, beginning with hardware testing 
+and progressing through the system layers. These tests were integrated into Continuous Integration (CI) pipelines using 
+GitHub Actions \cite{GitHub2024} to ensure that tests were executed automatically whenever changes were made to the 
+codebase.
+
+\subsection{Hardware Testing}
+
+Two types of tests were conducted on the hardware components: calibration and response time. Calibration tests involved 
+comparing sensor readings with those obtained from standard instruments, including multimeters, graduated cylinders, and
+thermometers. Response time tests measured the duration required for the sensors to react to environmental changes, 
+ensuring that they could accurately capture real-time variations, such as turning on an appliance, filling a glass of 
+water, or opening a window.
+
+\subsubsection{Current Sensors}
+
+The sensors were connected to a power strip alongside a multimeter, while an induction stove and a kettle were used to 
+create variations in current consumption. Table \ref{tab:current-sensors-calibration} presents the results of the 
+calibration tests for the current sensors. Although the sensors effectively captured changes in current, there was a 
+slight deviation from the readings obtained with the multimeter. The standard deviation was calculated to be less than 
+0.1A, which falls within the acceptable range for the application. Figure \ref{fig:using-kettle-and-ac} illustrates the 
+change in power consumption when the kettle was turned on (left), demonstrating the sensors' capability to capture rapid 
+changes in current consumption.
+
+\subsubsection{Water Flow Sensor}
+
+Two distinct tests were performed on the water flow sensor. The first test involved connecting the sensor to a funnel 
+and pouring one liter of water into a graduated cylinder at varying speeds: slow, medium, and fast. The second test 
+aimed to capture changes in water flow when rapidly filling the cylinder. Table \ref{tab:water-flow-sensor-calibration}
+shows the results of the first test, where an issue with slow water flow was identified due to the sensor's inability to 
+detect changes at low speeds. Several improvements were made to the code, including separating the code into different 
+tasks, to enhance accuracy; however, it was ultimately concluded that a higher-precision sensor was necessary, which 
+could not be acquired in time for the project.
+
+Figure \ref{fig:water-flow-sensor-response} demonstrates the response of the water flow sensor when filling the 
+container, showing that the sensor could capture changes in water flow in less than 10 seconds, which is suitable for 
+fast tasks like filling a glass. Any flow rate below this speed, such as a small stream from a faucet, may not be 
+detected by the sensor.
+
+\subsubsection{Temperature Sensors}
+
+Testing the temperature sensors required two tests. The first involved comparing the sensors with a thermometer to 
+evaluate the accuracy of the readings over 12 hours; the results were satisfactory, with a standard deviation of less 
+than 0.5 degrees Celsius. The second test assessed the response time of the sensors by placing one sensor in a glass of 
+ice and another in a glass of boiling water. Figure \ref{tab:temperature-sensors-calibration} presents the calibration 
+test results for the temperature sensors.
+
+Figure \ref{fig:temp-sensor-response} illustrates the temperature changes when the sensors were submerged. Once the 
+temperature reached the maximum and minimum values, the sensors were swapped to check the response time, which was under 
+a minute—acceptable for the application, as drastic temperature changes are not typical in indoor or outdoor settings.
+
+\subsection{Back-end Testing}
+
+A comprehensive set of tests was developed to evaluate the performance of the back-end system. The unit, integration, 
+and system tests utilized the OpenAPI specification to verify the payloads and responses from the API, ensuring that the 
+documentation aligned with the actual implementation. This approach required that any new feature added to the API 
+necessitated an update to the Swagger documentation, establishing it as a single source of truth.
+
+\subsubsection{Unit Testing}
+
+Unit tests were developed for every endpoint and utility function in the API. Mocha and Chai were employed to write the 
+tests in JavaScript, resulting in a total of 71 unit tests designed to assess payloads, responses, and error handling. 
+Figure \ref{fig:api-unit-tests-results} displays the results of the tests conducted locally.
+
+\subsubsection{Integration Testing}
+
+Figure \ref{fig
+} presents the results from the integration tests, which were utilized to verify the proper functioning of the different 
+components of the API. For instance, a test creates a user, logs in, creates listings, modifies those listings, and 
+finally deletes them along with the user. These tests were also developed using Mocha \cite{Mocha2024} and Chai 
+\cite{Chai2024}.
+
+\subsubsection{System Testing}
+
+System tests were executed using Postman \cite{Postman2024} to evaluate the API as a whole, covering the entire workflow 
+from user creation and login to provider registration, listing and reservation retrieval from AirBnB, simulating a stay, 
+and finally fetching reports. An image depicting these tests can be found in Figure \ref{fig:systems-tests-results}.
+
+\subsubsection{Regression Testing}
+
+Unit and integration tests were automatically executed using GitHub Actions every time code was pushed to the 
+repository. Notifications were sent via email if the code failed to compile or if any tests did not run successfully. 
+Figure \ref{fig:api-build} illustrates a successful build of the API.
+
+\subsection{Front-end Testing}
+
+Testing of the User Interface was conducted manually during the development phase, followed by a small group of users 
+(guests and hosts) testing the system and completing surveys to gather feedback on their experiences with the 
+application.
+
+\subsubsection{User Testing}
+
+Due to the low season in the region where the AirBnB property is located, it was not feasible to gather a large number 
+of users for testing. Ultimately, only four individuals participated in the testing: two guests and two hosts. Tables 
+\ref{tab:hosts-survey-results} and \ref{tab:guests-survey-results} present the results of the surveys.
 
 \section{Evaluation}
 
@@ -168,26 +166,42 @@ made to the codebase.
 % User Feedback: If possible, gather feedback from users. This could be done through user testing, surveys, or interviews.
 % Reflection: Reflect on the development process. What went well? What didn't? What would you do differently next time?
 
-As stated in the first section of this chapter, the objectives of the project were achieved. The system is able to
-perform all basic functionalities. Some of the decisions taken in the design phase like TDD and CI were crucial to 
-deliver a robust solution even though they made the development process slower. In terms of security in IoT devices, the 
-use of Rust \cite{Rust2024} would have been a better choice, but duo to the lack of experience with the language and the 
-small ecosystem of sensor libraries it was decided to use C++ and PlatformIO instead.
+As mentioned in the first section of this chapter, the project objectives were successfully met, and the system is 
+capable of performing all essential functionalities. Certain design decisions, such as adopting Test-Driven Development 
+(TDD) and Continuous Integration (CI), were vital in delivering a robust solution, despite extending the development 
+timeline. Regarding IoT device security, utilizing Rust \cite{Rust2024} would have been advantageous; however, due to 
+limited experience with the language and the smaller ecosystem of sensor libraries, C++ and PlatformIO were selected 
+instead.
 
-Calibration of the sensors took a lot of trial and error and this should be considered for any future work as it had 
-an impact on the original schedule. Low cost sensors were sourced locally because of budget and time constraints, but 
-using more precise sensors would have been a better choice, especially when talking about the water flow sensor.
+Sensor calibration involved considerable trial and error, which should be taken into account for future projects, as it 
+impacted the original schedule. Low-cost sensors were sourced locally due to budget and time constraints, but opting for 
+more precise sensors, particularly for the water flow sensor, would have been preferable.
 
-The use of JavaScript and Node.js for the API was a good choice. The development process was faster due to 
-extensive support of the language and the vast amount of libraries available. The use of Agenda for scheduling tasks was
-an excellent choice, it's integration with MongoDB and the ease of use made it a great tool for the job. The use of 
-OpenAPI and Swagger integrated into the code and the tests was a great decision as the documentation was written in a 
-more organic way.
+The decision to use JavaScript and Node.js for the API proved effective, as the development process was expedited by the 
+extensive support for the language and the abundance of available libraries. The integration of Agenda for task 
+scheduling was an excellent choice, given its compatibility with MongoDB and user-friendly nature. Incorporating OpenAPI 
+and Swagger into the code and tests facilitated a more organic approach to documentation.
 
-The User Interface was developed using low-code tools, this was changed from the original plan of using Flutter
-\cite{Flutter2024} or React \cite{React2024} because of the time constraints. Appsmith proved to be a fast and easy to 
-use tool, with the power of JavaScript underneath, in the end all the features were implemented in the span of 2 weeks.
+The User Interface was developed using low-code tools, a shift from the initial plan to use Flutter \cite{Flutter2024} 
+or React \cite{React2024} due to time constraints. Appsmith demonstrated to be a fast and user-friendly tool, leveraging 
+the power of JavaScript, and ultimately allowed for the implementation of all features within two weeks.
 
-Finally, deploying to Google Cloud was a good choice, having a dedicated virtual machine available 24/7 was crucial for
-storing the data coming from the sensors. The use of Docker made the development both locally and remotely easier, as 
-it was possible to spin up the containers on both environments with the same configuration.
+Finally, deploying the solution on Google Cloud was a strategic decision. Having a dedicated virtual machine available 
+24/7 was crucial for storing data from the sensors. The use of Docker simplified development in both local and remote 
+environments, enabling consistent container configurations across both setups.
+
+\section{Limitations}
+
+This project faced a few limitations that impacted its overall scope and effectiveness:
+
+\begin{itemize}
+    \item \textbf{Integration with Airbnb}: One of the most significant limitations was the inability to integrate the 
+    system with Airbnb. Although the project aimed to pull listings and reservations from the platform, technical 
+    challenges or restrictions in accessing Airbnb's API prevented this functionality from being realized. As a result, 
+    this had to be simulated after capturing AirBnB's web application responses.
+    \item \textbf{Limited User Testing}: The user testing phase was constrained by the low season in the region where 
+    the AirBnB property is located. Ultimately, only four users participated in the testing: two guests and two hosts. 
+    This limited sample size may not have adequately represented the broader user base, potentially skewing feedback and 
+    insights. With a more diverse group of testers, the project could have benefited from a wider range of perspectives 
+    and suggestions for improvement.
+\end{itemize}
