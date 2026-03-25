@@ -4,10 +4,12 @@ on:
   pull_request:
     paths:
       - 'api/**'
+      - '.github/workflows/api.yml'
   push:
     branches: [main]
     paths:
       - 'api/**'
+      - '.github/workflows/api.yml'
 
 permissions:
   contents: read
