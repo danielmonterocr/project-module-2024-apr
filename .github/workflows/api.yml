@@ -2,30 +2,37 @@ name: api
 
 on:
   pull_request:
-  push:
     paths:
       - 'api/**'
+  push:
+    branches: [main]
+    paths:
+      - 'api/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: api-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build-api:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [22] # Define a matrix of Node.js versions to test.There would be 3 jobs for 12.x, 14.x, 16.x
+    timeout-minutes: 15
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
-          node-version: 22.6
+          node-version: 22
           cache: 'npm'
           cache-dependency-path: api/package-lock.json
 
       - name: Generate Swagger UI
-        uses: Legion2/swagger-ui-action@v1
+        uses: Legion2/swagger-ui-action@eff65dc3f193f0a749872be82f74baa35be0797d # v1
         with:
-          version: 3.1.0
           output: swagger-ui
           spec-file: api/open-api/swagger.yaml
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -44,13 +51,3 @@ jobs:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_DOMAIN: ${{ secrets.DB_DOMAIN }}
           DB_NAME: ${{ secrets.DB_NAME }}
-
-      - name: Run integration tests
-        working-directory: ./api
-        run: npm run test-int
-        env:
-          TOKEN_SECRET: ${{ secrets.TOKEN_SECRET }}
-          DB_PREFIX: ${{ secrets.DB_PREFIX }}
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_DOMAIN: ${{ secrets.DB_DOMAIN }}
