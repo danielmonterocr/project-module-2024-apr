@@ -3,7 +3,7 @@ import sinon from 'sinon';
 import request from 'supertest';
 import express from 'express';
 import { User } from '../../src/models/User.js';
-import { Listing } from '../../src/models/Listing.js';
+import { Provider } from '../../src/models/Provider.js';
 import { users as router } from '../../src/routes/users.js';
 import jsonwebtoken from 'jsonwebtoken'
 
@@ -136,7 +136,7 @@ describe('POST /api/users/:userId/sync', function () {
         app.use(router);
         verifyStub = sinon.stub(jsonwebtoken, 'verify');
         findByIdStub = sinon.stub(User, 'findById');
-        findOneStub = sinon.stub(Listing, 'findOne');
+        findOneStub = sinon.stub(Provider, 'find');
     });
 
     afterEach(function () {
@@ -147,7 +147,7 @@ describe('POST /api/users/:userId/sync', function () {
         const user = { username: 'Nick', email: 'nick@cloud.com' };
         verifyStub.returns(true);
         findByIdStub.resolves(user);
-        findOneStub.resolves({});
+        findOneStub.resolves([]);
 
         const rest = (await request(app).post('/api/users/123/sync').query({ provider: 'airbnb' }).set({ token: '1234567890' }));
 
