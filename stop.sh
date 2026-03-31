@@ -50,12 +50,14 @@ if [[ "$CLEAN" == "true" ]]; then
         2>/dev/null || true
     rmdir "$HOME/.mytb-data" "$HOME/.mytb-logs" 2>/dev/null || true
 
-    info "Removing Appsmith host data..."
-    docker run --rm \
-        -v "$ROOT_DIR/ui/stacks":/stacks \
-        alpine sh -c "rm -rf /stacks/* /stacks/.* 2>/dev/null; echo done" \
-        2>/dev/null || true
-    rmdir "$ROOT_DIR/ui/stacks" 2>/dev/null || true
+    if [[ -d "$ROOT_DIR/ui/stacks" ]]; then
+        info "Removing Appsmith host data..."
+        docker run --rm \
+            -v "$ROOT_DIR/ui/stacks":/stacks \
+            alpine sh -c "rm -rf /stacks/* /stacks/.* 2>/dev/null; echo done" \
+            2>/dev/null || true
+        rmdir "$ROOT_DIR/ui/stacks" 2>/dev/null || true
+    fi
 
     if [[ -f "$ROOT_DIR/api/.env" ]]; then
         info "Removing api/.env..."
