@@ -148,16 +148,45 @@ TB_HOST_URL="http://localhost:8080"
 # ═════════════════════════════════════════════════════════════════════════════
 echo ""
 info "Stage B: Starting ThingsBoard..."
+
+# ── Ensure host volume directories exist with correct ownership ───────────
+# The ThingsBoard image uses two internal users:
+#   - thingsboard (UID 799) owns /data
+#   - postgres    (UID 100) owns /data/db (created by the entrypoint)
+# If these directories don't exist, Docker creates them as root, which
+# causes "Permission denied" errors.  We pre-create them and hand ownership
+# to UID 799 so the entrypoint can bootstrap the rest.
+TB_DATA_DIR="$HOME/.mytb-data"
+TB_LOGS_DIR="$HOME/.mytb-logs"
+if [[ ! -d "$TB_DATA_DIR" ]] || [[ ! -d "$TB_LOGS_DIR" ]]; then
+    info "Creating ThingsBoard volume directories..."
+    mkdir -p "$TB_DATA_DIR" "$TB_LOGS_DIR"
+    docker run --rm -v "$TB_DATA_DIR":/data -v "$TB_LOGS_DIR":/logs alpine \
+        chown -R 799:799 /data /logs
+fi
+
 docker compose -f "$API_DIR/docker-compose.yaml" up -d mytb
 
-info "Waiting for ThingsBoard to become ready (this can take 2–3 minutes)..."
-TB_MAX_WAIT=6 # seconds
-TB_INTERVAL=6
+info "Waiting for ThingsBoard to become ready (this can take 3–5 minutes on first run)..."
+TB_MAX_WAIT=480 # seconds – first run includes DB schema creation + Java startup
+TB_INTERVAL=5
 TB_ELAPSED=0
 TB_READY=false
+SPINNER_CHARS='⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏'
+SPINNER_IDX=0
 
 while [[ $TB_ELAPSED -lt $TB_MAX_WAIT ]]; do
-    HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+    # ── Bail early if the container is not running ────────────────────────
+    CONTAINER_STATE=$(docker compose -f "$API_DIR/docker-compose.yaml" ps --format '{{.State}}' mytb 2>/dev/null || true)
+    if [[ "$CONTAINER_STATE" == "exited" || "$CONTAINER_STATE" == "dead" ]]; then
+        echo ""
+        error "ThingsBoard container exited unexpectedly. Last 20 log lines:"
+        docker compose -f "$API_DIR/docker-compose.yaml" logs --tail 20 mytb
+        die "Fix the issue above and re-run ./start.sh"
+    fi
+
+    # ── Probe the login endpoint (with a short timeout to avoid hangs) ───
+    HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 5 \
         -X POST "$TB_HOST_URL/api/auth/login" \
         -H "Content-Type: application/json" \
         -d '{"username":"dummy","password":"dummy"}' 2>/dev/null || true)
@@ -168,17 +197,23 @@ while [[ $TB_ELAPSED -lt $TB_MAX_WAIT ]]; do
         break
     fi
 
-    printf "  Waited %ds / %ds (HTTP %s)...\r" "$TB_ELAPSED" "$TB_MAX_WAIT" "$HTTP_CODE"
+    # ── Animated spinner with elapsed time ────────────────────────────────
+    SPIN_CHAR="${SPINNER_CHARS:SPINNER_IDX:1}"
+    SPINNER_IDX=$(( (SPINNER_IDX + 1) % ${#SPINNER_CHARS} ))
+    printf "  ${CYAN}%s${RESET}  %3ds / %ds  (HTTP %s)   \r" "$SPIN_CHAR" "$TB_ELAPSED" "$TB_MAX_WAIT" "${HTTP_CODE:-000}"
+
     sleep $TB_INTERVAL
     TB_ELAPSED=$((TB_ELAPSED + TB_INTERVAL))
 done
 
-echo ""  # clear the \r line
+printf "\033[2K"  # clear the spinner line
 if [[ "$TB_READY" != "true" ]]; then
-    die "ThingsBoard did not become ready within ${TB_MAX_WAIT}s. Check logs: docker compose -f api/docker-compose.yaml logs mytb"
+    error "ThingsBoard did not become ready within ${TB_MAX_WAIT}s. Recent logs:"
+    docker compose -f "$API_DIR/docker-compose.yaml" logs --tail 30 mytb
+    die "Check the logs above for errors, then re-run ./start.sh"
 fi
 
-success "ThingsBoard is ready."
+success "ThingsBoard is ready (took ~${TB_ELAPSED}s)."
 
 # ═════════════════════════════════════════════════════════════════════════════
 # C. AUTO-PROVISION THINGSBOARD KEYS
