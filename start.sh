@@ -158,12 +158,10 @@ info "Stage B: Starting ThingsBoard..."
 # to UID 799 so the entrypoint can bootstrap the rest.
 TB_DATA_DIR="$HOME/.mytb-data"
 TB_LOGS_DIR="$HOME/.mytb-logs"
-if [[ ! -d "$TB_DATA_DIR" ]] || [[ ! -d "$TB_LOGS_DIR" ]]; then
-    info "Creating ThingsBoard volume directories..."
-    mkdir -p "$TB_DATA_DIR" "$TB_LOGS_DIR"
-    docker run --rm -v "$TB_DATA_DIR":/data -v "$TB_LOGS_DIR":/logs alpine \
-        chown -R 799:799 /data /logs
-fi
+info "Ensuring ThingsBoard volume directories exist with correct ownership..."
+mkdir -p "$TB_DATA_DIR" "$TB_LOGS_DIR"
+docker run --rm -v "$TB_DATA_DIR":/data -v "$TB_LOGS_DIR":/logs alpine \
+    chown -R 799:799 /data /logs
 
 docker compose -f "$API_DIR/docker-compose.yaml" up -d mytb
 
