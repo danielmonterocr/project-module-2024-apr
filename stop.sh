@@ -45,9 +45,8 @@ if [[ "$CLEAN" == "true" ]]; then
     echo ""
     info "Removing ThingsBoard host data..."
     docker run --rm \
-        -v "$HOME/.mytb-data":/data \
-        -v "$HOME/.mytb-logs":/logs \
-        alpine sh -c "rm -rf /data/* /data/.* /logs/* /logs/.* 2>/dev/null; echo done" \
+        -v "$HOME":/host \
+        alpine sh -c "rm -rf /host/.mytb-data /host/.mytb-logs 2>/dev/null; echo done" \
         2>/dev/null || true
     rmdir "$HOME/.mytb-data" "$HOME/.mytb-logs" 2>/dev/null || true
 
