@@ -46,8 +46,7 @@ env_set() {
     local key="$1"
     local value="$2"
     if grep -qE "^${key}=" "$ENV_FILE"; then
-        # Use a delimiter that won't appear in keys/values (%%)
-        sed -i "s%%^${key}=.*%%${key}=${value}%%" "$ENV_FILE"
+        sed -i "s|^${key}=.*|${key}=${value}|" "$ENV_FILE"
     else
         echo "${key}=${value}" >> "$ENV_FILE"
     fi
@@ -262,11 +261,54 @@ print(d['profileData']['provisionConfiguration']['provisionDeviceSecret'])
 ")
     fi
 
+    # Step 3b: If provisioning is not enabled, enable it on the default profile
     if [[ -z "$PROV_KEY" || "$PROV_KEY" == "null" || -z "$PROV_SECRET" || "$PROV_SECRET" == "null" ]]; then
-        warn "Could not retrieve provisioning key/secret from default device profile."
-        warn "The API will still start, but device provisioning will not work until keys are set."
-        warn "After startup, visit http://localhost:8080 and create a device profile with provisioning enabled."
-    else
+        info "Provisioning not enabled on default device profile – enabling it automatically..."
+
+        # Generate random key and secret (32 hex chars each)
+        GEN_KEY=$(head -c 16 /dev/urandom | xxd -p)
+        GEN_SECRET=$(head -c 16 /dev/urandom | xxd -p)
+
+        if command -v jq &>/dev/null; then
+            UPDATED_PROFILE=$(echo "$PROFILE" | jq \
+                --arg key "$GEN_KEY" \
+                --arg secret "$GEN_SECRET" \
+                '.provisionDeviceKey = $key |
+                 .profileData.provisionConfiguration = {
+                     "type": "ALLOW_CREATE_NEW_DEVICES",
+                     "provisionDeviceSecret": $secret
+                 }')
+        else
+            UPDATED_PROFILE=$(echo "$PROFILE" | python3 -c "
+import sys, json
+d = json.load(sys.stdin)
+d['provisionDeviceKey'] = '${GEN_KEY}'
+d['profileData']['provisionConfiguration'] = {
+    'type': 'ALLOW_CREATE_NEW_DEVICES',
+    'provisionDeviceSecret': '${GEN_SECRET}'
+}
+json.dump(d, sys.stdout)
+")
+        fi
+
+        SAVE_RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
+            "$TB_HOST_URL/api/deviceProfile" \
+            -H "X-Authorization: Bearer $TB_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "$UPDATED_PROFILE")
+
+        if [[ "$SAVE_RESPONSE" == "200" ]]; then
+            PROV_KEY="$GEN_KEY"
+            PROV_SECRET="$GEN_SECRET"
+            success "Provisioning enabled on default device profile."
+        else
+            warn "Failed to enable provisioning on default device profile (HTTP $SAVE_RESPONSE)."
+            warn "The API will still start, but device provisioning will not work until keys are set."
+            warn "After startup, visit http://localhost:8080 and enable provisioning on the default device profile."
+        fi
+    fi
+
+    if [[ -n "$PROV_KEY" && "$PROV_KEY" != "null" && -n "$PROV_SECRET" && "$PROV_SECRET" != "null" ]]; then
         env_set "PROVISION_DEVICE_KEY" "$PROV_KEY"
         env_set "PROVISION_DEVICE_SECRET" "$PROV_SECRET"
         # Reload so the API container picks up the new values
