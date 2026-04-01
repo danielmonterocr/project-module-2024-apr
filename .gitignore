@@ -32,3 +32,6 @@ node_modules
 # BibTeX
 *.bbl
 *.blg
+
+# Docker runtime data
+ui/stacks/
