@@ -3,8 +3,10 @@
 # start.sh – Smarter Stays full-stack launcher
 #
 # Usage:
-#   ./start.sh               Start all services (no simulator)
-#   ./start.sh --simulate    Start all services + IoT sensor simulator
+#   ./start.sh                           Start all services (no simulator)
+#   ./start.sh --simulate                Start all + simulator (1 listing, 3 sensors)
+#   ./start.sh --listings N              Start all + simulator with N auto-generated listings
+#   ./start.sh --sim-config <file.json>  Start all + simulator using a config file
 #
 # What this script does:
 #   A. Preflight checks  – validates tooling and the .env file
@@ -32,9 +34,39 @@ ENV_EXAMPLE="$API_DIR/.env.example"
 
 # ── Parse flags ───────────────────────────────────────────────────────────────
 SIMULATE=false
-for arg in "$@"; do
-    case "$arg" in
-        --simulate) SIMULATE=true ;;
+SIM_NUM_LISTINGS=""
+SIM_CONFIG_PATH=""
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --simulate)
+            SIMULATE=true
+            shift
+            ;;
+        --listings)
+            if [[ -z "${2:-}" ]] || ! [[ "$2" =~ ^[0-9]+$ ]] || [[ "$2" -lt 1 ]]; then
+                die "--listings requires a positive integer (e.g. --listings 3)"
+            fi
+            SIMULATE=true
+            SIM_NUM_LISTINGS="$2"
+            shift 2
+            ;;
+        --sim-config)
+            if [[ -z "${2:-}" ]]; then
+                die "--sim-config requires a file path"
+            fi
+            # Resolve to absolute path
+            SIM_CONFIG_PATH="$(cd "$(dirname "$2")" && pwd)/$(basename "$2")"
+            if [[ ! -f "$SIM_CONFIG_PATH" ]]; then
+                die "Config file not found: $SIM_CONFIG_PATH"
+            fi
+            SIMULATE=true
+            shift 2
+            ;;
+        *)
+            warn "Unknown flag: $1 (ignored)"
+            shift
+            ;;
     esac
 done
 
@@ -341,6 +373,16 @@ fi
 # ═════════════════════════════════════════════════════════════════════════════
 echo ""
 info "Stage D: Building and starting MongoDB + API server..."
+
+# ── Export simulator config to the environment for docker compose ─────────
+if [[ -n "$SIM_NUM_LISTINGS" ]]; then
+    export SIM_NUM_LISTINGS
+fi
+if [[ -n "$SIM_CONFIG_PATH" ]]; then
+    export SIM_CONFIG_PATH
+    export SIM_CONFIG_FILE="/app/sim-config.json"
+fi
+
 docker compose -f "$API_DIR/docker-compose.yaml" ${SIM_PROFILE[@]+"${SIM_PROFILE[@]}"} up -d --build
 
 info "Waiting for the API server to become ready..."
@@ -394,7 +436,13 @@ echo -e "  Appsmith UI      ${CYAN}http://localhost:80${RESET}"
 
 if [[ "$SIMULATE" == "true" ]]; then
     echo ""
-    echo -e "  ${BOLD}${YELLOW}Simulator${RESET}        Running (power, temp, water-flow nodes)"
+    SIM_DESC="1 listing, 3 sensor nodes"
+    if [[ -n "$SIM_CONFIG_PATH" ]]; then
+        SIM_DESC="custom config ($(basename "$SIM_CONFIG_PATH"))"
+    elif [[ -n "$SIM_NUM_LISTINGS" ]]; then
+        SIM_DESC="${SIM_NUM_LISTINGS} listing(s), $((SIM_NUM_LISTINGS * 3)) sensor nodes (auto-generated)"
+    fi
+    echo -e "  ${BOLD}${YELLOW}Simulator${RESET}        Running – ${SIM_DESC}"
     echo -e "                   View logs: docker compose -f api/docker-compose.yaml logs -f simulator"
 fi
 echo ""

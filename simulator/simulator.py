@@ -6,10 +6,18 @@ Automatically provisions virtual devices through the API and publishes
 realistic telemetry to ThingsBoard via MQTT, mimicking the three ESP32
 sensor nodes (power, temp, water-flow).
 
-All configuration is via environment variables (see README.md).
+Supports multiple listings, each with a configurable set of sensors.
+Configuration is resolved in priority order:
+  1. SIM_CONFIG_FILE  – a JSON file with full listing definitions
+  2. SIM_NUM_LISTINGS – auto-generate N listings with all 3 sensors
+  3. Default          – 1 listing with all 3 sensors
+
+See README.md for the config file schema and all environment variables.
 """
 
+import json
 import os
+import re
 import sys
 import time
 import signal
@@ -27,15 +35,13 @@ SIM_USER_EMAIL = os.environ.get("SIM_USER_EMAIL", "simulator@test.com")
 SIM_USER_PASSWORD = os.environ.get("SIM_USER_PASSWORD", "simulator123")
 SIM_USER_NAME = os.environ.get("SIM_USER_NAME", "simulator")
 SIM_LISTING_TITLE = os.environ.get("SIM_LISTING_TITLE", "Simulated Property")
+SIM_CONFIG_FILE = os.environ.get("SIM_CONFIG_FILE", "")
+SIM_NUM_LISTINGS = os.environ.get("SIM_NUM_LISTINGS", "")
 PUBLISH_INTERVAL_MULTIPLIER = float(os.environ.get("PUBLISH_INTERVAL_MULTIPLIER", "1.0"))
 LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO").upper()
 
-# Devices to provision
-DEVICES = [
-    {"deviceName": "sim-power-node", "deviceType": "power"},
-    {"deviceName": "sim-temp-node", "deviceType": "temp"},
-    {"deviceName": "sim-water-flow-node", "deviceType": "water-flow"},
-]
+VALID_SENSOR_TYPES = {"power", "temp", "water-flow"}
+ALL_SENSORS = ["power", "temp", "water-flow"]
 
 NODE_CLASSES = {
     "power": PowerNode,
@@ -52,6 +58,83 @@ logging.basicConfig(
     stream=sys.stdout,
 )
 logger = logging.getLogger("simulator")
+
+
+# ── Config loader ─────────────────────────────────────────────────────────────
+
+def _slugify(title: str) -> str:
+    """Turn a listing title into a DNS-safe slug for device naming."""
+    slug = title.lower().strip()
+    slug = re.sub(r"[^a-z0-9]+", "-", slug)
+    return slug.strip("-")
+
+
+def load_listings_config() -> list[dict]:
+    """
+    Resolve the listings configuration.
+
+    Priority:
+      1. SIM_CONFIG_FILE  → load JSON file
+      2. SIM_NUM_LISTINGS → auto-generate N listings
+      3. Default          → 1 listing with all 3 sensors
+    """
+    # ── 1. Config file ────────────────────────────────────────────────────
+    if SIM_CONFIG_FILE:
+        path = SIM_CONFIG_FILE
+        if not os.path.isfile(path):
+            logger.error("SIM_CONFIG_FILE=%s does not exist.", path)
+            sys.exit(1)
+        with open(path, "r") as f:
+            data = json.load(f)
+        listings = data.get("listings", [])
+        if not listings:
+            logger.error("Config file has no listings.")
+            sys.exit(1)
+        # Validate
+        for idx, entry in enumerate(listings):
+            if not entry.get("title"):
+                logger.error("Listing #%d is missing 'title'.", idx + 1)
+                sys.exit(1)
+            sensors = entry.get("sensors", [])
+            unknown = set(sensors) - VALID_SENSOR_TYPES
+            if unknown:
+                logger.error("Listing '%s' has unknown sensor types: %s",
+                             entry["title"], unknown)
+                sys.exit(1)
+            if not sensors:
+                entry["sensors"] = list(ALL_SENSORS)
+            entry.setdefault("location", "Simulated Location")
+        logger.info("Loaded %d listing(s) from config file: %s",
+                    len(listings), path)
+        return listings
+
+    # ── 2. SIM_NUM_LISTINGS ───────────────────────────────────────────────
+    if SIM_NUM_LISTINGS:
+        try:
+            count = int(SIM_NUM_LISTINGS)
+            if count < 1:
+                raise ValueError
+        except ValueError:
+            logger.error("SIM_NUM_LISTINGS must be a positive integer (got '%s').",
+                         SIM_NUM_LISTINGS)
+            sys.exit(1)
+        listings = []
+        for i in range(1, count + 1):
+            listings.append({
+                "title": f"Simulated Property {i}" if count > 1 else SIM_LISTING_TITLE,
+                "location": f"Simulated Location {i}" if count > 1 else "Simulated Location",
+                "sensors": list(ALL_SENSORS),
+            })
+        logger.info("Auto-generated config for %d listing(s).", count)
+        return listings
+
+    # ── 3. Default: 1 listing, all sensors ────────────────────────────────
+    logger.info("Using default config: 1 listing with all sensors.")
+    return [{
+        "title": SIM_LISTING_TITLE,
+        "location": "Simulated Location",
+        "sensors": list(ALL_SENSORS),
+    }]
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -110,90 +193,127 @@ def register_or_login() -> str:
     return token
 
 
-def ensure_listing(token: str) -> str:
-    """Create the simulator listing if it doesn't exist. Returns listing _id."""
-    headers = {"token": token}
-
-    # Check if it already exists
-    resp = requests.get(f"{API_URL}/api/listings",
-                        params={"title": SIM_LISTING_TITLE},
-                        headers=headers, timeout=10)
-    if resp.status_code == 200:
-        listings = resp.json()
-        if listings:
-            listing_id = listings[0]["_id"]
-            logger.info("Listing '%s' already exists (id=%s)",
-                        SIM_LISTING_TITLE, listing_id)
-            return listing_id
-
-    # Create new listing
-    resp = requests.post(f"{API_URL}/api/listings", json={
-        "listingId": "sim-listing-001",
-        "provider": "simulator",
-        "title": SIM_LISTING_TITLE,
-        "location": "Simulated Location",
-        "userId": "simulator",
-    }, headers=headers, timeout=10)
-
-    if resp.status_code == 200:
-        listing_id = resp.json()["_id"]
-        logger.info("Created listing '%s' (id=%s)",
-                    SIM_LISTING_TITLE, listing_id)
-        return listing_id
-
-    logger.error("Failed to create listing (%d): %s",
-                 resp.status_code, resp.text)
-    sys.exit(1)
-
-
-def provision_devices(token: str, listing_id: str) -> list[dict]:
+def ensure_listings(token: str, listings_config: list[dict]) -> list[dict]:
     """
-    Provision all simulated devices via the API.
-    Returns a list of dicts with deviceName, deviceType, deviceToken.
+    Create simulator listings if they don't exist.
+    Returns the config list enriched with 'listing_id' (string listingId)
+    and 'mongo_id' (MongoDB _id) for each entry.
     """
     headers = {"token": token}
-    result = []
 
-    for dev in DEVICES:
-        # Check if device already exists
-        resp = requests.get(f"{API_URL}/api/devices",
-                            params={"deviceName": dev["deviceName"]},
+    for idx, entry in enumerate(listings_config, start=1):
+        title = entry["title"]
+        listing_id = f"sim-listing-{idx:03d}"
+
+        # Check if it already exists
+        resp = requests.get(f"{API_URL}/api/listings",
+                            params={"title": title},
                             headers=headers, timeout=10)
         if resp.status_code == 200:
             existing = resp.json()
             if existing:
-                d = existing[0]
-                logger.info("Device '%s' already exists (token=%s)",
+                entry["listing_id"] = existing[0]["listingId"]
+                entry["mongo_id"] = existing[0]["_id"]
+                logger.info("Listing '%s' already exists (id=%s)",
+                            title, entry["listing_id"])
+                continue
+
+        # Create new listing
+        resp = requests.post(f"{API_URL}/api/listings", json={
+            "listingId": listing_id,
+            "provider": "simulator",
+            "title": title,
+            "location": entry.get("location", "Simulated Location"),
+            "userId": "simulator",
+        }, headers=headers, timeout=10)
+
+        if resp.status_code == 200:
+            entry["listing_id"] = resp.json()["listingId"]
+            entry["mongo_id"] = resp.json()["_id"]
+            logger.info("Created listing '%s' (listingId=%s)",
+                        title, entry["listing_id"])
+        else:
+            logger.error("Failed to create listing '%s' (%d): %s",
+                         title, resp.status_code, resp.text)
+            sys.exit(1)
+
+    return listings_config
+
+
+def provision_all_devices(token: str, listings: list[dict]) -> list[dict]:
+    """
+    Provision devices for all listings according to each listing's sensor config.
+    Returns a flat list of dicts with deviceName, deviceType, deviceToken.
+    """
+    headers = {"token": token}
+    result = []
+
+    for entry in listings:
+        slug = _slugify(entry["title"])
+        listing_id = entry["mongo_id"]
+
+        for sensor_type in entry["sensors"]:
+            device_name = f"{slug}-{sensor_type}-node"
+
+            # Check if device already exists
+            resp = requests.get(f"{API_URL}/api/devices",
+                                params={"deviceName": device_name},
+                                headers=headers, timeout=10)
+            if resp.status_code == 200:
+                existing = resp.json()
+                if existing:
+                    d = existing[0]
+                    logger.info("Device '%s' already exists (token=%s)",
+                                d["deviceName"], d["deviceToken"])
+                    result.append({
+                        "deviceName": d["deviceName"],
+                        "deviceType": d["deviceType"],
+                        "deviceToken": d["deviceToken"],
+                    })
+                    continue
+
+            # Create new device (provisions in ThingsBoard via the API)
+            resp = requests.post(f"{API_URL}/api/devices", json={
+                "deviceName": device_name,
+                "deviceType": sensor_type,
+                "listingId": listing_id,
+            }, headers=headers, timeout=30)
+
+            if resp.status_code == 200:
+                d = resp.json()
+                logger.info("Provisioned device '%s' (token=%s)",
                             d["deviceName"], d["deviceToken"])
                 result.append({
                     "deviceName": d["deviceName"],
                     "deviceType": d["deviceType"],
                     "deviceToken": d["deviceToken"],
                 })
-                continue
-
-        # Create new device (this provisions it in ThingsBoard via the API)
-        resp = requests.post(f"{API_URL}/api/devices", json={
-            "deviceName": dev["deviceName"],
-            "deviceType": dev["deviceType"],
-            "listingId": listing_id,
-        }, headers=headers, timeout=30)
-
-        if resp.status_code == 200:
-            d = resp.json()
-            logger.info("Provisioned device '%s' (token=%s)",
-                        d["deviceName"], d["deviceToken"])
-            result.append({
-                "deviceName": d["deviceName"],
-                "deviceType": d["deviceType"],
-                "deviceToken": d["deviceToken"],
-            })
-        else:
-            logger.error("Failed to provision '%s' (%d): %s",
-                         dev["deviceName"], resp.status_code, resp.text)
-            sys.exit(1)
+            else:
+                logger.error("Failed to provision '%s' (%d): %s",
+                             device_name, resp.status_code, resp.text)
+                sys.exit(1)
 
     return result
+
+
+def enable_listings(token: str, listings: list[dict]):
+    """Enable monitoring for all simulator listings."""
+    headers = {"token": token}
+
+    for entry in listings:
+        listing_id = entry["listing_id"]
+        title = entry["title"]
+
+        resp = requests.post(
+            f"{API_URL}/api/listings/{listing_id}/enable",
+            headers=headers, timeout=30,
+        )
+        if resp.status_code == 200:
+            logger.info("Monitoring enabled for listing '%s' (%s)",
+                        title, listing_id)
+        else:
+            logger.warning("Failed to enable listing '%s' (%d): %s",
+                           title, resp.status_code, resp.text)
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
@@ -207,19 +327,28 @@ def main():
     logger.info("  Interval mult : %.2f  (1.0 = real-time)", PUBLISH_INTERVAL_MULTIPLIER)
     logger.info("=" * 60)
 
-    # 1. Wait for API readiness
+    # 1. Load listings configuration
+    listings_config = load_listings_config()
+    total_sensors = sum(len(l["sensors"]) for l in listings_config)
+    logger.info("Plan: %d listing(s), %d sensor node(s) total",
+                len(listings_config), total_sensors)
+
+    # 2. Wait for API readiness
     wait_for_api()
 
-    # 2. Register / login
+    # 3. Register / login
     token = register_or_login()
 
-    # 3. Ensure a listing exists for the simulated devices
-    listing_id = ensure_listing(token)
+    # 4. Ensure all listings exist
+    listings = ensure_listings(token, listings_config)
 
-    # 4. Provision the three devices
-    devices = provision_devices(token, listing_id)
+    # 5. Provision devices for every listing
+    devices = provision_all_devices(token, listings)
 
-    # 5. Start node simulation threads
+    # 6. Enable monitoring on all listings
+    enable_listings(token, listings)
+
+    # 7. Start node simulation threads
     nodes = []
     for dev in devices:
         cls = NODE_CLASSES.get(dev["deviceType"])
@@ -238,9 +367,10 @@ def main():
         nodes.append(node)
         logger.info("Started %s simulation thread", dev["deviceName"])
 
-    logger.info("All %d nodes running. Press Ctrl+C to stop.", len(nodes))
+    logger.info("All %d node(s) running across %d listing(s). Press Ctrl+C to stop.",
+                len(nodes), len(listings))
 
-    # 6. Block until interrupted
+    # 8. Block until interrupted
     stop = False
 
     def handle_signal(signum, frame):

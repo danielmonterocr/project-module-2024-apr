@@ -7,6 +7,13 @@ import mongoose from 'mongoose';
 
 app.use(express.json())
 
+// Expose the 'token' response header so Swagger UI (and other browser clients)
+// can read the JWT returned by the login endpoint.
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Expose-Headers', 'token');
+    next();
+});
+
 import jsYaml from 'js-yaml';
 import fs from 'fs';
 import swaggerUi from 'swagger-ui-express';
