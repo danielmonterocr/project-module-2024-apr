@@ -42,3 +42,18 @@ services:
 
     ports:
       - $PORT:$PORT
+
+  simulator:
+    profiles: ["simulator"]
+    build:
+      context: ../simulator
+    depends_on:
+      - server
+      - mytb
+    restart: on-failure
+    environment:
+      API_URL: "http://server:${PORT:-3000}"
+      MQTT_BROKER: mytb
+      MQTT_PORT: 1883
+      PUBLISH_INTERVAL_MULTIPLIER: "${PUBLISH_INTERVAL_MULTIPLIER:-1.0}"
+      LOG_LEVEL: "${SIM_LOG_LEVEL:-INFO}"

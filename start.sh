@@ -3,7 +3,8 @@
 # start.sh – Smarter Stays full-stack launcher
 #
 # Usage:
-#   ./start.sh
+#   ./start.sh               Start all services (no simulator)
+#   ./start.sh --simulate    Start all services + IoT sensor simulator
 #
 # What this script does:
 #   A. Preflight checks  – validates tooling and the .env file
@@ -28,6 +29,19 @@ API_DIR="$ROOT_DIR/api"
 UI_DIR="$ROOT_DIR/ui"
 ENV_FILE="$API_DIR/.env"
 ENV_EXAMPLE="$API_DIR/.env.example"
+
+# ── Parse flags ───────────────────────────────────────────────────────────────
+SIMULATE=false
+for arg in "$@"; do
+    case "$arg" in
+        --simulate) SIMULATE=true ;;
+    esac
+done
+
+SIM_PROFILE=()
+if [[ "$SIMULATE" == "true" ]]; then
+    SIM_PROFILE=(--profile simulator)
+fi
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 info()    { echo -e "${CYAN}[INFO]${RESET}  $*"; }
@@ -274,6 +288,7 @@ print(d['profileData']['provisionConfiguration']['provisionDeviceSecret'])
                 --arg key "$GEN_KEY" \
                 --arg secret "$GEN_SECRET" \
                 '.provisionDeviceKey = $key |
+                 .provisionType = "ALLOW_CREATE_NEW_DEVICES" |
                  .profileData.provisionConfiguration = {
                      "type": "ALLOW_CREATE_NEW_DEVICES",
                      "provisionDeviceSecret": $secret
@@ -283,6 +298,7 @@ print(d['profileData']['provisionConfiguration']['provisionDeviceSecret'])
 import sys, json
 d = json.load(sys.stdin)
 d['provisionDeviceKey'] = '${GEN_KEY}'
+d['provisionType'] = 'ALLOW_CREATE_NEW_DEVICES'
 d['profileData']['provisionConfiguration'] = {
     'type': 'ALLOW_CREATE_NEW_DEVICES',
     'provisionDeviceSecret': '${GEN_SECRET}'
@@ -325,7 +341,7 @@ fi
 # ═════════════════════════════════════════════════════════════════════════════
 echo ""
 info "Stage D: Building and starting MongoDB + API server..."
-docker compose -f "$API_DIR/docker-compose.yaml" up -d --build
+docker compose -f "$API_DIR/docker-compose.yaml" ${SIM_PROFILE[@]+"${SIM_PROFILE[@]}"} up -d --build
 
 info "Waiting for the API server to become ready..."
 API_URL="http://localhost:${PORT:-3000}"
@@ -375,6 +391,12 @@ echo -e "  API              ${CYAN}http://localhost:${PORT:-3000}${RESET}"
 echo -e "  Swagger UI       ${CYAN}http://localhost:${PORT:-3000}/api-docs${RESET}"
 echo -e "  ThingsBoard      ${CYAN}http://localhost:8080${RESET}  (${THINGSBOARD_USERNAME} / ${THINGSBOARD_PASSWORD})"
 echo -e "  Appsmith UI      ${CYAN}http://localhost:80${RESET}"
+
+if [[ "$SIMULATE" == "true" ]]; then
+    echo ""
+    echo -e "  ${BOLD}${YELLOW}Simulator${RESET}        Running (power, temp, water-flow nodes)"
+    echo -e "                   View logs: docker compose -f api/docker-compose.yaml logs -f simulator"
+fi
 echo ""
 echo -e "  Use ${BOLD}./stop.sh${RESET} to stop all services."
 echo ""
