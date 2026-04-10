@@ -38,6 +38,7 @@ paths:
       summary: Create user
       description: Create a new user
       operationId: createUser
+      security: []
       requestBody:
         description: Create user object
         content:
@@ -66,21 +67,26 @@ paths:
       tags:
         - users
       summary: Logs user into the system
-      description: Creates a new token for the user
+      description: Creates a new token for the user. The JWT is returned in the **token** response header.
       operationId: loginUser
-      parameters:
-        - name: username
-          in: query
-          description: The user name for login
-          required: false
-          schema:
-            type: string
-        - name: password
-          in: query
-          description: The password for login in clear text
-          required: false
-          schema:
-            type: string
+      security: []
+      requestBody:
+        description: User credentials
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  examples: ["simulator@test.com"]
+                password:
+                  type: string
+                  examples: ["simulator123"]
       responses:
         '200':
           description: Succesful operation
@@ -696,7 +702,10 @@ components:
         - message
   requestBodies:
   securitySchemes:
-    api_key:
+    token:
       type: apiKey
-      name: api_key
+      name: token
       in: header
+      description: JWT token returned in the response header of POST /api/users/login
+security:
+  - token: []

@@ -1,0 +1,19 @@
+{
+  "listings": [
+    {
+      "title": "Beach House",
+      "location": "Santa Cruz, Costa Rica",
+      "sensors": ["power", "temp", "water-flow"]
+    },
+    {
+      "title": "Mountain Cabin",
+      "location": "Monteverde, Costa Rica",
+      "sensors": ["temp", "water-flow"]
+    },
+    {
+      "title": "City Apartment",
+      "location": "San José, Costa Rica",
+      "sensors": ["power", "temp"]
+    }
+  ]
+}

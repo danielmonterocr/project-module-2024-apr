@@ -27,11 +27,11 @@ if [[ "${1:-}" == "--clean" ]]; then
 fi
 
 echo ""
-info "Stopping API stack (MongoDB, ThingsBoard, API server)..."
+info "Stopping API stack (MongoDB, ThingsBoard, API server, simulator if running)..."
 if [[ "$CLEAN" == "true" ]]; then
-    docker compose -f "$ROOT_DIR/api/docker-compose.yaml" down -v
+    docker compose -f "$ROOT_DIR/api/docker-compose.yaml" --profile simulator down -v
 else
-    docker compose -f "$ROOT_DIR/api/docker-compose.yaml" down
+    docker compose -f "$ROOT_DIR/api/docker-compose.yaml" --profile simulator down
 fi
 
 info "Stopping UI (Appsmith)..."

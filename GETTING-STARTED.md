@@ -154,7 +154,39 @@ Once inside, sign in using the API credentials you registered in step 1. You wil
 
 ## Simulating Sensor Data (Without Physical Hardware)
 
-The ESP32 sensor nodes transmit data over **MQTT** on port `1883`. You can simulate them using `mosquitto_pub` or any MQTT client.
+The project includes a built-in simulator that creates listings, provisions sensor devices,
+enables monitoring, and publishes realistic MQTT telemetry – no physical hardware needed.
+
+### Quick start (1 listing, 3 sensors)
+
+```bash
+./start.sh --simulate
+```
+
+### Multiple listings
+
+```bash
+# Auto-generate 3 listings, each with all 3 sensors (9 nodes)
+./start.sh --listings 3
+
+# Use a config file for full control
+./start.sh --sim-config simulator/sim-config.example.json
+```
+
+See `simulator/sim-config.example.json` for the config file format. Each listing can
+specify its own subset of sensors (`power`, `temp`, `water-flow`).
+
+The simulator automatically enables monitoring on all created listings.
+
+### View simulator logs
+
+```bash
+docker compose -f api/docker-compose.yaml logs -f simulator
+```
+
+### Manual MQTT simulation
+
+You can also send individual readings using `mosquitto_pub` or any MQTT client.
 
 ### Install mosquitto clients
 

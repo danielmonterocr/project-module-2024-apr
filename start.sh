@@ -3,7 +3,10 @@
 # start.sh – Smarter Stays full-stack launcher
 #
 # Usage:
-#   ./start.sh
+#   ./start.sh                           Start all services (no simulator)
+#   ./start.sh --simulate                Start all + simulator (1 listing, 3 sensors)
+#   ./start.sh --listings N              Start all + simulator with N auto-generated listings
+#   ./start.sh --sim-config <file.json>  Start all + simulator using a config file
 #
 # What this script does:
 #   A. Preflight checks  – validates tooling and the .env file
@@ -29,6 +32,49 @@ UI_DIR="$ROOT_DIR/ui"
 ENV_FILE="$API_DIR/.env"
 ENV_EXAMPLE="$API_DIR/.env.example"
 
+# ── Parse flags ───────────────────────────────────────────────────────────────
+SIMULATE=false
+SIM_NUM_LISTINGS=""
+SIM_CONFIG_PATH=""
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --simulate)
+            SIMULATE=true
+            shift
+            ;;
+        --listings)
+            if [[ -z "${2:-}" ]] || ! [[ "$2" =~ ^[0-9]+$ ]] || [[ "$2" -lt 1 ]]; then
+                die "--listings requires a positive integer (e.g. --listings 3)"
+            fi
+            SIMULATE=true
+            SIM_NUM_LISTINGS="$2"
+            shift 2
+            ;;
+        --sim-config)
+            if [[ -z "${2:-}" ]]; then
+                die "--sim-config requires a file path"
+            fi
+            # Resolve to absolute path
+            SIM_CONFIG_PATH="$(cd "$(dirname "$2")" && pwd)/$(basename "$2")"
+            if [[ ! -f "$SIM_CONFIG_PATH" ]]; then
+                die "Config file not found: $SIM_CONFIG_PATH"
+            fi
+            SIMULATE=true
+            shift 2
+            ;;
+        *)
+            warn "Unknown flag: $1 (ignored)"
+            shift
+            ;;
+    esac
+done
+
+SIM_PROFILE=()
+if [[ "$SIMULATE" == "true" ]]; then
+    SIM_PROFILE=(--profile simulator)
+fi
+
 # ── Helpers ───────────────────────────────────────────────────────────────────
 info()    { echo -e "${CYAN}[INFO]${RESET}  $*"; }
 success() { echo -e "${GREEN}[OK]${RESET}    $*"; }
@@ -46,8 +92,7 @@ env_set() {
     local key="$1"
     local value="$2"
     if grep -qE "^${key}=" "$ENV_FILE"; then
-        # Use a delimiter that won't appear in keys/values (%%)
-        sed -i "s%%^${key}=.*%%${key}=${value}%%" "$ENV_FILE"
+        sed -i "s|^${key}=.*|${key}=${value}|" "$ENV_FILE"
     else
         echo "${key}=${value}" >> "$ENV_FILE"
     fi
@@ -262,11 +307,56 @@ print(d['profileData']['provisionConfiguration']['provisionDeviceSecret'])
 ")
     fi
 
+    # Step 3b: If provisioning is not enabled, enable it on the default profile
     if [[ -z "$PROV_KEY" || "$PROV_KEY" == "null" || -z "$PROV_SECRET" || "$PROV_SECRET" == "null" ]]; then
-        warn "Could not retrieve provisioning key/secret from default device profile."
-        warn "The API will still start, but device provisioning will not work until keys are set."
-        warn "After startup, visit http://localhost:8080 and create a device profile with provisioning enabled."
-    else
+        info "Provisioning not enabled on default device profile – enabling it automatically..."
+
+        # Generate random key and secret (32 hex chars each)
+        GEN_KEY=$(head -c 16 /dev/urandom | xxd -p)
+        GEN_SECRET=$(head -c 16 /dev/urandom | xxd -p)
+
+        if command -v jq &>/dev/null; then
+            UPDATED_PROFILE=$(echo "$PROFILE" | jq \
+                --arg key "$GEN_KEY" \
+                --arg secret "$GEN_SECRET" \
+                '.provisionDeviceKey = $key |
+                 .provisionType = "ALLOW_CREATE_NEW_DEVICES" |
+                 .profileData.provisionConfiguration = {
+                     "type": "ALLOW_CREATE_NEW_DEVICES",
+                     "provisionDeviceSecret": $secret
+                 }')
+        else
+            UPDATED_PROFILE=$(echo "$PROFILE" | python3 -c "
+import sys, json
+d = json.load(sys.stdin)
+d['provisionDeviceKey'] = '${GEN_KEY}'
+d['provisionType'] = 'ALLOW_CREATE_NEW_DEVICES'
+d['profileData']['provisionConfiguration'] = {
+    'type': 'ALLOW_CREATE_NEW_DEVICES',
+    'provisionDeviceSecret': '${GEN_SECRET}'
+}
+json.dump(d, sys.stdout)
+")
+        fi
+
+        SAVE_RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
+            "$TB_HOST_URL/api/deviceProfile" \
+            -H "X-Authorization: Bearer $TB_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "$UPDATED_PROFILE")
+
+        if [[ "$SAVE_RESPONSE" == "200" ]]; then
+            PROV_KEY="$GEN_KEY"
+            PROV_SECRET="$GEN_SECRET"
+            success "Provisioning enabled on default device profile."
+        else
+            warn "Failed to enable provisioning on default device profile (HTTP $SAVE_RESPONSE)."
+            warn "The API will still start, but device provisioning will not work until keys are set."
+            warn "After startup, visit http://localhost:8080 and enable provisioning on the default device profile."
+        fi
+    fi
+
+    if [[ -n "$PROV_KEY" && "$PROV_KEY" != "null" && -n "$PROV_SECRET" && "$PROV_SECRET" != "null" ]]; then
         env_set "PROVISION_DEVICE_KEY" "$PROV_KEY"
         env_set "PROVISION_DEVICE_SECRET" "$PROV_SECRET"
         # Reload so the API container picks up the new values
@@ -283,7 +373,17 @@ fi
 # ═════════════════════════════════════════════════════════════════════════════
 echo ""
 info "Stage D: Building and starting MongoDB + API server..."
-docker compose -f "$API_DIR/docker-compose.yaml" up -d --build
+
+# ── Export simulator config to the environment for docker compose ─────────
+if [[ -n "$SIM_NUM_LISTINGS" ]]; then
+    export SIM_NUM_LISTINGS
+fi
+if [[ -n "$SIM_CONFIG_PATH" ]]; then
+    export SIM_CONFIG_PATH
+    export SIM_CONFIG_FILE="/app/sim-config.json"
+fi
+
+docker compose -f "$API_DIR/docker-compose.yaml" ${SIM_PROFILE[@]+"${SIM_PROFILE[@]}"} up -d --build
 
 info "Waiting for the API server to become ready..."
 API_URL="http://localhost:${PORT:-3000}"
@@ -333,6 +433,18 @@ echo -e "  API              ${CYAN}http://localhost:${PORT:-3000}${RESET}"
 echo -e "  Swagger UI       ${CYAN}http://localhost:${PORT:-3000}/api-docs${RESET}"
 echo -e "  ThingsBoard      ${CYAN}http://localhost:8080${RESET}  (${THINGSBOARD_USERNAME} / ${THINGSBOARD_PASSWORD})"
 echo -e "  Appsmith UI      ${CYAN}http://localhost:80${RESET}"
+
+if [[ "$SIMULATE" == "true" ]]; then
+    echo ""
+    SIM_DESC="1 listing, 3 sensor nodes"
+    if [[ -n "$SIM_CONFIG_PATH" ]]; then
+        SIM_DESC="custom config ($(basename "$SIM_CONFIG_PATH"))"
+    elif [[ -n "$SIM_NUM_LISTINGS" ]]; then
+        SIM_DESC="${SIM_NUM_LISTINGS} listing(s), $((SIM_NUM_LISTINGS * 3)) sensor nodes (auto-generated)"
+    fi
+    echo -e "  ${BOLD}${YELLOW}Simulator${RESET}        Running – ${SIM_DESC}"
+    echo -e "                   View logs: docker compose -f api/docker-compose.yaml logs -f simulator"
+fi
 echo ""
 echo -e "  Use ${BOLD}./stop.sh${RESET} to stop all services."
 echo ""
